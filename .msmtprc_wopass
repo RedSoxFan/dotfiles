@@ -1,0 +1,17 @@
+# Set default values for all following accounts.
+defaults
+auth           on
+tls            on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+logfile        ~/.msmtp.log
+
+# Pitt
+account        pitt
+host           smtp.office365.com
+port           587
+from           bma37@pitt.edu
+user           bma37@pitt.edu
+password       PASSWORD_GOES_HERE
+
+# Set a default account
+account default : pitt

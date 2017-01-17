@@ -1,0 +1,27 @@
+#!/bin/sh
+# Key Map
+xmodmap "/home/brian/.Xmodmap"
+
+##################### Applications #########################
+amixer -c1 sset Master,0 87 &
+nm-applet &
+pulseaudio -D &
+pasystray &
+udevedu &
+onedrive-d start &
+gdfs ~/.gdfscreds ~/GoogleDrive &
+terminator -l fluxbox &
+xset s 18000 18000 &  # Set the screen blanking to 5 hours
+xset -dpms &  # Disable auto sleep and suspend timers
+cbatticon &
+numlockx on &
+xrandr --output HDMI2 --mode 1920x1080 --pos 1920x0
+fbsetbg -F .wallpaper &
+synclient VertEdgeScroll=1
+synclient TapButton1=1
+blueman-applet &
+
+###################### FluxBox #############################
+exec fluxbox
+# or if you want to keep a log:
+# exec fluxbox -log "/home/brian/.fluxbox/log"

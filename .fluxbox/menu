@@ -1,0 +1,20 @@
+[begin] (Fluxbox)
+    [encoding] {UTF-8}
+        [exec] (Run) {dmenu_extended_run}
+	    [submenu] (Fluxbox) {Fluxbox}
+		[config] (Configure)
+		[submenu] (Styles) {Choose a style...}
+		    [stylesdir] (/usr/share/fluxbox/styles)
+		    [stylesdir] (~/.fluxbox/styles)
+		[end]
+		[workspaces] (Workspace List)
+		[reconfig] (Reload Fluxbox)
+        [end]
+	    [submenu] (Power Management) {Power Management}
+            [exit] (Logout)
+        	[exec] (Shutdown) {systemctl poweroff}
+            [exec] (Reboot) {systemctl reboot}
+            [exec] (Reboot to Windows) {bash -c "sudo grub-reboot Windows\ 10 && systemctl reboot"}
+	    [end]
+    [endencoding]
+[end]

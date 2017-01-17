@@ -1,0 +1,360 @@
+# i3 config file (v4)
+#
+# Please see http://i3wm.org/docs/userguide.html for a complete reference!
+
+set $mod Mod4
+
+# Set Outputs
+set $LAPTOP "eDP1"
+set $EXTERNAL "HDMI2"
+
+# Set Workspace Names
+set $WS1 "1:MAIN"
+set $WS2 "2:MEDIA"
+set $WS3 "3:DEVEL"
+set $WS4 "4:GAMES"
+set $WS5 "5:1520"
+set $WS6 "6:1530"
+set $WS7 "7:1632"
+set $WS8 "8:1980"
+set $WS9 "9:TMPA"
+set $WSA "10:TMPB"
+set $WSB "11:ALT"
+set $WSC "12:VIDEO"
+set $WSD "13:RTFM"
+set $WSE "14:GAMEB"
+set $WSF "15:1520B"
+set $WSG "16:1530B"
+set $WSH "17:1632B"
+set $WSI "18:1980B"
+set $WSJ "19:TMPC"
+set $WSK "20:TMPD"
+
+# Set Workspace Outputs
+workspace $WS1 output $LAPTOP
+workspace $WS2 output $LAPTOP
+workspace $WS3 output $LAPTOP
+workspace $WS4 output $LAPTOP
+workspace $WS5 output $LAPTOP
+workspace $WS6 output $LAPTOP
+workspace $WS7 output $LAPTOP
+workspace $WS8 output $LAPTOP
+workspace $WS9 output $LAPTOP
+workspace $WSA output $LAPTOP
+workspace $WSB output $EXTERNAL
+workspace $WSC output $EXTERNAL
+workspace $WSD output $EXTERNAL
+workspace $WSE output $EXTERNAL
+workspace $WSF output $EXTERNAL
+workspace $WSG output $EXTERNAL
+workspace $WSH output $EXTERNAL
+workspace $WSI output $EXTERNAL
+workspace $WSJ output $EXTERNAL
+workspace $WSK output $EXTERNAL
+
+# Font for window titles. Will also be used by the bar unless a different font
+# is used in the bar {} block below.
+font pango:monospace,FontAwesome 8
+
+# This font is widely installed, provides lots of unicode glyphs, right-to-left
+# text rendering and scalability on retina/hidpi displays (thanks to pango).
+#
+# font pango:DejaVu Sans Mono 8
+
+# Before i3 v4.8, we used to recommend this one as the default:
+# font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
+# The font above is very space-efficient, that is, it looks good, sharp and
+# clear in small sizes. However, its unicode glyph coverage is limited, the old
+# X core fonts rendering does not support right-to-left and this being a bitmap
+# font, it doesn’t scale on retina/hidpi displays.
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# start a terminal
+bindsym $mod+Return exec i3-sensible-terminal
+
+# kill focused window
+bindsym $mod+Shift+q kill
+
+# start dmenu (a program launcher)
+bindsym $mod+d exec dmenu_run
+# There also is the (new) i3-dmenu-desktop which only displays applications
+# shipping a .desktop file. It is a wrapper around dmenu, so you need that
+# installed.
+# bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
+
+# change focus
+bindsym $mod+j focus left
+bindsym $mod+k focus down
+bindsym $mod+l focus up
+bindsym $mod+semicolon focus right
+bindsym $mod+Control+j focus output left
+bindsym $mod+Control+semicolon focus output right
+
+# alternatively, you can use the cursor keys:
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+bindsym $mod+Control+Left focus output left
+bindsym $mod+Control+Right focus output right
+
+# move focused window
+bindsym $mod+Shift+j move left
+bindsym $mod+Shift+k move down
+bindsym $mod+Shift+l move up
+bindsym $mod+Shift+semicolon move right
+bindsym $mod+Control+Shift+j move container to output left
+bindsym $mod+Control+Shift+semicolon move container to output right
+bindsym $mod+Control+Shift+k move workspace to output left
+bindsym $mod+Control+Shift+l move workspace to output right
+
+# alternatively, you can use the cursor keys:
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+bindsym $mod+Control+Shift+Left move container to output left
+bindsym $mod+Control+Shift+Right move container to output right
+bindsym $mod+Control+Shift+Up move workspace to output left
+bindsym $mod+Control+Shift+Down move workspace to output right
+
+# split in horizontal orientation
+bindsym $mod+h split h
+
+# split in vertical orientation
+bindsym $mod+v split v
+
+# enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen toggle
+bindsym $mod+g fullscreen toggle global
+
+# change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# focus the parent container
+bindsym $mod+a focus parent
+
+# focus the child container
+#bindsym $mod+d focus child
+
+# focus settings
+focus_follows_mouse no
+mouse_warping none
+
+# move cursor to the bottom out of the way
+bindsym $mod+c exec xdotool mousemove 960 1079
+
+# workspace settings
+workspace_auto_back_and_forth yes
+
+# switch to workspace
+bindsym $mod+1 workspace $WS1
+bindsym $mod+2 workspace $WS2
+bindsym $mod+3 workspace $WS3
+bindsym $mod+4 workspace $WS4
+bindsym $mod+5 workspace $WS5
+bindsym $mod+6 workspace $WS6
+bindsym $mod+7 workspace $WS7
+bindsym $mod+8 workspace $WS8
+bindsym $mod+9 workspace $WS9
+bindsym $mod+0 workspace $WSA
+bindsym $mod+Mod1+1 workspace $WSB
+bindsym $mod+Mod1+2 workspace $WSC
+bindsym $mod+Mod1+3 workspace $WSD
+bindsym $mod+Mod1+4 workspace $WSE
+bindsym $mod+Mod1+5 workspace $WSF
+bindsym $mod+Mod1+6 workspace $WSG
+bindsym $mod+Mod1+7 workspace $WSH
+bindsym $mod+Mod1+8 workspace $WSI
+bindsym $mod+Mod1+9 workspace $WSJ
+bindsym $mod+Mod1+0 workspace $WSK
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace $WS1; workspace $WS1
+bindsym $mod+Shift+2 move container to workspace $WS2; workspace $WS2
+bindsym $mod+Shift+3 move container to workspace $WS3; workspace $WS3
+bindsym $mod+Shift+4 move container to workspace $WS4; workspace $WS4
+bindsym $mod+Shift+5 move container to workspace $WS5; workspace $WS5
+bindsym $mod+Shift+6 move container to workspace $WS6; workspace $WS6
+bindsym $mod+Shift+7 move container to workspace $WS7; workspace $WS7
+bindsym $mod+Shift+8 move container to workspace $WS8; workspace $WS8
+bindsym $mod+Shift+9 move container to workspace $WS9; workspace $WS9
+bindsym $mod+Shift+0 move container to workspace $WSA; workspace $WSA
+bindsym $mod+Mod1+Shift+1 move container to workspace $WSB; workspace $WSB
+bindsym $mod+Mod1+Shift+2 move container to workspace $WSC; workspace $WSC
+bindsym $mod+Mod1+Shift+3 move container to workspace $WSD; workspace $WSD
+bindsym $mod+Mod1+Shift+4 move container to workspace $WSE; workspace $WSE
+bindsym $mod+Mod1+Shift+5 move container to workspace $WSF; workspace $WSF
+bindsym $mod+Mod1+Shift+6 move container to workspace $WSG; workspace $WSG
+bindsym $mod+Mod1+Shift+7 move container to workspace $WSH; workspace $WSH
+bindsym $mod+Mod1+Shift+8 move container to workspace $WSI; workspace $WSI
+bindsym $mod+Mod1+Shift+9 move container to workspace $WSJ; workspace $WSJ
+bindsym $mod+Mod1+Shift+0 move container to workspace $WSK; workspace $WSK
+
+# scratchpad
+bindsym $mod+Shift+minus move scratchpad
+bindsym $mod+minus scratchpad show
+
+# marks
+bindsym $mod+Shift+m exec i3-input -F 'mark %s' -P 'Mark: '
+bindsym $mod+m exec i3-input -F '[con_mark="%s"] focus' -P 'Go to: '
+bindsym $mod+Control+m exec i3-input -F 'unmark %s' -P 'Mark: '
+
+# audio
+bindsym XF86AudioMute exec "amixer sset Master,0 toggle"
+bindsym XF86AudioRaiseVolume exec "amixer sset Master,0 500+"; exec "amixer sset Master,0 $(amixer sget Master,0 | grep -P -o 'Left:\s*Playback\s*\d+' | cut -d' ' -f3)"
+bindsym XF86AudioLowerVolume exec "amixer sset Master,0 500-"; exec "amixer sset Master,0 $(amixer sget Master,0 | grep -P -o 'Left:\s*Playback\s*\d+' | cut -d' ' -f3)"
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioStop exec playerctl stop
+bindsym XF86AudioPrev exec playerctl previous
+bindsym XF86AudioNext exec playerctl next
+
+# Rofi
+bindsym $mod+grave exec bash -c "pactl set-default-sink "$(pactl list sinks | grep Name | cut -d" " -f2 | rofi -dmenu -p "Default Sink")
+bindsym $mod+Tab exec "rofi -show window -modi window,run"
+
+# border settings
+new_window pixel 1
+bindsym $mod+F12 border toggle
+
+# reload the configuration file
+bindsym $mod+Shift+c reload
+# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym $mod+Shift+r restart
+# exit i3 (logs you out of your X session)
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+
+# Lock
+bindsym Control+Mod1+l exec i3lock -c 111111
+
+# Screenshot
+bindsym --release $mod+t exec --no-startup-id import -window-id `xdotool getactivewindow` ~/Pictures/screenshot-`/bin/date +%Y%m%d-%H:%M:%S`.png
+bindsym --release $mod+y exec --no-startup-id import -window root ~/Pictures/screenshot-`/bin/date +%Y%m%d-%H:%M:%S`.png
+
+# resize window (you can also use the mouse for that)
+mode "resize" {
+        # These bindings trigger as soon as you enter the resize mode
+
+        # Pressing left will shrink the window’s width.
+        # Pressing right will grow the window’s width.
+        # Pressing up will shrink the window’s height.
+        # Pressing down will grow the window’s height.
+        bindsym j resize shrink width 10 px or 10 ppt
+        bindsym k resize grow height 10 px or 10 ppt
+        bindsym l resize shrink height 10 px or 10 ppt
+        bindsym semicolon resize grow width 10 px or 10 ppt
+
+        # same bindings, but for the arrow keys
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+# mode launcher
+mode "launcher" {
+        # Web + Files
+        bindsym g exec google-chrome-stable --incognito; mode "default"
+        bindsym c exec chromium --incognito; mode "default"
+        bindsym f exec firefox; mode "default"
+        bindsym n exec thunar; mode "default"
+        bindsym b exec vivaldi-stable --incognito; mode "default"
+        bindsym x exec playonlinux --run "Mozilla Firefox"; mode "default"
+        bindsym o exec bash -c "GTK2_RC_FILES=/usr/share/themes/Vertex-Light/gtk-2.0/gtkrc opera"; mode "default"
+
+        # Shell + Editors
+		bindsym a exec urxvt -e bash --rcfile ~/.bashrc-agenda; mode "default"
+        bindsym v exec urxvt -e vim; mode "default"
+
+        # Misc
+        bindsym d exec discord-canary; mode "default"
+        bindsym s exec spotify; mode "default"
+        bindsym t exec corebird; mode "default"
+
+        # Back to normal
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+bindsym $mod+o mode "launcher"
+
+# Colors
+client.focused 			#666666 #666666 #ffffff #999999 #666666
+client.focused_inactive	#222222 #222222 #ffffff #222222 #222222
+client.unfocused		#000000 #000000 #ffffff #000000 #000000
+client.urgent			#881000 #881000 #000000 #881000 #881000
+client.background		#111111
+
+## App Settings ##
+
+# Spotify
+assign [class="Spotify"] $WS2
+for_window [class="Spotify"] border none
+
+# Thunderbird
+for_window [class="Thunderbird"] border none
+for_window [class="Thunderbird"] floating enable
+for_window [class="Thunderbird"] move absolute position 0 px 0 px
+for_window [class="Thunderbird"] resize set 1920 1060
+
+## End App Settings##
+
+# Start i3bar to display a workspace bar (plus the system information i3status
+# finds out, if available)
+bar {
+        colors {
+                background #111111
+                statusline #ffffff
+                separator #444444
+                focused_background #111111
+                focused_statusline #ffffff
+                focused_separator #444444
+
+                focused_workspace #666666 #666666 #ffffff
+                active_workspace #444444 #444444 #ffffff
+                inactive_workspace #222222 #222222 #ffffff
+                urgent_workspace #111111 #111111 #ff0000
+
+                binding_mode #ffffff #111111 #ffffff
+        }
+
+        strip_workspace_numbers yes
+        status_command i3blocks
+        tray_output $LAPTOP
+}
+
+# Startup
+exec --no-startup-id "amixer -c sset Master,0 87"
+exec --no-startup-id nm-applet
+exec --no-startup-id blueman-applet
+exec --no-startup-id pulseaudio -D
+exec --no-startup-id pasystray
+exec --no-startup-id udevedu
+exec --no-startup-id onedrive-d start
+exec --no-startup-id gdfs ~/.gdfscreds ~/GoogleDrive
+exec --no-startup-id xset s 18000 18000
+exec --no-startup-id xset -dpms
+# exec --no-startup-id thunderbird
+exec_always --no-startup-id numlockx on
+exec_always --no-startup-id xrandr --output HDMI2 --mode 1920x1080 --pos 1920x0
+exec_always --no-startup-id feh --bg-fill ~/.wallpaper
+exec_always --no-startup-id synclient VertEdgeScroll=1
+exec_always --no-startup-id synclient TapButton1=1
+
+# vim:filetype=i3

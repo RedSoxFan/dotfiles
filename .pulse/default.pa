@@ -1,0 +1,96 @@
+.nofail
+
+.fail
+
+load-module module-device-manager
+
+### Automatically restore the volume of streams and devices
+load-module module-device-restore
+load-module module-stream-restore
+load-module module-card-restore
+
+### Automatically augment property information from .desktop files
+### stored in /usr/share/application
+load-module module-augment-properties
+
+### Should be after module-*-restore but before module-*-detect
+load-module module-switch-on-port-available
+
+### Load several protocols
+.ifexists module-esound-protocol-unix.so
+load-module module-esound-protocol-unix
+.endif
+load-module module-native-protocol-unix
+
+### Load additional modules from GConf settings. This can be configured with the paprefs tool.
+### Please keep in mind that the modules configured by paprefs might conflict with manually
+### loaded modules.
+.ifexists module-gconf.so
+.nofail
+load-module module-gconf
+.fail
+.endif
+
+### Automatically restore the default sink/source when changed by the user
+### during runtime
+### NOTE: This should be loaded as early as possible so that subsequent modules
+### that look up the default sink/source get the right value
+load-module module-default-device-restore
+
+### Automatically move streams to the default sink if the sink they are
+### connected to dies, similar for sources
+load-module module-rescue-streams
+
+### Make sure we always have a sink around, even if it is a null sink.
+load-module module-always-sink
+
+### Honour intended role device property
+load-module module-intended-roles
+
+### Automatically suspend sinks/sources that become idle for too long
+load-module module-suspend-on-idle
+
+### If autoexit on idle is enabled we want to make sure we only quit
+### when no local session needs us anymore.
+.ifexists module-console-kit.so
+load-module module-console-kit
+.endif
+.ifexists module-systemd-login.so
+load-module module-systemd-login
+.endif
+
+### Enable positioned event sounds
+load-module module-position-event-sounds
+
+### Cork music/video streams when a phone stream is active
+load-module module-role-cork
+
+### Modules to allow autoloading of filters (such as echo cancellation)
+### on demand. module-filter-heuristics tries to determine what filters
+### make sense, and module-filter-apply does the heavy-lifting of
+### loading modules and rerouting streams.
+load-module module-filter-heuristics
+load-module module-filter-apply
+
+### Load Bluetooth Module
+load-module module-bluetooth-discover
+load-module module-switch-on-connect
+
+### ALSA sources
+### hw:1,0 is laptop mic
+load-module module-alsa-source device=hw:1,0 source_name=Internal source_properties=device.description=Internal
+
+### ALSA sinks for devices that will be able to output audio
+### hw:1,0 is laptop speakers/headphones
+### hw:0,7 is HDMI audio
+### Stero Outputs
+load-module module-alsa-sink device=hw:1,0 sink_name=Laptop sink_properties=device.description=Laptop
+load-module module-alsa-sink device=hw:0,7 sink_name=HDMI sink_properties=device.description=HDMI
+load-module module-combine-sink sink_name=LaptopAndHDMI slaves=Laptop,HDMI sink_properties=device.description=LaptopAndHDMI
+### Mono Outputs
+load-module module-remap-sink sink_name=Laptop_Mono master=Laptop channels=2 channel_map=mono,mono sink_properties=device.description=Laptop_Mono
+load-module module-remap-sink sink_name=HDMI_Mono master=HDMI channels=2 channel_map=mono,mono sink_properties=device.description=HDMI_Mono
+load-module module-remap-sink sink_name=LaptopAndHDMI_Mono master=LaptopAndHDMI channels=2  channel_map=mono,mono sink_properties=device.description=LaptopAndHDMI_Mono
+
+### Set the default sink to laptop
+set-default-sink 1

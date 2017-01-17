@@ -1,0 +1,278 @@
+###############################################################################
+# Brian Ashworth <bosrsf04@gmail.com>
+# Fluxbox Keys File
+# Last Modified: 27 Dec 16
+###############################################################################
+
+############################### SESSION COMMANDS ##############################
+
+# System Menus
+OnDesktop Mouse1 :HideMenus
+OnDesktop Mouse2 :WorkspaceMenu
+OnDesktop Mouse3 :RootMenu
+Control Escape :RootMenu
+
+# Session Management
+Control Mod1 Delete :Exit
+Control Mod1 l :Exec bash -c "xlock -mousemotion +description -mode blank -info '' && numlockx on"
+
+# Configuration
+Shift Escape k :Exec urxvt -e "vim ~/.fluxbox/keys"
+Shift Escape r :Reconfig
+Shift Escape s :Exec urxvt -e "vim ~/.fluxbox/startup"
+
+# Display Settings
+XF86WWW :Exec xrandr --output eDP1 --pos 0x0 --output HDMI2 --pos 1920x0
+Control XF86WWW :Exec xrandr --output eDP1 --pos 1920x0 --output HDMI2 --pos 0x0
+
+###############################################################################
+
+
+################################## WORKSPACES #################################
+
+# Switching Workspaces
+Control Mod4 Left :PrevWorkspace
+Control Mod4 Right :NextWorkspace
+Control F1 :Workspace 1
+Control F2 :Workspace 2
+Control F3 :Workspace 3
+Control F4 :Workspace 4
+Control F5 :Workspace 5
+Control F6 :Workspace 6
+Control F7 :Workspace 7
+Control F8 :Workspace 8
+Control F9 :Workspace 9
+Control F10 :Workspace 10
+Control F11 :Workspace 11
+Control F12 :Workspace 12
+
+# Send To Workspace
+Mod4 Left :SendToPrevWorkspace
+Mod4 Right :SendToNextWorkspace
+Mod4 F1 :SendToWorkspace 1
+Mod4 F2 :SendToWorkspace 2
+Mod4 F3 :SendToWorkspace 3
+Mod4 F4 :SendToWorkspace 4
+Mod4 F5 :SendToWorkspace 5
+Mod4 F6 :SendToWorkspace 6
+Mod4 F7 :SendToWorkspace 7
+Mod4 F8 :SendToWorkspace 8
+Mod4 F9 :SendToWorkspace 9
+Mod4 F10 :SendToWorkspace 10
+Mod4 F11 :SendToWorkspace 11
+Mod4 F12 :SendToWorkspace 12
+
+# Take To Workspace
+Control Mod4 Left :TakeToPrevWorkspace
+Control Mod4 Right :TakeToNextWorkspace
+Control Mod4 F1 :TakeToWorkspace 1
+Control Mod4 F2 :TakeToWorkspace 2
+Control Mod4 F3 :TakeToWorkspace 3
+Control Mod4 F4 :TakeToWorkspace 4
+Control Mod4 F5 :TakeToWorkspace 5
+Control Mod4 F6 :TakeToWorkspace 6
+Control Mod4 F7 :TakeToWorkspace 7
+Control Mod4 F8 :TakeToWorkspace 8
+Control Mod4 F9 :TakeToWorkspace 9
+Control Mod4 F10 :TakeToWorkspace 10
+Control Mod4 F11 :TakeToWorkspace 11
+Control Mod4 F12 :TakeToWorkspace 12
+
+###############################################################################
+
+
+############################## WINDOW MANAGEMENT ##############################
+
+# Manual Positioning
+OnWindow Mod1 Mouse1 :MacroCmd {Raise} {Focus} {StartMoving}
+OnWindowBorder Move1 :StartMoving
+OnTitlebar Move1 :StartMoving
+
+# Manual Sizing
+OnLeftGrip Move1 :StartResizing bottomleft
+OnRightGrip Move1 :StartResizing bottomright
+
+# States
+OnTitlebar Double Mouse1 :Maximize
+OnTitlebar Double Mouse3 :Shade
+OnTitlebar Mouse3 :WindowMenu
+
+Mod1 F4 :Close
+Mod1 F5 :Kill
+Mod1 F8 :Stick
+Mod1 F9 :Minimize
+Mod1 F10 :Maximize
+Mod1 F11 :Fullscreen
+Mod1 F12 :ToggleDecor
+Mod1 space :WindowMenu
+
+# Misc Extra Mouse Buttons
+Mouse6 :Maximize
+Control Mouse6 :MacroCmd {ResizeTo 50% 100%} {MoveTo 00 00 UpperLeft}
+Mouse7 :Fullscreen
+Control Mouse7 :MacroCmd {ResizeTo 50% 100%} {MoveTo 00 00 UpperRight}
+Mouse8 :MacroCmd {SendToNextHead} {MoveTo 00 00 Center} {Maximize}
+Control Mouse8 :Stick
+Mod4 Mouse8 :MacroCmd {ResizeTo 97% 97%} {MoveTo 00 00 Center}
+
+# Selection
+OnTitlebar Mouse1 :MacroCmd {Raise} {Focus} {ActivateTab}
+Mod1 Tab :NextWindow {groups} (workspace=[current])
+Mod1 Shift Tab :PrevWindow {groups} (workspace=[current])
+
+# Snapping
+Control KP_Divide :MacroCmd {SendToPrevHead} {MoveTo 00 00 Center} {Maximize}
+Control KP_Multiply :MacroCmd {SendToNextHead} {MoveTo 00 00 Center} {Maximize}
+Control KP_0 :Minimize
+Control KP_1 :MacroCmd {ResizeTo 50% 50%} {MoveTo 00 00 LowerLeft}
+Control KP_2 :MacroCmd {ResizeTo 100% 50%} {MoveTo 00 00 LowerLeft}
+Control KP_3 :MacroCmd {ResizeTo 50% 50%} {MoveTo 00 00 LowerRight}
+Control KP_4 :MacroCmd {ResizeTo 50% 100%} {MoveTo 00 00 UpperLeft}
+Control KP_5 :Maximize
+Control KP_6 :MacroCmd {ResizeTo 50% 100%} {MoveTo 00 00 UpperRight}
+Control KP_7 :MacroCmd {ResizeTo 50% 50%} {MoveTo 00 00 UpperLeft}
+Control KP_8 :MacroCmd {ResizeTo 100% 50%} {MoveTo 00 00 UpperLeft}
+Control KP_9 :MacroCmd {ResizeTo 50% 50%} {MoveTo 00 00 UpperRight}
+
+# Centering
+Control Mod4 KP_5 :MoveTo 00 00 Center
+Mod4 KP_Divide :MacroCmd {SendToPrevHead} {MoveTo 00 00 Center}
+Mod4 KP_Multiply :MacroCmd {SendToNextHead} {MoveTo 00 00 Center}
+Mod4 KP_1 :MacroCmd {ResizeTo 10% 10%} {MoveTo 00 00 Center}
+Mod4 KP_2 :MacroCmd {ResizeTo 20% 20%} {MoveTo 00 00 Center}
+Mod4 KP_3 :MacroCmd {ResizeTo 30% 30%} {MoveTo 00 00 Center}
+Mod4 KP_4 :MacroCmd {ResizeTo 40% 40%} {MoveTo 00 00 Center}
+Mod4 KP_5 :MacroCmd {ResizeTo 50% 50%} {MoveTo 00 00 Center}
+Mod4 KP_6 :MacroCmd {ResizeTo 60% 60%} {MoveTo 00 00 Center}
+Mod4 KP_7 :MacroCmd {ResizeTo 70% 70%} {MoveTo 00 00 Center}
+Mod4 KP_8 :MacroCmd {ResizeTo 80% 80%} {MoveTo 00 00 Center}
+Mod4 KP_9 :MacroCmd {ResizeTo 90% 90%} {MoveTo 00 00 Center}
+Mod4 KP_0 :MacroCmd {ResizeTo 100% 100%} {MoveTo 00 00 Center}
+Mod4 KP_Add :MacroCmd {Resize 5% 5%} {MoveTo 00 00 Center}
+Mod4 KP_Subtract :MacroCmd {Resize -5% -5%} {MoveTo 00 00 Center}
+Mod4 KP_Enter :MacroCmd {ResizeTo 97% 97%} {MoveTo 00 00 Center}
+
+###############################################################################
+
+
+############################### TAB MANAGEMENT ################################
+
+OnTitlebar Control Mouse1 :StartTabbing
+Mod4 Tab :NextTab
+Mod4 Shift Tab :PrevTab
+Mod4 1 :Tab 1
+Mod4 2 :Tab 2
+Mod4 3 :Tab 3
+Mod4 4 :Tab 4
+Mod4 5 :Tab 5
+Mod4 6 :Tab 6
+Mod4 7 :Tab 7
+Mod4 8 :Tab 8
+Mod4 9 :Tab 9
+Mod4 0 :Tab 10
+
+###############################################################################
+
+
+################################## MULTIMEDIA #################################
+
+# Volume
+XF86AudioMute :Exec amixer sset Master,0 toggle
+XF86AudioRaiseVolume :Exec amixer sset Master,0 500+
+XF86AudioLowerVolume :Exec amixer sset Master,0 500-
+
+# Music
+XF86AudioPlay :Exec playerctl play-pause
+XF86AudioStop :Exec playerctl stop
+XF86AudioPrev :Exec playerctl previous
+XF86AudioNext :Exec playerctl next
+
+###############################################################################
+
+
+################################## UTILIES ##################################
+
+# Misc
+Mod1 F2 :Exec dmenu_extended_run
+Mod1 F3 :Exec fbrun
+Control Mod1 t :Exec urxvt
+
+###############################################################################
+
+
+############################# GENERAL APPLICATIONS ############################
+
+# Web + File Browsers
+Mod4 c :Exec google-chrome-stable --incognito
+Control Mod4 c :Exec chromium --incognito
+Mod4 f :Exec firefox
+Mod4 n :Exec thunar
+Control Mod4 v :Exec vivaldi-stable --incognito
+Mod4 x :Exec playonlinux --run "Mozilla Firefox"
+Mod4 o :Exec bash -c "GTK2_RC_FILES=/usr/share/themes/Vertex-Light/gtk-2.0/gtkrc opera"
+
+# Shells + Editors
+Mod4 v :Exec urxvt -e vim
+
+# Microsoft Office
+Mod4 e :Exec playonlinux --run "Microsoft Excel 2010"
+Mod4 p :Exec playonlinux --run "Microsoft PowerPoint 2010"
+Mod4 w :Exec playonlinux --run "Microsoft Word 2010"
+
+# Misc
+Mod4 d :Exec discord-canary
+Mod4 t :Exec corebird
+
+###############################################################################
+# Remaining Letters: ab    ghijklm   qrs u   yz                               #
+# Remaining Numbers: 1234567890                                               #
+###############################################################################
+
+
+################################ MODE - GAMING ################################
+#     NOTE: ANY KEYS NOT SPECIFIED IN THIS SECTION WILL NOT BE AVAILABLE      #
+###############################################################################
+
+# Enterance + Session
+Pause : KeyMode Gaming Pause
+Gaming: Control Escape :RootMenu
+Gaming: Control Mod1 l :Exec bash -c "xlock -mousemotion +description -mode blank -info '' && numlockx on"
+
+# Workspace Management
+Gaming: Mod4 Left :PrevWorkspace
+Gaming: Mod4 Right :NextWorkspace
+
+# Window Management
+Gaming: Mod4 KP_Divide :MacroCmd {SendToPrevHead} {MoveTo 00 00 Center}
+Gaming: Mod4 KP_Multiply :MacroCmd {SendToNextHead} {MoveTo 00 00 Center}
+Gaming: Mod1 Tab :NextWindow {groups} (workspace=[current])
+Gaming: Mod1 F4 :Close
+Gaming: Mod1 F5 :Kill
+
+# Multimedia
+Gaming: XF86AudioMute :Exec amixer sset Master,0 toggle
+Gaming: XF86AudioRaiseVolume :Exec amixer sset Master,0 500+
+Gaming: XF86AudioLowerVolume :Exec amixer sset Master,0 500-
+
+# Utilities
+Gaming: Mod1 F2 :Exec demnu_extended_run
+Gaming: Control Mod1 t :Exec urxvt
+
+# Simulate Keycodes
+#Gaming: F1 :Cond {Matches (Borderlands.exe)} {Exec xte 'usleep 200000' 'key Page_Up'}
+#Gaming: F2 :Cond {Matches (Borderlands.exe)} {Exec xte 'usleep 200000' 'key Page_Down'}
+#Gaming: Caps_Lock :Cond {Matches (Borderlands.exe)} {Exec xte 'usleep 200000' 'key Return'}
+
+# General Applications and Games
+Gaming: Mod4 c :Exec gnome-chrome-stable --incognito
+Gaming: Mod4 v :Exec vivaldi --incognito
+Gaming: Mod4 grave :Exec steam
+Gaming: Mod4 1 :Exec playonlinux --run "Steam"
+#Gaming: Mod4 w :Exec playonlinux --run "Witcher"
+Gaming: Mod4 b 1 :Exec playonlinux --run "Borderlands"
+Gaming: Mod4 b 2 :Exec playonlinux --run "Borderlands 2"
+
+###############################################################################
+# Remaining Letters: a  defghijklmnopqrstuv xyz                               #
+# Remaining Numbers:  234567890                                               #
+###############################################################################
