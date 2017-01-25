@@ -152,7 +152,10 @@ focus_follows_mouse no
 mouse_warping none
 
 # move cursor to the bottom out of the way
-bindsym $mod+c exec xdotool mousemove 960 1079
+bindsym $mod+c exec xdotool mousemove 0 1079
+
+# allow the pointer to be locked/unlocked
+bindsym $mod+z exec ~/.local/share/bin/enablepointer toggle
 
 # workspace settings
 workspace_auto_back_and_forth yes
@@ -279,7 +282,7 @@ mode "launcher" {
         bindsym o exec bash -c "GTK2_RC_FILES=/usr/share/themes/Vertex-Light/gtk-2.0/gtkrc opera"; mode "default"
 
         # Shell + Editors
-		bindsym a exec urxvt -e bash --rcfile ~/.bashrc-agenda; mode "default"
+        bindsym a exec urxvt -e bash --rcfile ~/.bashrc-agenda; mode "default"
         bindsym v exec urxvt -e vim; mode "default"
 
         # Misc
@@ -302,6 +305,9 @@ client.urgent			#881000 #881000 #000000 #881000 #881000
 client.background		#111111
 
 ## App Settings ##
+
+# Corebird
+for_window [class="Corebird" window_type="dialog"] fullscreen
 
 # Spotify
 assign [class="Spotify"] $WS2
@@ -350,6 +356,7 @@ exec --no-startup-id onedrive-d start
 exec --no-startup-id gdfs ~/.gdfscreds ~/GoogleDrive
 exec --no-startup-id xset s 18000 18000
 exec --no-startup-id xset -dpms
+exec --no-startup-id slack
 # exec --no-startup-id thunderbird
 exec_always --no-startup-id numlockx on
 exec_always --no-startup-id xrandr --output HDMI2 --mode 1920x1080 --pos 1920x0

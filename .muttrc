@@ -1,2 +1,2 @@
-set sendmail="/usr/bin/msmtp"
-set from=bma37@pitt.edu
+set sendmail="/usr/bin/msmtp -a gmail"
+set from=bma37@gmail.com

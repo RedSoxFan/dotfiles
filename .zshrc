@@ -54,6 +54,7 @@ plugins=(git)
 # User configuration
 # export PATH="/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
 # export MANPATH="/usr/local/man:$MANPATH"
+export PATH=$PATH:~/.local/share/bin
 
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8

@@ -1,4 +1,5 @@
 # Environment Variables
+export PATH=$PATH:~/.local/share/bin
 export TERM=xterm-256color
 export TERMINAL=/usr/bin/urxvt
 export EDITOR=/usr/bin/vim

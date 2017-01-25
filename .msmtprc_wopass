@@ -11,7 +11,15 @@ host           smtp.office365.com
 port           587
 from           bma37@pitt.edu
 user           bma37@pitt.edu
-password       PASSWORD_GOES_HERE
+password       PASSWORD
+
+# GMail
+account        gmail
+host           smtp.gmail.com
+port           587
+from           bosrsf04@gmail.com
+user           bosrsf04@gmail.com
+password       PASSWORD
 
 # Set a default account
-account default : pitt
+account default : gmail

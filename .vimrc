@@ -6,7 +6,6 @@ set nowrap
 set modelines=1
 set sidescroll=1
 set shell=bash
-set tabstop=4
 
 " Enable iMproved
 set nocompatible
@@ -88,3 +87,17 @@ command WQ wq
 command Wq wq
 command W w
 command Q q
+
+" Linux kernel defauls
+set tabstop=8 softtabstop=8 shiftwidth=8 noexpandtab
+
+" Override space/tab settings for Java and Python
+autocmd FileType java setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
+autocmd FileType python setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
+
+" Override space/tab settings for javascript, php, html, and css
+autocmd FileType javascript setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
+autocmd FileType php setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
+autocmd FileType html setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
+autocmd FileType css setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
+
