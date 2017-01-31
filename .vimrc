@@ -93,6 +93,7 @@ set tabstop=8 softtabstop=8 shiftwidth=8 noexpandtab
 
 " Override space/tab settings for Java and Python
 autocmd FileType java setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
+autocmd FileType groovy setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 autocmd FileType python setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 
 " Override space/tab settings for javascript, php, html, and css

@@ -8,7 +8,7 @@ command=VAL=$(xset q | grep -E -o "Caps Lock\s*:\s*(on|off)" | sed -r "s/^.*off$
 command=VAL=$(xset q | grep -E -o "Num Lock\s*:\s*(on|off)" | sed -r "s/^.*on$//" | sed -r "s/^(Num Lock).*off$/\1 OFF/") && echo $VAL && test -n "$VAL" && exit 33 || exit 0
 
 [weather]
-command=echo $(inxi -xxxw -c 0 | grep -E -o "[-]?[1]?[0-9]?[0-9] F" | sed 's/ /°/')" ("$(inxi -xxxw -c 0 | grep -E -o "Conditions: [-]?[0-9]+ F \([-]?[0-9]+ C\) - [A-Za-z0-9 ]+\:" | grep -E -o "\- [A-Za-z0-9 ]+ [A-Za-z]+\:" | cut -d" " -f2- | rev | cut -d" " -f2- | rev)")" | sed -r "s/^  \(\)$//"
+command=echo $(inxi -xxxw -c 0 | grep -E -o "[-]?[1]?[0-9]?[0-9] F" | sed 's/ /°/')" ("$(inxi -xxxw -c 0 | grep -E -o "Conditions: [-]?[0-9]+ F \([-]?[0-9]+ C\) - [A-Za-z0-9 ]+\:" | grep -E -o "\- [A-Za-z0-9 ]+ [A-Za-z]+\:" | cut -d" " -f2- | rev | cut -d" " -f2- | rev)")" | sed -r "s/^\s*\(\)$//"
 interval=1800
 label=
 

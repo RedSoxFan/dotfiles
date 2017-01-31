@@ -76,6 +76,8 @@ bindsym $mod+Return exec i3-sensible-terminal
 
 # kill focused window
 bindsym $mod+Shift+q kill
+# for when the window is subborn...
+bindsym $mod+Control+Shift+q exec kill -9 $(xdotool getactivewindow getwindowpid)
 
 # start dmenu (a program launcher)
 bindsym $mod+d exec dmenu_run
@@ -277,7 +279,7 @@ mode "launcher" {
         bindsym c exec chromium --incognito; mode "default"
         bindsym f exec firefox; mode "default"
         bindsym n exec thunar; mode "default"
-        bindsym b exec vivaldi-stable --incognito; mode "default"
+        bindsym b exec vivaldi-stable; mode "default"
         bindsym x exec playonlinux --run "Mozilla Firefox"; mode "default"
         bindsym o exec bash -c "GTK2_RC_FILES=/usr/share/themes/Vertex-Light/gtk-2.0/gtkrc opera"; mode "default"
 
@@ -286,7 +288,7 @@ mode "launcher" {
         bindsym v exec urxvt -e vim; mode "default"
 
         # Misc
-        bindsym d exec discord-canary; mode "default"
+        bindsym d exec discord-ptb; mode "default"
         bindsym s exec spotify; mode "default"
         bindsym t exec corebird; mode "default"
 
@@ -353,7 +355,6 @@ exec --no-startup-id pulseaudio -D
 exec --no-startup-id pasystray
 exec --no-startup-id udevedu
 exec --no-startup-id onedrive-d start
-exec --no-startup-id gdfs ~/.gdfscreds ~/GoogleDrive
 exec --no-startup-id xset s 18000 18000
 exec --no-startup-id xset -dpms
 exec --no-startup-id slack
