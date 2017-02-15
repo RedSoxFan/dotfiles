@@ -41,6 +41,9 @@ Bundle 'edkolev/tmuxline.vim'
 " i3-vim-syntax
 Plugin 'PotatoesMaster/i3-vim-syntax'
 
+" Enable code completion
+Plugin 'Valloric/YouCompleteMe'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -92,13 +95,13 @@ command Q q
 set tabstop=8 softtabstop=8 shiftwidth=8 noexpandtab
 
 " Override space/tab settings for Java and Python
-autocmd FileType java setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
-autocmd FileType groovy setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
+autocmd FileType java setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
+autocmd FileType groovy setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
 autocmd FileType python setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 
 " Override space/tab settings for javascript, php, html, and css
 autocmd FileType javascript setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
 autocmd FileType php setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
-autocmd FileType html setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
+autocmd FileType html setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab wrap linebreak nolist
 autocmd FileType css setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
 

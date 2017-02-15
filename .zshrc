@@ -54,7 +54,7 @@ plugins=(git)
 # User configuration
 # export PATH="/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
 # export MANPATH="/usr/local/man:$MANPATH"
-export PATH=$PATH:~/.local/share/bin
+export PATH=/usr/lib/ccache/bin:$PATH:~/.local/share/bin
 
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
@@ -84,10 +84,20 @@ export BROWSER=/usr/bin/vivaldi-stable
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # General Aliases
+alias cdo="cd \"$OLDPWD\" "
 alias java7="/lib/jvm/java-7-openjdk/bin/java "
 alias javac7="/lib/jvm/java-7-openjdk/bin/javac "
 alias java8="/lib/jvm/java-8-openjdk/bin/java "
 alias javac8="/lib/jvm/java-8-openjdk/bin/javac "
+
+# General Functions
+function mkcd() {
+	mkdir "$1" && cd "$1"
+}
+
+function mkpcd() {
+	mkdir -p "$1" && cd "$1"
+}
 
 # Pitt Aliases
 alias mntafs="sshfs bma37@unixs.cssd.pitt.edu: ~/afs -o rw,allow_other "
@@ -96,6 +106,7 @@ alias 1520="2174 && cd 1520 "
 alias 1530="2174 && cd 1530 "
 alias 1632="2174 && cd 1632 "
 alias 1980="2174 && cd 1980 "
+alias kernel="cd ~/programming/git/kernels/staging "
 alias unixs="ssh -l bma37 bma37@unixs.cssd.pitt.edu "
 
 ZSH_CACHE_DIR=$HOME/.oh-my-zsh-cache
@@ -104,3 +115,11 @@ if [[ ! -d $ZSH_CACHE_DIR ]]; then
 fi
 
 source $ZSH/oh-my-zsh.sh
+
+# Fix home, end, and delete keys
+bindkey "\033[1~" beginning-of-line
+bindkey "\033[7~" beginning-of-line
+bindkey "\033[4~" end-of-line
+bindkey "\033[8~" end-of-line
+bindkey "\033[3~" delete-char
+

@@ -24,7 +24,7 @@ command=echo $(ip addr show dev enp2s0 | grep -E -o "inet ([0-9]+\.?){4}/[0-9]+"
 label=
 
 [wireless]
-command=echo $(ip addr show dev wlp3s0 | grep -E -o "inet ([0-9]+\.?){4}/[0-9]+" | sed "s/inet//")" ("$(iw dev wlp3s0 link | grep SSID | cut -d" " -f2-)"["$(iw dev wlp3s0 link | grep -E -o "freq: (2|5)" | cut -d" " -f2 | sed "s/2/2.4/")"] "$(iw dev wlp3s0 link | grep bitrate | grep -E -o "[0-9]+\.[0-9]+ MBit/s" | sed "s|.0 | |" | sed "s| MBit/s|Mbps|")")" | sed "s/ ([] )//"
+command=echo $(ip addr show dev wlp3s0 | grep -E -o "inet ([0-9]+\.?){4}/[0-9]+" | sed "s/inet//")" ("$(iw dev wlp3s0 link | grep SSID | cut -d" " -f2-)"["$(iw dev wlp3s0 link | grep -E -o "freq: (2|5)" | cut -d" " -f2 | sed "s/2/2.4/")"] "$(iw dev wlp3s0 link | grep bitrate | grep -E -o "[0-9]+\.[0-9]+ MBit/s" | sed "s|.0 | |" | sed "s| MBit/s|Mbps|")")" | sed "s/ (\[\] )//"
 label=
 
 [temp]
