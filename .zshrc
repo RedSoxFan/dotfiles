@@ -123,3 +123,8 @@ bindkey "\033[4~" end-of-line
 bindkey "\033[8~" end-of-line
 bindkey "\033[3~" delete-char
 
+# Show abbreviated path
+prompt_dir () {
+	prompt_segment blue black "%1~"
+}
+
