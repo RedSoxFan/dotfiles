@@ -316,11 +316,12 @@ for_window [class="Corebird" window_type="dialog"] fullscreen
 assign [class="Spotify"] $WS2
 for_window [class="Spotify"] border none
 
-# Thunderbird
-for_window [class="Thunderbird"] border none
-for_window [class="Thunderbird"] floating enable
-for_window [class="Thunderbird"] move absolute position 0 px 0 px
-for_window [class="Thunderbird"] resize set 1920 1060
+# Slack
+assign [class="Slack"] $WS8
+for_window [class="Slack"] mark "sl"
+
+# Opera (Twitch)
+assign [class="Opera"] $WSC
 
 ## End App Settings##
 
@@ -359,7 +360,6 @@ exec --no-startup-id onedrive-d start
 exec --no-startup-id xset s 18000 18000
 exec --no-startup-id xset -dpms
 exec --no-startup-id slack
-# exec --no-startup-id thunderbird
 exec_always --no-startup-id numlockx on
 exec_always --no-startup-id xrandr --output HDMI2 --mode 1920x1080 --pos 1920x0
 exec_always --no-startup-id feh --bg-fill ~/.wallpaper

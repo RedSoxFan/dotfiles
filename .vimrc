@@ -44,6 +44,9 @@ Plugin 'PotatoesMaster/i3-vim-syntax'
 " Enable code completion
 Plugin 'Valloric/YouCompleteMe'
 
+" Show marks
+Plugin 'kshenoy/vim-signature'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -78,8 +81,6 @@ set hlsearch incsearch ignorecase " highlight search, incremental search and ign
 " double escape for removing search highlights
 nnoremap <silent> <Esc><Esc> :let @/=""<CR>
 
-autocmd BufWritePre * :%s/\s\+$//e
-
 " Backup locations
 set backup
 set backupdir=~/.vim/backup
@@ -105,3 +106,6 @@ autocmd FileType php setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
 autocmd FileType html setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab wrap linebreak nolist
 autocmd FileType css setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
 
+" Custom keybinds
+nmap st :tabs<Enter>
+nmap sr :registers<Enter>
