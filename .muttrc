@@ -1,2 +1,4 @@
 set sendmail="/usr/bin/msmtp -a gmail"
-set from=bma37@gmail.com
+set from=bosrsf04@gmail.com
+set sort = 'threads'
+source "~/.mutt/gmail"

@@ -1,0 +1,42 @@
+// vim:ts=4:sw=4:et
+{
+    "border": "pixel",
+    "current_border_width": 1,
+    "floating": "auto_off",
+    "geometry": {
+       "height": 1060,
+       "width": 638,
+       "x": 1025,
+       "y": 1
+    },
+    "name": "RedSoxFan/2174_CS1530_SoftwareEngineeringCowards: CS 1530 - Spring 2017 - Copenhagen Hnefetafl 11x11 - Software Engineering Cowards - Brian Ashworth, John Johnson, Edwin Mellet, and Aaron Tamenne",
+    "percent": 0.5,
+    "swallows": [
+       {
+        "class": "^Vivaldi\\-stable$"
+       }
+    ],
+    "type": "con"
+}
+
+{
+    "border": "pixel",
+    "current_border_width": 1,
+    "floating": "auto_off",
+    "geometry": {
+       "height": 422,
+       "width": 1012,
+       "x": 0,
+       "y": 0
+    },
+    "name": "brian@F555L-Arch: ~/OneDrive/Pitt/2174/1530/Hnefatafl",
+    "percent": 0.5,
+    "swallows": [
+       {
+        "class": "^URxvt$",
+        "instance": "^hnefatafl$"
+       }
+    ],
+    "type": "con"
+}
+

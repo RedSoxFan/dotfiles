@@ -1,0 +1,42 @@
+// vim:ts=4:sw=4:et
+{
+    "border": "pixel",
+    "current_border_width": 1,
+    "floating": "auto_off",
+    "geometry": {
+       "height": 1060,
+       "width": 1918,
+       "x": 1,
+       "y": 1
+    },
+    "name": "laboon/CS1632_Spring2017: CS1632 Software Quality Assurance, Spring 2017",
+    "percent": 0.5,
+    "swallows": [
+       {
+        "class": "^Vivaldi\\-stable$"
+       }
+    ],
+    "type": "con"
+}
+
+{
+    "border": "pixel",
+    "current_border_width": 1,
+    "floating": "auto_off",
+    "geometry": {
+       "height": 422,
+       "width": 1012,
+       "x": 0,
+       "y": 0
+    },
+    "name": "brian@F555L-Arch: ~/OneDrive/Pitt/2174/1632",
+    "percent": 0.5,
+    "swallows": [
+       {
+        "class": "^URxvt$",
+        "instance": "^quality$"
+       }
+    ],
+    "type": "con"
+}
+

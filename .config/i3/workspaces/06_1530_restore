@@ -1,0 +1,20 @@
+#!/bin/sh
+GAME_REPO="https://github.com/RedSoxFan/2174_CS1530_SoftwareEngineeringCowards" 
+CLASS_REPO="https://github.com/laboon/CS1530_Spring2017"
+
+WSN="6:1530"
+WSF=$(echo $WSN | sed "s/:/_/g" | sed -E "s/^([0-9]_)/0\1/g")
+
+# To avoid back-and-forth, switch to a non-existant workspace
+# before switching to and applying the layout. This is not
+# needed for singular restores, but is needed for batch.
+if [ $("i3-get-workspace") == "$WSN" ]; then
+	PREFIX="workspace \"NonExistantWorkspace\";"
+else
+	PREFIX=""
+fi
+
+i3-msg "$PREFIX workspace $WSN; append_layout ~/.config/i3/workspaces/$WSF.json"
+sleep 1
+vivaldi-stable --new-window $GAME_REPO $CLASS_REPO &
+urxvt -name hnefatafl -e sh -c "cd ~/OneDrive/Pitt/2174/1530/Hnefatafl && zsh" &

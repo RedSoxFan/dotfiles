@@ -80,12 +80,8 @@ bindsym $mod+Shift+q kill
 # for when the window is subborn...
 bindsym $mod+Control+Shift+q exec kill -9 $(xdotool getactivewindow getwindowpid)
 
-# start dmenu (a program launcher)
-bindsym $mod+d exec dmenu_run
-# There also is the (new) i3-dmenu-desktop which only displays applications
-# shipping a .desktop file. It is a wrapper around dmenu, so you need that
-# installed.
-# bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
+# start rofi (a program launcher)
+bindsym $mod+d exec "rofi -show run -modi window,run"
 
 # change focus
 bindsym $mod+j focus left
@@ -210,10 +206,11 @@ bindsym $mod+Mod1+Shift+0 move container to workspace $WSK; workspace $WSK
 # scratchpad
 bindsym $mod+Shift+minus move scratchpad
 bindsym $mod+minus scratchpad show
+bindsym $mod+Control+minus exec i3-input -F '[%s] scratchpad show' -P 'Scratchpad: '
 
 # marks
 bindsym $mod+Shift+m exec i3-input -F 'mark %s' -P 'Mark: '
-bindsym $mod+m exec i3-input -F '[con_mark="%s"] focus' -P 'Go to: '
+bindsym $mod+m exec i3-input -F '[con_mark="^%s$"] focus' -P 'Go to: '
 bindsym $mod+Control+m exec i3-input -F 'unmark %s' -P 'Mark: '
 
 # audio
@@ -285,20 +282,64 @@ mode "launcher" {
         bindsym o exec bash -c "GTK2_RC_FILES=/usr/share/themes/Vertex-Light/gtk-2.0/gtkrc opera"; mode "default"
 
         # Shell + Editors
-        bindsym a exec urxvt -e bash --rcfile ~/.bashrc-agenda; mode "default"
-        bindsym v exec urxvt -e vim; mode "default"
+        bindsym a exec urxvt -name agenda -e ~/.local/share/bin/agenda; mode "default"
+        bindsym v exec urxvt -name vim -e vim; mode "default"
 
         # Misc
         bindsym d exec discord-ptb; mode "default"
         bindsym s exec spotify; mode "default"
         bindsym t exec corebird; mode "default"
 
+        # Gaming
+        bindsym w exec steam-native; mode "default"
+        bindsym e exec playonlinux --run Steam; mode "default"
+
+        # Back to normal
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+
+        # Available Letters: -------hijklm--pqr--u---yz
+        # Available Numbers: 1234567890
+}
+
+bindsym $mod+o mode "launcher"
+
+# restore workspaces
+mode "restore" {
+        # All
+        bindsym grave exec /home/brian/.local/share/bin/i3-restore-workspace -; mode "default"
+
+        # Current
+        bindsym space exec /home/brian/.local/share/bin/i3-restore-workspace; mode "default"
+
+        # Specifics
+        bindsym 1 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS1"; mode "default"
+        bindsym 2 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS2"; mode "default"
+        bindsym 3 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS3"; mode "default"
+        bindsym 4 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS4"; mode "default"
+        bindsym 5 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS5"; mode "default"
+        bindsym 6 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS6"; mode "default"
+        bindsym 7 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS7"; mode "default"
+        bindsym 8 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS8"; mode "default"
+        bindsym 9 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS9"; mode "default"
+        bindsym 0 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSA"; mode "default"
+        bindsym Mod1+1 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSB"; mode "default"
+        bindsym Mod1+2 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSC"; mode "default"
+        bindsym Mod1+3 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSD"; mode "default"
+        bindsym Mod1+4 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSE"; mode "default"
+        bindsym Mod1+5 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSF"; mode "default"
+        bindsym Mod1+6 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSG"; mode "default"
+        bindsym Mod1+7 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH"; mode "default"
+        bindsym Mod1+8 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSI"; mode "default"
+        bindsym Mod1+9 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSJ"; mode "default"
+        bindsym Mod1+0 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSK"; mode "default"
+
         # Back to normal
         bindsym Return mode "default"
         bindsym Escape mode "default"
 }
 
-bindsym $mod+o mode "launcher"
+bindsym $mod+Escape mode "restore"
 
 # Colors
 client.focused 			#666666 #666666 #ffffff #999999 #666666
@@ -309,12 +350,17 @@ client.background		#111111
 
 ## App Settings ##
 
+# Agenda
+for_window [class="URxvt" instance="agenda"] floating enable
+for_window [class="URxvt" instance="agenda"] move scratchpad
+for_window [class="URxvt" instance="agenda"] scratchpad show
+for_window [class="URxvt" instance="agenda"] mark "a"
+
 # Corebird
 for_window [class="Corebird" window_type="dialog"] fullscreen
 
 # Spotify
 assign [class="Spotify"] $WS2
-for_window [class="Spotify"] border none
 
 # Slack
 assign [class="Slack"] $WS8
@@ -366,4 +412,4 @@ exec_always --no-startup-id feh --bg-fill ~/.wallpaper
 exec_always --no-startup-id synclient VertEdgeScroll=1
 exec_always --no-startup-id synclient TapButton1=1
 
-# vim:filetype=i3
+# vim:filetype=i3:et

@@ -7,7 +7,6 @@ export VISUAL=/usr/bin/vim
 export BROWSER=/usr/bin/vivaldi-stable
 
 # General Aliases
-alias agenda="gcalcli agenda now sunday --military --detail_location | sed -r 's/(CS [0-9]+): .*/\1/' | sed -r 's/  Location: //' "
 alias cdo="cd \"$OLDPWD\" "
 alias java7="/lib/jvm/java-7-openjdk/bin/java "
 alias javac7="/lib/jvm/java-7-openjdk/bin/javac "
