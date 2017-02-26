@@ -1,0 +1,11 @@
+#!/bin/sh
+if [ "$1" = "0" ] || [ "$1" = "1" ]; then
+	val=$1
+else
+	val=$(xinput list-props 12 | grep "Device Enabled" | rev | cut -c1 | sed 's/0/t/' | sed 's/1/0/' | sed 's/t/1/')
+fi
+
+ids=$(xinput list | grep -P "slave\s+pointer" | grep -P "Touchpad|Transceiver" | grep -E -o "id=[0-9]+" | cut -d'=' -f2)
+for x in $ids; do
+	xinput set-prop $x "Device Enabled" $val
+done

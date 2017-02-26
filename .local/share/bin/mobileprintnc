@@ -1,0 +1,2 @@
+#!/bin/bash
+echo "" | mutt -s "Mobile Print" mobileprint@pitt.edu -a "$1" -F /home/brian/.muttrc-pitt

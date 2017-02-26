@@ -1,0 +1,9 @@
+#!/bin/bash
+xdg-open "$1" &
+
+pr=$(echo -e "Yes\nNo" | dmenu -p "Send to Mobile Print?" -b -l 2)
+
+if [ $pr == "Yes" ]; then
+    mutt -s "Mobile Print" mobileprint@pitt.edu -a "$1" -F /home/brian/.muttrc-pitt
+    echo -e "Sent to Mobile Print" | dmenu -b -l 1
+fi;

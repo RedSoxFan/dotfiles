@@ -1,0 +1,21 @@
+#!/bin/sh
+
+get_delta() {
+	now=$(date +%s)
+	later=$(date -d $1 +%s)
+	delta=`expr $later - $now`
+
+	if [ $delta -lt 0 ]; then
+		echo `expr 86400 - $delta`
+	else
+		echo $delta
+	fi;
+}
+
+while [ 1 -eq 1 ]; do
+	clear
+	cal -3
+	gcalcli agenda now "next sunday" --military --detail_location | sed -r 's/(CS [0-9]+): .*/\1/' | sed -r 's/  Location: //'
+	sleep 1
+	sleep $(get_delta "00:00:00")
+done

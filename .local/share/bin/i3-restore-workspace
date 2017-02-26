@@ -1,0 +1,37 @@
+#!/bin/sh
+
+# Directory containing restore scripts
+DIR="/home/brian/.config/i3/workspaces"
+
+# Formatt desktop name
+fmt_workspace() {
+	echo $(echo $1 | sed 's/:/_/g' | sed -E 's/^([0-9]_)/0\1/g')
+}
+
+
+# Create array of workspaces to restore
+if [ $# -eq 0 ]; then
+	# Add current
+	DESKS+=($DIR/$(fmt_workspace $(i3-get-workspace))"_restore")
+elif [ $# -eq 1 ] && [ $1 == "-" ]; then
+	# Add all
+	FILES=$(ls "$DIR/"*_restore)
+	for file in ${FILES[@]}; do
+		DESKS+=($file)
+	done
+else
+	# All the ones provided
+	for desk in "$@"; do
+		DESKS+=($DIR/$(fmt_workspace $desk)"_restore")
+	done
+fi
+
+# Restore if possible
+for restore in ${DESKS[@]}; do
+	if [ -e $restore ]; then
+		echo "Running $restore..."
+		$restore > /dev/null
+	else
+		echo "$restore not found..."
+	fi
+done
