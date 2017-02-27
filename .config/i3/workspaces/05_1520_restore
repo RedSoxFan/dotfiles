@@ -10,7 +10,7 @@ WSF=$(echo $WSN | sed "s/:/_/g" | sed -E "s/^([0-9]_)/0\1/g")
 # To avoid back-and-forth, switch to a non-existant workspace
 # before switching to and applying the layout. This is not
 # needed for singular restores, but is needed for batch.
-if [ $("i3-get-workspace") == "$WSN" ]; then
+if [ $("/home/brian/.local/share/bin/i3-get-workspace") == "$WSN" ]; then
 	PREFIX="workspace \"NonExistantWorkspace\";"
 else
 	PREFIX=""

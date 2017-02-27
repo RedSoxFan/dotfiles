@@ -12,7 +12,7 @@ fmt_workspace() {
 # Create array of workspaces to restore
 if [ $# -eq 0 ]; then
 	# Add current
-	DESKS+=($DIR/$(fmt_workspace $(i3-get-workspace))"_restore")
+	DESKS+=($DIR/$(fmt_workspace $(~/.local/share/bin/i3-get-workspace))"_restore")
 elif [ $# -eq 1 ] && [ $1 == "-" ]; then
 	# Add all
 	FILES=$(ls "$DIR/"*_restore)

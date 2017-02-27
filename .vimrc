@@ -107,5 +107,8 @@ autocmd FileType html setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab 
 autocmd FileType css setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
 
 " Custom keybinds
-nmap st :tabs<Enter>
-nmap sr :registers<Enter>
+nmap ,t :tabs<Enter>
+nmap ,r :registers<Enter>
+nmap ,b :<C-U>exec (v:count ? "b" . v:count : "ls")<Enter>
+nmap ,; :bp<Enter>
+nmap ,' :bn<Enter>
