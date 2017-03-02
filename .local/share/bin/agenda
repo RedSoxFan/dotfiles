@@ -3,19 +3,21 @@
 get_delta() {
 	now=$(date +%s)
 	later=$(date -d $1 +%s)
-	delta=`expr $later - $now`
 
-	if [ $delta -lt 0 ]; then
-		echo `expr 86400 - $delta`
-	else
-		echo $delta
+	if [ $later -lt $now ]; then
+		later=`expr $later + 86400`
 	fi;
+
+	echo `expr $later - $now`
 }
 
 while [ 1 -eq 1 ]; do
 	clear
 	cal -3
-	gcalcli agenda now "next sunday" --military --detail_location | sed -r 's/(CS [0-9]+): .*/\1/' | sed -r 's/  Location: //'
+	gcalcli agenda now "sunday 23:59:59" --military --detail_location | sed -r 's/(CS [0-9]+): .*/\1/' | sed -r 's/  Location: //'
+	echo "Updated: "$(date)
 	sleep 1
-	sleep $(get_delta "00:00:00")
+	delta=$(get_delta "00:00:00")
+	echo "Sleeping until: "$(date -d @$(($(date +%s) + $delta)))
+	sleep $delta
 done
