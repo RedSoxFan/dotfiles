@@ -371,8 +371,7 @@ assign [class="Opera"] $WSC
 
 ## End App Settings##
 
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
+# Start i3blocks
 bar {
         colors {
                 background #111111
@@ -400,7 +399,6 @@ exec --no-startup-id "amixer -c sset Master,0 87"
 exec --no-startup-id nm-applet
 exec --no-startup-id blueman-applet
 exec --no-startup-id pulseaudio -D
-exec --no-startup-id pasystray
 exec --no-startup-id udevedu
 exec --no-startup-id onedrive-d start
 exec --no-startup-id xset s 18000 18000
