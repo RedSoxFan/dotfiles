@@ -85,6 +85,7 @@ export BROWSER=/usr/bin/vivaldi-stable
 
 # General Aliases
 alias cdo="cd \"$OLDPWD\" "
+alias cls="echo -ne '\033c'"
 alias i3sus="i3lock -c 111111 && systemctl suspend"
 alias java7="/lib/jvm/java-7-openjdk/bin/java "
 alias javac7="/lib/jvm/java-7-openjdk/bin/javac "

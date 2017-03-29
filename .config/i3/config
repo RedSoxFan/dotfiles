@@ -280,6 +280,7 @@ mode "launcher" {
         bindsym b exec vivaldi-stable; mode "default"
         bindsym x exec playonlinux --run "Mozilla Firefox"; mode "default"
         bindsym o exec bash -c "GTK2_RC_FILES=/usr/share/themes/Vertex-Light/gtk-2.0/gtkrc opera"; mode "default"
+        bindsym r exec urxvt -name ranger -e ranger; mode "default"
 
         # Shell + Editors
         bindsym a exec urxvt -name agenda -e ~/.local/share/bin/agenda; mode "default"
