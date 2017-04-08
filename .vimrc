@@ -43,6 +43,7 @@ Plugin 'PotatoesMaster/i3-vim-syntax'
 
 " Enable code completion
 Plugin 'Valloric/YouCompleteMe'
+let g:ycm_global_ycm_extra_conf = '/usr/share/vim/vimfiles/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
 
 " Show marks
 Plugin 'kshenoy/vim-signature'
@@ -112,3 +113,5 @@ nmap ,r :registers<Enter>
 nmap ,b :<C-U>exec (v:count ? "b" . v:count : "ls")<Enter>
 nmap ,; :bp<Enter>
 nmap ,' :bn<Enter>
+nmap ,f :set ff=unix<Enter>
+nmap ,d :set ff=dos<Enter>

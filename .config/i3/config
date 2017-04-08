@@ -7,6 +7,7 @@ set $mod Mod4
 # Set Outputs
 set $LAPTOP "eDP1"
 set $EXTERNAL "HDMI2"
+set $VGAOUT "HDMI1"
 
 # Set Workspace Names
 set $WS1 "1:MAIN"
@@ -29,6 +30,7 @@ set $WSH "17:1632B"
 set $WSI "18:1980B"
 set $WSJ "19:TMPC"
 set $WSK "20:TMPD"
+set $WSP "21:PRESENT"
 
 # Set Workspace Outputs
 workspace $WS1 output $LAPTOP
@@ -51,6 +53,7 @@ workspace $WSH output $EXTERNAL
 workspace $WSI output $EXTERNAL
 workspace $WSJ output $EXTERNAL
 workspace $WSK output $EXTERNAL
+workspace $WSP output $VGAOUT
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -180,6 +183,7 @@ bindsym $mod+Mod1+7 workspace $WSH
 bindsym $mod+Mod1+8 workspace $WSI
 bindsym $mod+Mod1+9 workspace $WSJ
 bindsym $mod+Mod1+0 workspace $WSK
+bindsym $mod+p workspace $WSP
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace $WS1; workspace $WS1
@@ -202,11 +206,18 @@ bindsym $mod+Mod1+Shift+7 move container to workspace $WSH; workspace $WSH
 bindsym $mod+Mod1+Shift+8 move container to workspace $WSI; workspace $WSI
 bindsym $mod+Mod1+Shift+9 move container to workspace $WSJ; workspace $WSJ
 bindsym $mod+Mod1+Shift+0 move container to workspace $WSK; workspace $WSK
+bindsym $mod+Shift+p move container to workspace $WSP; workspace $WSP
 
 # scratchpad
 bindsym $mod+Shift+minus move scratchpad
 bindsym $mod+minus scratchpad show
 bindsym $mod+Control+minus exec i3-input -F '[%s] scratchpad show' -P 'Scratchpad: '
+
+# sticky
+bindsym $mod+equal sticky toggle
+
+# rename
+bindsym $mod+Shift+equal exec i3-input -F 'rename workspace to "%s"' -P 'Name: '
 
 # marks
 bindsym $mod+Shift+m exec i3-input -F 'mark %s' -P 'Mark: '
@@ -278,8 +289,8 @@ mode "launcher" {
         bindsym f exec firefox; mode "default"
         bindsym n exec thunar; mode "default"
         bindsym b exec vivaldi-stable; mode "default"
-        bindsym x exec playonlinux --run "Mozilla Firefox"; mode "default"
-        bindsym o exec bash -c "GTK2_RC_FILES=/usr/share/themes/Vertex-Light/gtk-2.0/gtkrc opera"; mode "default"
+        bindsym x exec ~/opt/xfinitytv; mode "default"
+        bindsym o exec bash -c "GTK2_RC_FILES=/usr/share/themes/Vertex-Light/gtk-2.0/gtkrc opera-developer"; mode "default"
         bindsym r exec urxvt -name ranger -e ranger; mode "default"
 
         # Shell + Editors
@@ -293,7 +304,7 @@ mode "launcher" {
 
         # Gaming
         bindsym w exec steam-native; mode "default"
-        bindsym e exec playonlinux --run Steam; mode "default"
+        bindsym e exec ~/opt/steam-wine64; mode "default"
 
         # Back to normal
         bindsym Return mode "default"
@@ -334,6 +345,7 @@ mode "restore" {
         bindsym Mod1+8 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSI"; mode "default"
         bindsym Mod1+9 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSJ"; mode "default"
         bindsym Mod1+0 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSK"; mode "default"
+        bindsym p exec /home/brian/.local/share/bin/i3-restore-workspace "$WSP"; mode "default"
 
         # Back to normal
         bindsym Return mode "default"
@@ -392,7 +404,31 @@ bar {
 
         strip_workspace_numbers yes
         status_command i3blocks
+        output $LAPTOP
         tray_output $LAPTOP
+}
+
+bar {
+        colors {
+                background #111111
+                statusline #ffffff
+                separator #444444
+                focused_background #111111
+                focused_statusline #ffffff
+                focused_separator #444444
+
+                focused_workspace #666666 #666666 #ffffff
+                active_workspace #444444 #444444 #ffffff
+                inactive_workspace #222222 #222222 #ffffff
+                urgent_workspace #111111 #111111 #ff0000
+
+                binding_mode #ffffff #111111 #ffffff
+        }
+
+        strip_workspace_numbers yes
+        status_command i3blocks -c /home/brian/.config/i3blocks/config-external
+        output $EXTERNAL
+        output $VGAOUT
 }
 
 # Startup
@@ -407,6 +443,7 @@ exec --no-startup-id xset -dpms
 exec --no-startup-id slack
 exec_always --no-startup-id numlockx on
 exec_always --no-startup-id xrandr --output HDMI2 --mode 1920x1080 --pos 1920x0
+exec_always --no-startup-id xrandr --output HDMI1 --mode 1920x1080 --pos 1920x0
 exec_always --no-startup-id feh --bg-fill ~/.wallpaper
 exec_always --no-startup-id synclient VertEdgeScroll=1
 exec_always --no-startup-id synclient TapButton1=1

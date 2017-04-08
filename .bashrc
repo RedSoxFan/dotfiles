@@ -6,6 +6,9 @@ export EDITOR=/usr/bin/vim
 export VISUAL=/usr/bin/vim
 export BROWSER=/usr/bin/vivaldi-stable
 
+# Fix fonts not showing up in java applications
+export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true'
+
 # General Aliases
 alias cdo="cd \"$OLDPWD\" "
 alias cls="echo -ne '\033c'"

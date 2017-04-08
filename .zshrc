@@ -68,6 +68,9 @@ export TERM=xterm-256color
 export TERMINAL=xterm-256color
 export BROWSER=/usr/bin/vivaldi-stable
 
+# Fix fonts not showing up in java applications
+export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true'
+
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
@@ -117,6 +120,9 @@ if [[ ! -d $ZSH_CACHE_DIR ]]; then
 fi
 
 source $ZSH/oh-my-zsh.sh
+
+# Reverts oh-my-zsh's change in behavior to allow for dot/hyphen/underscore tab completion again
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
 # Fix home, end, and delete keys
 bindkey "\033[1~" beginning-of-line
