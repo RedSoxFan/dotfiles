@@ -1,5 +1,6 @@
 " Basic editor stuff
 syntax on
+set listchars=tab:>-
 set number
 set nofoldenable
 set nowrap
@@ -43,7 +44,7 @@ Plugin 'PotatoesMaster/i3-vim-syntax'
 
 " Enable code completion
 Plugin 'Valloric/YouCompleteMe'
-let g:ycm_global_ycm_extra_conf = '/usr/share/vim/vimfiles/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+let g:ycm_server_python_interpreter = '/usr/bin/python2'
 
 " Show marks
 Plugin 'kshenoy/vim-signature'
@@ -95,6 +96,9 @@ command Q q
 
 " Linux kernel defauls
 set tabstop=8 softtabstop=8 shiftwidth=8 noexpandtab
+
+" Enable list for Kconfig
+autocmd FileType kconfig setlocal list
 
 " Override space/tab settings for Java and Python
 autocmd FileType java setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab

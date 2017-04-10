@@ -292,6 +292,7 @@ mode "launcher" {
         bindsym x exec ~/opt/xfinitytv; mode "default"
         bindsym o exec bash -c "GTK2_RC_FILES=/usr/share/themes/Vertex-Light/gtk-2.0/gtkrc opera-developer"; mode "default"
         bindsym r exec urxvt -name ranger -e ranger; mode "default"
+        bindsym h exec chromium --app=http://www.accuweather.com/en/us/pittsburgh-pa/15213/hourly-weather-forecast/1310; mode "default"
 
         # Shell + Editors
         bindsym a exec urxvt -name agenda -e ~/.local/share/bin/agenda; mode "default"
@@ -310,7 +311,7 @@ mode "launcher" {
         bindsym Return mode "default"
         bindsym Escape mode "default"
 
-        # Available Letters: -------hijklm--pqr--u---yz
+        # Available Letters: --------ijklm--pqr--u---yz
         # Available Numbers: 1234567890
 }
 
@@ -353,6 +354,23 @@ mode "restore" {
 }
 
 bindsym $mod+Escape mode "restore"
+
+# android stuff
+mode "android" {
+        # AirDroid
+        bindsym a exec vivaldi-stable --app=http://web.airdroid.com
+
+        # Show battery
+        bindsym b exec notify-send "Galaxy S7" "Battery: "$(adb shell "dumpsys battery" | grep level | cut -d' ' -f4)"%"; mode "default"
+
+        # Toggle display
+        bindsym d exec adb shell input keyevent 26; mode "default"
+
+        # Back to normal
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+bindsym $mod+b mode "android"
 
 # Colors
 client.focused 			#666666 #666666 #ffffff #999999 #666666
