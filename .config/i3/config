@@ -7,7 +7,7 @@ set $mod Mod4
 # Set Outputs
 set $LAPTOP "eDP1"
 set $EXTERNAL "HDMI2"
-set $VGAOUT "HDMI1"
+set $VGAOUT "DP1"
 
 # Set Workspace Names
 set $WS1 "1:MAIN"
@@ -461,7 +461,7 @@ exec --no-startup-id xset -dpms
 exec --no-startup-id slack
 exec_always --no-startup-id numlockx on
 exec_always --no-startup-id xrandr --output HDMI2 --mode 1920x1080 --pos 1920x0
-exec_always --no-startup-id xrandr --output HDMI1 --mode 1920x1080 --pos 1920x0
+exec_always --no-startup-id xrandr --output DP1 --mode 1024x768 --pos 1920x0
 exec_always --no-startup-id feh --bg-fill ~/.wallpaper
 exec_always --no-startup-id synclient VertEdgeScroll=1
 exec_always --no-startup-id synclient TapButton1=1
