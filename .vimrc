@@ -45,6 +45,7 @@ Plugin 'PotatoesMaster/i3-vim-syntax'
 " Enable code completion
 Plugin 'Valloric/YouCompleteMe'
 let g:ycm_server_python_interpreter = '/usr/bin/python2'
+let g:ycm_autoclose_preview_window_after_completion = 1
 
 " Show marks
 Plugin 'kshenoy/vim-signature'

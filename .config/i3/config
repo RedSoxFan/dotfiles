@@ -317,6 +317,30 @@ mode "launcher" {
 
 bindsym $mod+o mode "launcher"
 
+# video modes
+mode "video" {
+        # Just laptop
+        bindsym q exec xrandr --output $LAPTOP --primary --mode 1920x1080 --pos 0x0 --output $EXTERNAL --off --output $VGAOUT --off
+
+        # Laptop + HDMI
+        bindsym w exec xrandr --output $LAPTOP --primary --mode 1920x1080 --pos 0x0 --output $EXTERNAL --mode 1920x1080 --pos 1920x0 --output $VGAOUT --off
+
+        # Laptop + VGA
+        bindsym e exec xrandr --output $LAPTOP --primary --mode 1920x1080 --pos 0x0 --output $EXTERNAL --off --output $VGAOUT --mode 1024x768 --pos 1920x0
+
+        # Clone Laptop to HDMI
+        bindsym r exec xrandr --output $LAPTOP --primary --mode 1920x1080 --pos 0x0 --output $EXTERNAL --mode 1920x1080 --pos 0x0 --output $VGAOUT --off
+
+        # Clone Laptop to VGA
+        bindsym t exec xrandr --output $LAPTOP --primary --mode 1024x768 --pos 0x0 --output $EXTERNAL --off --output $VGAOUT --mode 1024x768 --pos 0x0
+
+        # Back to normal
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+bindsym $mod+i mode "video"
+
 # restore workspaces
 mode "restore" {
         # All
@@ -423,7 +447,7 @@ bar {
         strip_workspace_numbers yes
         status_command i3blocks
         output $LAPTOP
-        tray_output $LAPTOP
+        tray_output primary
 }
 
 bar {
@@ -447,6 +471,7 @@ bar {
         status_command i3blocks -c /home/brian/.config/i3blocks/config-external
         output $EXTERNAL
         output $VGAOUT
+        tray_output primary
 }
 
 # Startup
@@ -460,8 +485,7 @@ exec --no-startup-id xset s 18000 18000
 exec --no-startup-id xset -dpms
 exec --no-startup-id slack
 exec_always --no-startup-id numlockx on
-exec_always --no-startup-id xrandr --output HDMI2 --mode 1920x1080 --pos 1920x0
-exec_always --no-startup-id xrandr --output DP1 --mode 1024x768 --pos 1920x0
+exec_always --no-startup-id xrandr --output EXTERNAL2 --mode 1920x1080 --pos 1920x0
 exec_always --no-startup-id feh --bg-fill ~/.wallpaper
 exec_always --no-startup-id synclient VertEdgeScroll=1
 exec_always --no-startup-id synclient TapButton1=1
