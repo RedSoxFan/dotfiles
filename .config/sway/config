@@ -1,0 +1,318 @@
+### Variables
+
+# Preferences
+set $mod Mod4
+set $term urxvt -e zsh
+set $menu rofi -show run -mode run
+
+# Device names
+set $LAPTOP eDP-1
+set $HDMI HDMI-A-2
+set $VGA DP-1
+set $TOUCHPAD 1267:5:Elan_Touchp
+
+# Workspace names
+set $WSL1 "1:MAIN"
+set $WSL2 "2:MEDIA"
+set $WSL3 "3:DEVEL"
+set $WSL4 "4:GAMES"
+set $WSL5 "5:TMPLA"
+set $WSL6 "6:TMPLB"
+set $WSL7 "7:TMPLC"
+set $WSL8 "8:TMPLD"
+set $WSL9 "9:TMPLE"
+set $WSL0 "10:TMPF"
+set $WSH1 "11:ALT"
+set $WSH2 "12:VIDEO"
+set $WSH3 "13:DOCS"
+set $WSH4 "14:TMPHA"
+set $WSH5 "15:TMPHB"
+set $WSH6 "16:TMPHC"
+set $WSH7 "17:TMPHD"
+set $WSH8 "18:TMPHE"
+set $WSH9 "19:TMPHF"
+set $WSH0 "20:TMPHG"
+set $WSVP "21:PRESENT"
+
+### Font configuration
+font pango:monospace,FontAwesome 8
+
+### Input configuration
+input $TOUCHPAD {
+    dwt enabled
+    natural_scroll disabled
+    scroll_method edge
+    tap enabled
+}
+
+### Output configuration
+output $LAPTOP resolution 1920x1080 position 0,0 bg ~/.wallpaper fill
+output $HDMI resolution 1920x1080 position 1920,0 bg ~/.wallpaper fill
+
+### Workspace outputs
+workspace $WSL1 output $LAPTOP
+workspace $WSL2 output $LAPTOP
+workspace $WSL3 output $LAPTOP
+workspace $WSL4 output $LAPTOP
+workspace $WSL5 output $LAPTOP
+workspace $WSL6 output $LAPTOP
+workspace $WSL7 output $LAPTOP
+workspace $WSL8 output $LAPTOP
+workspace $WSL9 output $LAPTOP
+workspace $WSL0 output $LAPTOP
+workspace $WSH1 output $HDMI
+workspace $WSH2 output $HDMI
+workspace $WSH3 output $HDMI
+workspace $WSH4 output $HDMI
+workspace $WSH5 output $HDMI
+workspace $WSH6 output $HDMI
+workspace $WSH7 output $HDMI
+workspace $WSH8 output $HDMI
+workspace $WSH9 output $HDMI
+workspace $WSH0 output $HDMI
+workspace $WSVP output $VGA
+
+### Key bindings
+floating_modifier $mod normal
+
+# Terminal
+bindsym $mod+Return exec $term
+
+# Kill focused window
+bindsym $mod+Shift+q kill
+
+# Start your launcher
+bindsym $mod+d exec $menu
+
+# Move your focus around
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+bindsym $mod+Control+h focus output left
+bindsym $mod+Control+l focus output right
+# or use $mod+[up|down|left|right]
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+bindsym $mod+Control+Left focus output left
+bindsym $mod+Control+Right focus output right
+
+# _move_ the focused window with the same, but add Shift
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+bindsym $mod+Control+Shift+h move container to output left
+bindsym $mod+Control+Shift+l move container to output right
+bindsym $mod+Control+Shift+j move workspace to output left
+bindsym $mod+Control+Shift+k move workspace to output right
+# ditto, with arrow keys
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+bindsym $mod+Control+Shift+Left move container to output left
+bindsym $mod+Control+Shift+Right move container to output right
+bindsym $mod+Control+Shift+Up move workspace to output left
+bindsym $mod+Control+Shift+Down move workspace to output right
+
+# Splits
+bindsym $mod+b splith
+bindsym $mod+v splitv
+
+# Switch the current container between different layout styles
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# Make the current focus fullscreen
+bindsym $mod+f fullscreen
+
+# Toggle the current focus between tiling and floating mode
+bindsym $mod+Shift+space floating toggle
+
+# Swap focus between the tiling area and the floating area
+bindsym $mod+space focus mode_toggle
+
+# move focus to the parent container
+bindsym $mod+a focus parent
+
+# focus settings
+focus_follows_mouse no
+mouse_warping no
+
+# workspace settings
+workspace_auto_back_and_forth yes
+
+# switch to workspace
+bindsym $mod+1 workspace $WSL1
+bindsym $mod+2 workspace $WSL2
+bindsym $mod+3 workspace $WSL3
+bindsym $mod+4 workspace $WSL4
+bindsym $mod+5 workspace $WSL5
+bindsym $mod+6 workspace $WSL6
+bindsym $mod+7 workspace $WSL7
+bindsym $mod+8 workspace $WSL8
+bindsym $mod+9 workspace $WSL9
+bindsym $mod+0 workspace $WSL0
+bindsym $mod+Mod1+1 workspace $WSH1
+bindsym $mod+Mod1+2 workspace $WSH2
+bindsym $mod+Mod1+3 workspace $WSH3
+bindsym $mod+Mod1+4 workspace $WSH4
+bindsym $mod+Mod1+5 workspace $WSH5
+bindsym $mod+Mod1+6 workspace $WSH6
+bindsym $mod+Mod1+7 workspace $WSH7
+bindsym $mod+Mod1+8 workspace $WSH8
+bindsym $mod+Mod1+9 workspace $WSH9
+bindsym $mod+Mod1+0 workspace $WSH0
+bindsym $mod+p workspace $WSVP
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace $WSL1; workspace $WSL1
+bindsym $mod+Shift+2 move container to workspace $WSL2; workspace $WSL2
+bindsym $mod+Shift+3 move container to workspace $WSL3; workspace $WSL3
+bindsym $mod+Shift+4 move container to workspace $WSL4; workspace $WSL4
+bindsym $mod+Shift+5 move container to workspace $WSL5; workspace $WSL5
+bindsym $mod+Shift+6 move container to workspace $WSL6; workspace $WSL6
+bindsym $mod+Shift+7 move container to workspace $WSL7; workspace $WSL7
+bindsym $mod+Shift+8 move container to workspace $WSL8; workspace $WSL8
+bindsym $mod+Shift+9 move container to workspace $WSL9; workspace $WSL9
+bindsym $mod+Shift+0 move container to workspace $WSL0; workspace $WSL0
+bindsym $mod+Mod1+Shift+1 move container to workspace $WSH1; workspace $WSH1
+bindsym $mod+Mod1+Shift+2 move container to workspace $WSH2; workspace $WSH2
+bindsym $mod+Mod1+Shift+3 move container to workspace $WSH3; workspace $WSH3
+bindsym $mod+Mod1+Shift+4 move container to workspace $WSH4; workspace $WSH4
+bindsym $mod+Mod1+Shift+5 move container to workspace $WSH5; workspace $WSH5
+bindsym $mod+Mod1+Shift+6 move container to workspace $WSH6; workspace $WSH6
+bindsym $mod+Mod1+Shift+7 move container to workspace $WSH7; workspace $WSH7
+bindsym $mod+Mod1+Shift+8 move container to workspace $WSH8; workspace $WSH8
+bindsym $mod+Mod1+Shift+9 move container to workspace $WSH9; workspace $WSH9
+bindsym $mod+Mod1+Shift+0 move container to workspace $WSH0; workspace $WSH0
+bindsym $mod+Shift+p move container to workspace $WSVP; workspace $WSVP
+
+# scratchpad
+bindsym $mod+Shift+minus move scratchpad
+bindsym $mod+minus scratchpad show
+
+# sticky
+bindsym $mod+equal stick toggle
+
+# marks (does not appear to be working completely)
+bindsym $mod+m exec echo | rofi -dmenu -p Mark: -lines 1 | xargs swaymsg mark
+
+# audio (keys not working)
+bindsym XF86AudioMute exec amixer sset Master,0 toggle
+bindsym XF86AudioRaiseVolume exec "amixer sset Master,0 500+"; exec "amixer sset Master,0 $(amixer sget Master,0 | grep -P -o 'Left:\s*Playback\s*\d+' | cut -d' ' -f3)"
+bindsym XF86AudioLowerVolume exec "amixer sset Master,0 500-"; exec "amixer sset Master,0 $(amixer sget Master,0 | grep -P -o 'Left:\s*Playback\s*\d+' | cut -d' ' -f3)"
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioStop exec playerctl stop
+bindsym XF86AudioPrev exec playerctl previous
+bindsym XF86AudioNext exec playerctl next
+
+# border settings
+new_window pixel 1
+bindsym $mod+F12 border toggle
+
+# Reload the configuration file
+bindsym $mod+Shift+c reload
+
+# Exit sway (logs you out of your wayland session)
+bindsym $mod+Shift+e exit
+
+# Lock
+bindsym Control+Mod1+l exec swaylock -c 111111
+
+# Screenshot + Recording
+bindsym $mod+t exec swaygrab -f ~/Pictures/screenshot-`/bin/date +%Y%m%d-%H:%M:%S`.png
+bindsym $mod+y exec swaygrab ~/Pictures/screenshot-`/bin/date +%Y%m%d-%H:%M:%S`.png
+bindsym $mod+Shift+t exec swaygrab -c -f ~/Videos/recording-`/bin/date +%Y%m%d-%H:%M:%S`.mp4
+bindsym $mod+Shift+y exec swaygrab -c ~/Videos/recording-`/bin/date +%Y%m%d-%H:%M:%S`.mp4
+bindsym $mod+Control+t exec killall swaygrab
+
+mode "resize" {
+    # left will shrink the containers width
+    # right will grow the containers width
+    # up will shrink the containers height
+    # down will grow the containers height
+    bindsym $left resize shrink width 10 px or 10 ppt
+    bindsym $down resize grow height 10 px or 10 ppt
+    bindsym $up resize shrink height 10 px or 10 ppt
+    bindsym $right resize grow width 10 px or 10 ppt
+
+    # ditto, with arrow keys
+    bindsym Left resize shrink width 10 px or 10 ppt
+    bindsym Down resize grow height 10 px or 10 ppt
+    bindsym Up resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow width 10 px or 10 ppt
+
+    # return to default mode
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+mode "launcher" {
+    # Web + Files
+    bindsym b exec vivaldi-stable; mode "default"
+    bindsym c exec chromium --incognito; mode "default"
+    bindsym f exec firefox; mode "default"
+    bindsym g exec google-chrome-stable --incognito; mode "default"
+    bindsym h exec chromium --app=http://www.accuweather.com/en/us/pittsburgh-pa/15213/hourly-weather-forecast/1310; mode "default"
+    bindsym n exec thunar; mode "default"
+    bindsym o exec bash -c "GTK2_RC_FILES=/usr/share/themes/Vertex-Light/gtk-2.0/gtkrc opera-developer"; mode "default"
+    bindsym r exec urxvt -name ranger -e ranger; mode "default"
+    bindsym x exec ~/opt/xfinitytv; mode "default"
+
+    # Shell + Editors
+    bindsym v exec urxvt -name vim -e vim; mode "default"
+
+    # Misc
+    bindsym s exec spotify; mode "default"
+    bindsym t exec corebird; mode "default"
+
+    # return to default
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+o mode "launcher"
+
+# Colors
+client.focused          #666666 #666666 #ffffff #999999 #666666
+client.focused_inactive #222222 #222222 #ffffff #222222 #222222
+client.unfocused        #000000 #000000 #ffffff #000000 #000000
+client.urgent           #881000 #881000 #000000 #881000 #881000
+client.background       #111111
+
+# Status
+bar {
+    colors {
+        background #111111
+        statusline #ffffff
+        separator #444444
+        focused_background #111111
+        focused_statusline #ffffff
+        focused_separator #444444
+
+        focused_workspace #666666 #666666 #ffffff
+        active_workspace #444444 #444444 #ffffff
+        inactive_workspace #222222 #222222 #ffffff
+        urgent_workspace #111111 #111111 #ff0000
+
+        binding_mode #ffffff #111111 #ffffff
+    }
+
+    strip_workspace_numbers yes
+    status_command i3blocks -c /home/brian/.config/i3blocks/config-sway
+}
+
+# Startup
+exec "amixer -c sset Master,0 87"
+exec pulseaudio -D
+exec onedrive-d start
+exec dunst
+
+include /etc/sway/config.d/*
+
+# vim:ft=sway:ts=4:sts=4:et

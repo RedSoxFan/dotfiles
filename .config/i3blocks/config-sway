@@ -1,12 +1,6 @@
 interval=5
 color=#FFFFFF
 
-[capslock]
-command=VAL=$(xset q | grep -E -o "Caps Lock\s*:\s*(on|off)" | sed -r "s/^.*off$//" | sed -r "s/^(Caps Lock).*on$/\1/") && echo $VAL && test -n "$VAL" && exit 33 || exit 0
-
-[numlocK]
-command=VAL=$(xset q | grep -E -o "Num Lock\s*:\s*(on|off)" | sed -r "s/^.*on$//" | sed -r "s/^(Num Lock).*off$/\1 OFF/") && echo $VAL && test -n "$VAL" && exit 33 || exit 0
-
 [weather]
 command=echo $(inxi -xxxw -c 0 | grep -E -o "[-]?[1]?[0-9]?[0-9] F" | sed 's/ /°/')" ("$(inxi -xxxw -c 0 | grep -E -o "Conditions: [-]?[0-9]+ F \([-]?[0-9]+ C\) - [A-Za-z0-9 ]+\:" | grep -E -o "\- [A-Za-z0-9 ]+ [A-Za-z]+\:" | cut -d" " -f2- | rev | cut -d" " -f2- | rev)")" | sed -r "s/^\s*\(\)$//"
 interval=1800
@@ -20,11 +14,11 @@ command=SINK=$(pactl info | grep -E -o "Default Sink: [A-Za-z0-9_.]+" | cut -d" 
 interval=1
 
 [ethernet]
-command=echo $(ethtool enp2s0 2>/dev/null | grep -P "(Speed|detected)" | rev | cut -d" " -f1 | rev | sed "s|Mb/s|Mbps|" | sed "s|yes||") | sed -r "s/^[0-9]+Mbps no$//"
+command=echo $(ip addr show dev enp2s0 | grep -E -o "inet ([0-9]+\.?){4}/[0-9]+" | sed "s/inet//")" ("$(ethtool enp2s0 2>/dev/null | grep "Speed" | cut -d" " -f2 | sed "s|Mb/s|Mbps|")")" | sed -r "s/^ \([0-9]+Mbps\)$//"
 label=
 
 [wireless]
-command=echo $(iw dev wlp3s0 link | grep SSID | cut -d" " -f2-)"["$(iw dev wlp3s0 link | grep -E -o "freq: (2|5)" | cut -d" " -f2 | sed "s/2/2.4/")"] "$(iw dev wlp3s0 link | grep bitrate | grep -E -o "[0-9]+\.[0-9]+ MBit/s" | sed "s|.0 | |" | sed "s| MBit/s|Mbps|") | sed "s/\[\] //"
+command=echo $(ip addr show dev wlp3s0 | grep -E -o "inet ([0-9]+\.?){4}/[0-9]+" | sed "s/inet//")" ("$(iw dev wlp3s0 link | grep SSID | cut -d" " -f2-)"["$(iw dev wlp3s0 link | grep -E -o "freq: (2|5)" | cut -d" " -f2 | sed "s/2/2.4/")"] "$(iw dev wlp3s0 link | grep bitrate | grep -E -o "[0-9]+\.[0-9]+ MBit/s" | sed "s|.0 | |" | sed "s| MBit/s|Mbps|")")" | sed "s/(\[\] )//"
 label=
 
 [temp]

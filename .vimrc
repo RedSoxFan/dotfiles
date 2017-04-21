@@ -4,6 +4,7 @@ set listchars=tab:>-
 set number
 set nofoldenable
 set nowrap
+set nrformats+=alpha
 set modelines=1
 set sidescroll=1
 set shell=bash
@@ -41,6 +42,9 @@ Bundle 'edkolev/tmuxline.vim'
 
 " i3-vim-syntax
 Plugin 'PotatoesMaster/i3-vim-syntax'
+
+" sway-vim-syntax
+Plugin 'aouelete/sway-vim-syntax'
 
 " Enable code completion
 Plugin 'Valloric/YouCompleteMe'
