@@ -14,23 +14,23 @@ set $WS1 "1:MAIN"
 set $WS2 "2:MEDIA"
 set $WS3 "3:DEVEL"
 set $WS4 "4:GAMES"
-set $WS5 "5:1520"
-set $WS6 "6:1530"
-set $WS7 "7:1632"
-set $WS8 "8:1980"
-set $WS9 "9:TMPA"
-set $WSA "10:TMPB"
+set $WS5 "5:LPTP5"
+set $WS6 "6:LPTP6"
+set $WS7 "7:LPTP7"
+set $WS8 "8:LPTP8"
+set $WS9 "9:LPTP9"
+set $WSA "10:LPTP0"
 set $WSB "11:ALT"
 set $WSC "12:VIDEO"
-set $WSD "13:RTFM"
-set $WSE "14:GAMEB"
-set $WSF "15:1520B"
-set $WSG "16:1530B"
-set $WSH "17:1632B"
-set $WSI "18:1980B"
-set $WSJ "19:TMPC"
-set $WSK "20:TMPD"
-set $WSP "21:PRESENT"
+set $WSD "13:DOCS"
+set $WSE "14:HDMI4"
+set $WSF "15:HDMI5"
+set $WSG "16:HDMI6"
+set $WSH "17:HDMI7"
+set $WSI "18:HDMI8"
+set $WSJ "19:HDMI9"
+set $WSK "20:HDMI0"
+set $WSV "21:VGAOUT"
 
 # Set Workspace Outputs
 workspace $WS1 output $LAPTOP
@@ -53,23 +53,11 @@ workspace $WSH output $EXTERNAL
 workspace $WSI output $EXTERNAL
 workspace $WSJ output $EXTERNAL
 workspace $WSK output $EXTERNAL
-workspace $WSP output $VGAOUT
+workspace $WSV output $VGAOUT
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 font pango:monospace,FontAwesome 8
-
-# This font is widely installed, provides lots of unicode glyphs, right-to-left
-# text rendering and scalability on retina/hidpi displays (thanks to pango).
-#
-# font pango:DejaVu Sans Mono 8
-
-# Before i3 v4.8, we used to recommend this one as the default:
-# font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
-# The font above is very space-efficient, that is, it looks good, sharp and
-# clear in small sizes. However, its unicode glyph coverage is limited, the old
-# X core fonts rendering does not support right-to-left and this being a bitmap
-# font, it doesn’t scale on retina/hidpi displays.
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -183,7 +171,7 @@ bindsym $mod+Mod1+7 workspace $WSH
 bindsym $mod+Mod1+8 workspace $WSI
 bindsym $mod+Mod1+9 workspace $WSJ
 bindsym $mod+Mod1+0 workspace $WSK
-bindsym $mod+p workspace $WSP
+bindsym $mod+Mod1+v workspace $WSV
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace $WS1; workspace $WS1
@@ -206,7 +194,7 @@ bindsym $mod+Mod1+Shift+7 move container to workspace $WSH; workspace $WSH
 bindsym $mod+Mod1+Shift+8 move container to workspace $WSI; workspace $WSI
 bindsym $mod+Mod1+Shift+9 move container to workspace $WSJ; workspace $WSJ
 bindsym $mod+Mod1+Shift+0 move container to workspace $WSK; workspace $WSK
-bindsym $mod+Shift+p move container to workspace $WSP; workspace $WSP
+bindsym $mod+Mod1+Shift+v move container to workspace $WSV; workspace $WSV
 
 # scratchpad
 bindsym $mod+Shift+minus move scratchpad
@@ -284,34 +272,33 @@ bindsym $mod+r mode "resize"
 # mode launcher
 mode "launcher" {
         # Web + Files
-        bindsym g exec google-chrome-stable --incognito; mode "default"
+        bindsym b exec vivaldi-stable; mode "default"
         bindsym c exec chromium --incognito; mode "default"
         bindsym f exec firefox; mode "default"
+        bindsym g exec google-chrome-stable --incognito; mode "default"
+        bindsym h exec chromium --app=http://www.accuweather.com/en/us/pittsburgh-pa/15213/hourly-weather-forecast/1310; mode "default"
         bindsym n exec thunar; mode "default"
-        bindsym b exec vivaldi-stable; mode "default"
-        bindsym x exec ~/opt/xfinitytv; mode "default"
         bindsym o exec bash -c "GTK2_RC_FILES=/usr/share/themes/Vertex-Light/gtk-2.0/gtkrc opera-developer"; mode "default"
         bindsym r exec urxvt -name ranger -e ranger; mode "default"
-        bindsym h exec chromium --app=http://www.accuweather.com/en/us/pittsburgh-pa/15213/hourly-weather-forecast/1310; mode "default"
+        bindsym x exec ~/opt/xfinitytv; mode "default"
 
         # Shell + Editors
         bindsym a exec urxvt -name agenda -e ~/.local/share/bin/agenda; mode "default"
         bindsym v exec urxvt -name vim -e vim; mode "default"
 
         # Misc
-        bindsym d exec discord-ptb; mode "default"
         bindsym s exec spotify; mode "default"
         bindsym t exec corebird; mode "default"
 
         # Gaming
-        bindsym w exec steam-native; mode "default"
         bindsym e exec ~/opt/steam-wine64; mode "default"
+        bindsym w exec steam-native; mode "default"
 
         # Back to normal
         bindsym Return mode "default"
         bindsym Escape mode "default"
 
-        # Available Letters: --------ijklm--pqr--u---yz
+        # Available Letters: ---d----ijklm--pqr--u---yz
         # Available Numbers: 1234567890
 }
 
@@ -370,7 +357,7 @@ mode "restore" {
         bindsym Mod1+8 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSI"; mode "default"
         bindsym Mod1+9 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSJ"; mode "default"
         bindsym Mod1+0 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSK"; mode "default"
-        bindsym p exec /home/brian/.local/share/bin/i3-restore-workspace "$WSP"; mode "default"
+        bindsym Mod1+v exec /home/brian/.local/share/bin/i3-restore-workspace "$WSV"; mode "default"
 
         # Back to normal
         bindsym Return mode "default"
@@ -410,6 +397,8 @@ for_window [class="URxvt" instance="agenda"] floating enable
 for_window [class="URxvt" instance="agenda"] move scratchpad
 for_window [class="URxvt" instance="agenda"] scratchpad show
 for_window [class="URxvt" instance="agenda"] mark "a"
+for_window [class="URxvt" instance="agenda"] move absolute position 180 px 180 px
+for_window [class="URxvt" instance="agenda"] resize set 600 px 720 px
 
 # Corebird
 for_window [class="Corebird" window_type="dialog"] fullscreen
@@ -483,7 +472,6 @@ exec --no-startup-id udevedu
 exec --no-startup-id onedrive-d start
 exec --no-startup-id xset s 18000 18000
 exec --no-startup-id xset -dpms
-exec --no-startup-id slack
 exec_always --no-startup-id numlockx on
 exec_always --no-startup-id xrandr --output $EXTERNAL --mode 1920x1080 --pos 1920x0
 exec_always --no-startup-id feh --bg-fill ~/.wallpaper

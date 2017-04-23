@@ -10,6 +10,7 @@ export BROWSER=/usr/bin/vivaldi-stable
 export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true'
 
 # General Aliases
+alias cdkern="cd ~/programming/git/kernels/staging "
 alias cdo="cd \"$OLDPWD\" "
 alias cls="echo -ne '\033c'"
 alias i3sus="i3lock -c 111111 && systemctl suspend"
@@ -28,16 +29,6 @@ mkcd() {
 mkpcd() {
 	mkdir -p "$1" && cd "$1"
 }
-
-# Pitt Aliases
-alias mntafs="sshfs bma37@unixs.cis.pitt.edu:~/afs -o rw,allow_other "
-alias 2174="cd /home/brian/OneDrive/Pitt/2174 "
-alias 1520="2174 && cd 1520 "
-alias 1530="2174 && cd 1530 "
-alias 1632="2174 && cd 1632 "
-alias 1980="2174 && cd 1980 "
-alias kernel="cd ~/programming/git/kernels/staging "
-alias unixs="ssh -l bma37@unixs.cis.pitt.edu "
 
 # Package Not Found
 source /usr/share/doc/pkgfile/command-not-found.bash

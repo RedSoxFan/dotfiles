@@ -89,11 +89,14 @@ export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true'
 # General Aliases
 alias cdo="cd \"$OLDPWD\" "
 alias cls="echo -ne '\033c'"
+alias cdkern="cd ~/programming/git/kernels/staging"
 alias i3sus="i3lock -c 111111 && systemctl suspend"
 alias java7="/lib/jvm/java-7-openjdk/bin/java "
 alias javac7="/lib/jvm/java-7-openjdk/bin/javac "
 alias java8="/lib/jvm/java-8-openjdk/bin/java "
 alias javac8="/lib/jvm/java-8-openjdk/bin/javac "
+alias topcpu="top -o '%CPU'"
+alias topmem="top -o '%MEM'"
 
 # General Functions
 function mkcd() {
@@ -103,16 +106,6 @@ function mkcd() {
 function mkpcd() {
 	mkdir -p "$1" && cd "$1"
 }
-
-# Pitt Aliases
-alias mntafs="sshfs bma37@unixs.cssd.pitt.edu: ~/afs -o rw,allow_other "
-alias 2174="cd /home/brian/OneDrive/Pitt/2174 "
-alias 1520="2174 && cd 1520 "
-alias 1530="2174 && cd 1530 "
-alias 1632="2174 && cd 1632 "
-alias 1980="2174 && cd 1980 "
-alias kernel="cd ~/programming/git/kernels/staging "
-alias unixs="ssh -l bma37 bma37@unixs.cssd.pitt.edu "
 
 ZSH_CACHE_DIR=$HOME/.oh-my-zsh-cache
 if [[ ! -d $ZSH_CACHE_DIR ]]; then
