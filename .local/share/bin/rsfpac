@@ -1,0 +1,864 @@
+#!/usr/bin/python3
+
+import abc
+import argparse
+import contextlib
+import io
+import readline
+import shlex
+import sys
+
+try:
+    from pulsectl import Pulse, PulseSinkInfo, PulseSinkInputInfo, \
+                         PulseVolumeInfo
+except ImportError:
+    print('Please install pulsectl for Python 3 (pip3 install pulsectl)')
+    sys.exit(1)
+
+
+def trueround(val):
+    '''
+    Traditional rounding where less than halfway between integers is rounded
+    down and greater than or equal to halfway is rounded up. This is needed
+    since the round function in Python 3 rounds towards the even integer.
+    '''
+    return int(val // 1 + (1 if val % 1 >= 0.5 else 0))
+
+
+@property
+def is_flat_volume(self):
+    '''
+    Determine whether all channels have the same volume for a sink or sink
+    input.
+
+    :return: Whether or not all channels have a flat volume
+    :rtype: bool
+    '''
+    return len(set(self.volume.values)) == 1
+
+
+# For conviency, add the property to the PulseSinkInfo and PulseSinkInputInfo
+# classes.
+PulseSinkInfo.is_flat_volume = is_flat_volume
+PulseSinkInputInfo.is_flat_volume = is_flat_volume
+
+
+@property
+def sink_input_pid(self):
+    '''
+    Retrieve the pid for a sink-input.
+
+    :return: The pid for the sink-input or None if not set
+    :rtype: int or None
+    '''
+    key = 'application.process.id'
+    return key in self.proplist and self.proplist[key] or None
+
+
+# For conviency, add the property to the PulseSinkInputInfo class
+PulseSinkInputInfo.pid = sink_input_pid
+
+
+class BaseController(metaclass=abc.ABCMeta):
+    '''
+    Base wrapper for PulseAudio tasks.
+    '''
+
+    def __init__(self, clientobj):
+        '''
+        Base wrapper
+        '''
+        self._client = clientobj
+
+    @abc.abstractmethod
+    def find_sink(self, query):
+        '''
+        Find a sink based on a query.
+
+        :param query: The query string
+        :type query: PulseSinkInfo or str or int
+        :return: The sink that was found
+        :rtype: PulseSinkInfo or None
+        '''
+        pass
+
+    @abc.abstractmethod
+    def find_sink_input(self, query, pid=False):
+        '''
+        Find a sink-input based on a query. If the pid keyword is set, then
+        the query string will search the application.process.id in the
+        proplist instead of the name or id of the sink-input.
+
+        :param query: The query string
+        :type query: PulseSinkInputInfo or str or int
+        :param pid: Whether to check the pid
+        :return: The sink-input that was found
+        :rtype: PulseSinkInputInfo or None
+        '''
+        pass
+
+
+class SinkController(BaseController):
+    '''
+    Wrapper around sink related tasks in PulseAudio.
+    '''
+
+    def __init__(self, clientobj):
+        '''
+        Create a wrapper for sink related tasks.
+        '''
+        BaseController.__init__(self, clientobj)
+
+    @property
+    def default_sink(self):
+        '''
+        Retrieve the default sink name.
+
+        :return: The default sink name
+        :rtype: str
+        '''
+        return self._client.server_info().default_sink_name
+
+    @default_sink.setter
+    def default_sink(self, sink):
+        '''
+        Set the default sink.
+
+        :param sink: The sink object or sink query string
+        :type sink: PulseSinkInfo or str or int
+        :raises ValueError: If the sink is not found
+        '''
+        sobj = self.find_sink(sink)
+        if sobj:
+            self._client.default_set(sobj)
+        else:
+            raise ValueError(f"Sink {sink} not found")
+
+    def display_default_sink_status(self):
+        '''
+        Retrieve information about the default sink. This is designed to be
+        used with i3block and font awesome, but should work for any status
+        monitor.
+
+        :return: The default sink status line
+        :rtype: str
+        '''
+        defsink = self.find_sink('-')
+        muteind = defsink.mute and '\uf026' or '\uf028'
+        print(f"{muteind} {defsink.name}", end='')
+        if defsink.is_flat_volume:
+            print(f" {trueround(defsink.volume.values[0] * 100)}%")
+        else:
+            for vol in defsink.volume.values:
+                print(f" {trueround(vol * 100)}%", end='')
+            print()
+
+    def display_sink(self, sink, props=False):
+        '''
+        Display formatted information for a sink. If props is set, then
+        display the property list for the sink as well.
+
+        :param sink: The sink object or sink query string
+        :type sink: PulseSinkInfo or str or int
+        :param props: Whether or not to display property list
+        :raises ValueError: If sink not found
+        '''
+        # Find sink object
+        sobj = self.find_sink(sink)
+        if not sobj:
+            raise ValueError(f"Sink {sink} not found")
+
+        # Status indicators
+        defind = sobj.name == self.default_sink and '*' or ' '
+        muteind = sobj.mute and 'M' or ' '
+
+        # Print the information
+        print(f"{defind} {sobj.index:2} {sobj.name:30} {muteind}", end='')
+        for value in sobj.volume.values:
+            print(f"  {trueround(value * 100):3}", end='')
+        print(f"\t{sobj.description}")
+
+        # If requested, print the property list
+        if props:
+            size = len(max(sobj.proplist.keys(), key=len))
+            for key, value in sorted(sobj.proplist.items()):
+                print(f"\t{key:{size}}\t{value}")
+            print()
+
+    def display_sinks(self, props=False):
+        '''
+        Display a formatted table of the sinks. If props is given, then
+        display the property lists for each sink as well.
+
+        :param bool props: Display the property list for each sink
+        '''
+        for sink in self.sinks:
+            self.display_sink(sink, props=props)
+
+    def find_sink(self, query):
+        '''
+        Try to find a sink that matches the given input query. The method of
+        searching is to see if the query is an exact match to the sink name,
+        description, or index. A hyphen (-) can be given as the query to
+        return the default sink. If the query does not match _exactly_ one
+        sink, then None is returned. For convience, if a PulseSinkInfo object
+        is given, it will be returned.
+
+        :param query: The query of the sink to search for
+        :type query: str or int or PulseSinkInfo
+        :return: The sink found
+        :rtype: PulseSinkInfo or None
+        '''
+        if isinstance(query, PulseSinkInfo):
+            return query
+
+        query = str(query) if query != '-' else self.default_sink
+        res = tuple(s for s in self.sinks
+                    if query in (s.name, s.description, str(s.index)))
+
+        return len(res) == 1 and res[0] or None
+
+    def get_sink_volumes(self, sink, names=False):
+        '''
+        Retrieve the volumes for each channel of a sink. If names is set, then
+        the result will be a dict with the channel name as the key and volume
+        as the value.
+
+        :param sink: The sink object or query string
+        :type sink: PulseSinkInfo or str or int
+        :param bool names: Whether or not to include channel names
+        :return: A tuple of volumes or dict of name:volume pairs
+        :rtype: tuple or dict
+        :raises ValueError: If sink not found
+        '''
+        sobj = self.find_sink(sink)
+        if not sobj:
+            raise ValueError(f"Sink {sink} not found")
+
+        if names:
+            return {n: trueround(v * 100)
+                    for n, v in zip(sobj.channel_list, sobj.volume.values)}
+        else:
+            return tuple(trueround(value * 100)
+                         for value in sobj.volume.values)
+
+    def is_sink_muted(self, sink):
+        '''
+        Retrieves whether or not a sink is muted.
+
+        :param sink: The sink object or query string
+        :type sink: PulseSinkInfo or str or int
+        :return: The mute status of the sink
+        :rtype: int
+        :raises ValueError: If sink not found
+        '''
+        sobj = self.find_sink(sink)
+        if not sobj:
+            raise ValueError(f"Sink {sink} not found")
+        return sobj.mute
+
+    def mute_sink(self, sink, mute):
+        '''
+        Set the mute status of a sink.
+
+        :param sink: The sink object or query string
+        :type sink: PulseSinkInfo or str or int
+        :param mute: '0' (mute), '1' (audible), or 't' (toggle)
+        :type mute: str or int
+        :raises ValueError: If sink not found or the mute state is invalid
+        '''
+        sobj = self.find_sink(sink)
+        if not sobj:
+            raise ValueError(f"Sink {sink} not found")
+
+        if mute == 't':
+            mute = 0 if sobj.mute else 1
+
+        if mute is not None:
+            self._client.sink_mute(sobj.index, int(mute))
+        else:
+            raise ValueError(f"Mute should be '0', '1', or 't' not {mute}")
+
+    def set_sink_volumes(self, sink, volumes):
+        '''
+        Set the volume for the channels of a sink.
+
+        :param sink: The sink object or query string
+        :type sink: PulseSinkInfo or str or int
+        :param volumes: The volumes for each channel or a flat volume
+        :type volumes: list or tuple
+        :raises ValueError: If sink not found or incorrect channel count given
+        '''
+        sobj = self.find_sink(sink)
+        if not sobj:
+            raise ValueError(f"Sink {sink} not found")
+
+        if len(volumes) == sobj.channel_count:
+            volinfo = PulseVolumeInfo([v / 100 for v in volumes])
+        elif len(volumes) == 1:
+            flatvol = [v / 100 for v in volumes]
+            volinfo = PulseVolumeInfo(flatvol * sobj.channel_count)
+        else:
+            raise ValueError(f"Sink {sink} has {sobj.channel_count} channels. "
+                             "Provide a volume per channel or a single flat "
+                             "volume")
+
+        self._client.sink_volume_set(sobj.index, volinfo)
+
+    @property
+    def sinks(self):
+        '''
+        Retrieve a tuple of sinks on the server.
+
+        :return: A tuple of PulseSinkInfo objects
+        :rtype: tuple
+        '''
+        return self._client.sink_list()
+
+
+class SinkInputController(BaseController):
+    '''
+    Wrapper around sink-inputs in PulseAudio.
+    '''
+
+    def __init__(self, clientobj):
+        '''
+        Create a wrapper around sink-inputs.
+        '''
+        BaseController.__init__(self, clientobj)
+
+    def display_sink_input(self, sinput, pid=False, props=False):
+        '''
+        Display sink-inputs for the client. The sink-input may be given as a
+        query or PulseSinkInputInfo object. If a query is given, the pid
+        keyword will control whether or not to search based on the pid of the
+        application associated with the sink-input. If props is given, the
+        property list will be outputted.
+
+        :param sinput: The sink-input or query
+        :type sinput: PulseSinkInfo or None
+        :param bool pid: Whether or not to interpret the query as a pid
+        :param bool props: Whether or not to output the property lists
+        :raises ValueError: If the sink-input is not found
+        :raises RuntimeError: If input is associated with an unknown sink
+        '''
+        # Find the sink-input
+        siobj = self.find_sink_input(sinput, pid=pid)
+        if not siobj:
+            raise ValueError(f"Sink-input {sinput} not found")
+
+        # Find the sink that it is being outputted to
+        sobj = self.find_sink(siobj.sink)
+        if not siobj:
+            raise RuntimeError(f"Sink-input {sinput} is using unknown sink")
+
+        # Indicitors
+        muteind = siobj.mute and 'M' or ' '
+
+        # Print basic information
+        print(f"{siobj.index:6} {siobj.name:30} {siobj.sink:2} {sobj.name:30}",
+              f"{muteind}", end='')
+        for value in siobj.volume.values:
+            print(f" {trueround(value * 100):3}", end='')
+        print()
+
+        # If desired, print proplist
+        if props:
+            size = len(max(siobj.proplist.keys(), key=len))
+            for key, value in sorted(siobj.proplist.items()):
+                print(f"\t{key:{size}}\t{value}")
+            print()
+
+    def display_sink_inputs(self, shall=False, props=False):
+        '''
+        Display the sink-inputs in a table. If the shall keyword is True, then
+        all sink-inputs will be displayed. Otherwise, sink-inputs with the
+        role of filter will be ommitted. If the props keyword is True, then
+        the property lists will be outputted.
+        '''
+        for sinput in self.sink_inputs:
+            if shall or sinput.proplist.get('media.role', None) != "filter":
+                self.display_sink_input(sinput, props=props)
+
+    def find_sink_input(self, query, pid=False):
+        '''
+        Try to find a sink-input that matches a given input query. By default,
+        the search checks to see if the name or index of any sink-input
+        matches the query. If the pid keyword is set to True, then the
+        property `application.process.id` is checked instead. If the query
+        does not match _exactly_ one sink-input, then None is returned. For
+        convience, if a PulseSinkInputInfo is given as the query, it will be
+        returned.
+
+        :param query: The query of the sink-input to search for
+        :type query: str or int or PulseSinkInputInfo
+        :param bool pid: Check the associated pid instead (default is False)
+        :return: The sink-input found
+        :rtype: PulseSinkInputInfo or None
+        '''
+        if isinstance(query, PulseSinkInputInfo):
+            return query
+
+        query = str(query)
+        if pid:
+            res = tuple(s for s in self.sink_inputs
+                        if str(query) in (s.pid, ))
+        else:
+            res = tuple(s for s in self.sink_inputs
+                        if str(query) in (s.name, str(s.index)))
+
+        return len(res) == 1 and res[0] or None
+
+    def get_sink_input_pid(self, sinput):
+        '''
+        Retrieve the pid of the sink-input.
+
+        :param sinput: The sink-input or query string
+        :type sinput: PulseSinkInputInfo or str or int
+        :return: The pid of the sink-input, if one is associated
+        :rtype: int or None
+        '''
+        siobj = self.find_sink_input(sinput, pid=False)
+        if not siobj:
+            raise ValueError(f"Sink-input {sinput} not found")
+        return siobj.pid
+
+    def get_sink_input_sink(self, sinput, pid=False):
+        '''
+        Retrieve which sink a sink-input is playing out of.
+
+        :param sinput: The sink-input object or query string
+        :type sinput: PulseSinkInputInfo or str or int
+        :param bool pid: Whether or not to interpret the query as a pid
+        :return: The sink
+        :rtype: PulseSinkInfo
+        :raises ValueError: If the sink-input is not found
+        '''
+        siobj = self.find_sink_input(sinput, pid=pid)
+        if not siobj:
+            raise ValueError(f"Sink-input {sinput} not found")
+        return self.find_sink(siobj.sink)
+
+    def get_sink_input_volumes(self, sinput, names=False, pid=False):
+        '''
+        Retrieve the volumes for each channel of a sink-input. If names is set,
+        then the result will be a dict with the channel name as the key and
+        volume as the value.
+
+        :param sinput: The sink-input object or query string
+        :type sinput: PulseSinkInputInfo or str or int
+        :param bool names: Whether or not to include channel names
+        :param bool pid: Whether or not to interpret the query as a pid
+        :return: A tuple of volumes or dict of name:volume pairs
+        :rtype: tuple or dict
+        :raises ValueError: If sink-input not found
+        '''
+        siobj = self.find_sink_input(sinput, pid=pid)
+        if not siobj:
+            raise ValueError(f"Sink-input {sinput} not found")
+
+        if names:
+            return {n: trueround(v * 100)
+                    for n, v in zip(siobj.channel_list, siobj.volume.values)}
+        else:
+            return tuple(trueround(value * 100)
+                         for value in siobj.volume.values)
+
+    def is_sink_input_muted(self, sinput, pid=False):
+        '''
+        Retrieves whether or not a sink-input is muted.
+
+        :param sinput: The sink-input object or query string
+        :type sinput: PulseSinkInputInfo or str or int
+        :param bool pid: Whether or not to treat the query as a pid
+        :return: The mute status of the sink-input
+        :rtype: int
+        :raises ValueError: If sink-input not found
+        '''
+        siobj = self.find_sink_input(sinput, pid=pid)
+        if not siobj:
+            raise ValueError(f"Sink-input {sinput} not found")
+        return siobj.mute
+
+    def move_sink_input(self, sinput, sink, pid=False):
+        '''
+        Move a sink-input to a sink.
+
+        :param sinput: The sink-input object or query string
+        :type sinput: PulseSinkInputInfo or str or int
+        :param sink: The sink object or query string
+        :type sink: PulseSinkInfo or str or int
+        :param bool pid: Whether or not to interpret the query as a pid
+        :raises ValueError: If the sink-input or sink is not found
+        '''
+        # Find sink-input
+        siobj = self.find_sink_input(sinput, pid=pid)
+        if not siobj:
+            raise ValueError(f"Sink-input {sinput} not found")
+
+        # Find sink
+        sobj = self.find_sink(sink)
+        if not sobj:
+            raise ValueError(f"Sink {sink} not found")
+
+        # Move to sink
+        self._client.sink_input_move(siobj.index, sobj.index)
+
+    def mute_sink_input(self, sinput, mute, pid=False):
+        '''
+        Set the mute status of a sink-input.
+
+        :param sinput: The sink-input object or query string
+        :type sinput: PulseSinkInputInfo or str or int
+        :param mute: '0' (mute), '1' (audible), or 't' (toggle)
+        :type mute: str or int
+        :param bool pid: Whether or not to treat the query as a pid
+        :raises ValueError: If sink-input not found or mute status is invalid
+        '''
+        siobj = self.find_sink_input(sinput)
+        if not siobj:
+            raise ValueError(f"Sink-input {sinput} not found")
+
+        if mute == 't':
+            mute = 0 if siobj.mute else 1
+
+        if mute is not None:
+            self._client.sink_input_mute(siobj.index, int(mute))
+        else:
+            raise ValueError(f"Mute should be '0', '1', or 't' not {mute}")
+
+    def set_sink_input_volumes(self, sinput, volumes, pid=False):
+        '''
+        Set the volume for the channels of a sink-input.
+
+        :param sinput: The sink-input object or query string
+        :type sinput: PulseSinkInputInfo or str or int
+        :param volumes: The volumes for each channel or a flat volume
+        :type volumes: list or tuple
+        :param bool pid: Whether or not to interpret the query as a pid
+        :raises ValueError: If sink not found or incorrect channel count given
+        '''
+        siobj = self.find_sink_input(sinput, pid=pid)
+        if not siobj:
+            raise ValueError(f"Sink-input {sinput} not found")
+
+        if len(volumes) == siobj.channel_count:
+            volinfo = PulseVolumeInfo([v / 100 for v in volumes])
+        elif len(volumes) == 1:
+            flatvol = [v / 100 for v in volumes]
+            volinfo = PulseVolumeInfo(flatvol * siobj.channel_count)
+        else:
+            raise ValueError(f"Sink-input {sinput} has {siobj.channel_count} "
+                             "channels. Provide a volume per channel or a "
+                             "single flat volume")
+
+        self._client.sink_input_volume_set(siobj.index, volinfo)
+
+    @property
+    def sink_inputs(self):
+        '''
+        Retrieve a tuple of sink-inputs on the server.
+
+        :return: A tuple of PulseSinkInputInfo objects
+        :rtype: tuple
+        '''
+        return self._client.sink_input_list()
+
+
+class RSFPACParser(object):
+    '''
+    Parser for rsfpac commands. Since sub-classing argparse.ArgumentParser
+    breaks it, this is merely a wrapper to segment the code.
+    '''
+
+    def __init__(self, interactive=False):
+        '''
+        An argument parser for rsfpac commands.
+
+        :param bool interactive: Whether or not to supress usage + description
+        '''
+        # Determine the keywords to use for the parser
+        keywords = {}
+        if interactive:
+            keywords['usage'] = argparse.SUPPRESS
+        else:
+            keywords['description'] = "A script for controlling PulseAudio"
+
+        # Create the parser
+        self.__parser = argparse.ArgumentParser(**keywords)
+        subpar = self.__parser.add_subparsers(dest='command',
+                metavar="command",
+                help="see <command> -h for more detailed help")
+
+        # sinks sub-parser
+        sinks = subpar.add_parser('sinks', aliases=['s'],
+                help="retrieve information about one or more sinks")
+        sinks.add_argument('-P', '--props', action='store_true',
+                help="show the property list for sinks")
+        sinks.add_argument('sink', type=str, nargs='?',
+                help="the sink to display information for ('-' for default)")
+
+        # sink-default sub-parser
+        sinkdef = subpar.add_parser('sink-default', aliases=['sd'],
+                help="retrieve or set the default sink")
+        sinkdef.add_argument('-i3', '--i3block', action='store_true',
+                help="format the default sink for an i3block")
+        sinkdef.add_argument('sink', type=str, nargs='?',
+                help="the sink to set as default")
+
+        # sink-mute sub-parser
+        sinkmute = subpar.add_parser('sink-mute', aliases=['sm'],
+                help="retrieve or set the mute status of a sink")
+        sinkmute.add_argument('sink', type=str,
+                help="the sink to get/set the mute state of ('-' for default)")
+        sinkmute.add_argument('mute', type=str, choices=['0', '1', 't'],
+                nargs='?', help="the mute status to set")
+
+        # sink-volume sub-parser
+        sinkvol = subpar.add_parser('sink-volume', aliases=['sv'],
+                help="retrieve or set the volumes for a sink")
+        sinkvol.add_argument('-n', '--names', action='store_true',
+                help='display the channel name(s) with the volume')
+        sinkvol.add_argument('sink', type=str,
+                help="the sink to get/set the volumes for ('-' for default)")
+        sinkvol.add_argument('volumes', type=int, nargs='*',
+                help="the volume(s) to set the sink channel(s) to")
+
+        # sink-inputs sub-parser
+        sinputs = subpar.add_parser('sink-inputs', aliases=['si'],
+                help="retrieve information about one or more sink-inputs")
+        sinputs.add_argument('-a', '--showall', action='store_true',
+                help="show all inputs including filters")
+        sinputs.add_argument('-P', '--props', action='store_true',
+                help="show the property list for the sink-inputs")
+        sinputs.add_argument('-p', '--pid', action='store_true',
+                help="attempt to search for a sink-input for a pid")
+        sinputs.add_argument('sinkinput', type=str, nargs='?',
+                help="the sink-input to display information for")
+
+        # sink-input-mute sub-parser
+        sinpmute = subpar.add_parser('sink-input-mute', aliases=['sim'],
+                help="retrieve or set the mute status of a sink-input")
+        sinpmute.add_argument('-p', '--pid', action='store_true',
+                help="attempt to search for a sink-input for a pid")
+        sinpmute.add_argument('sinkinput', type=str,
+                help="the sink-input to retrieve/set the mute status for")
+        sinpmute.add_argument('mute', type=str, choices=['0', '1', 't'],
+                nargs='?', help="the mute status to set")
+
+        # sink-input-pid sub-parser
+        sinppid = subpar.add_parser('sink-input-pid', aliases=['sip'],
+                help="retrieve the pid of a sink-input")
+        sinppid.add_argument('sinkinput', type=str,
+                help="the sink-input to retrieve the pid for")
+
+        # sink-input-sink sub-parser
+        sinpsink = subpar.add_parser('sink-input-sink', aliases=['sis'],
+                help="retrieve or set the sink that a sink-input is using")
+        sinpsink.add_argument('-p', '--pid', action='store_true',
+                help="attempt to search for a sink for a pid")
+        sinpsink.add_argument('sinkinput', type=str,
+                help="the sink-input to retrieve/set the sink for")
+        sinpsink.add_argument('sink', type=str, nargs='?',
+                help="the sink to move the sink to ('-' for default)")
+
+        # sink-input-volumes
+        sinpvol = subpar.add_parser('sink-input-volumes', aliases=['siv'],
+                help="retrieve or set the volume(s) for a sink-input")
+        sinpvol.add_argument('-n', '--names', action='store_true',
+                help='display the channel name(s) with the volume')
+        sinpvol.add_argument('-p', '--pid', action='store_true',
+                help="attempt to search for a sink for a pid")
+        sinpvol.add_argument('sinkinput', type=str,
+                help="the sink-input to retrieve/set the volume for")
+        sinpvol.add_argument('volumes', type=int, nargs='*',
+                help="the volume(s) to set the sink-input channel(s) to")
+
+    def parse_args(self, args):
+        '''
+        Parse the arguments.
+
+        :param args: The arguments to parse
+        :type args: tuple or list
+        :return: The parsed command
+        :rtype: args.Namespace
+        :raises SystemExit: If an invalid command is given
+        '''
+        err = io.StringIO()
+        try:
+            # Attempt to parse argument without displaying errors
+            with contextlib.redirect_stderr(err):
+                return self.__parser.parse_args(args)
+        except SystemExit:
+            # If there was an error, show help
+            if err.getvalue():
+                if args and len(args) > 1 and '-h' not in args:
+                    # Attempt to show help for the command
+                    self.parse_args((args[0], '-h'))
+                else:
+                    # Show general help
+                    return self.__parser.parse_args(('-h', ))
+            else:
+                raise
+
+
+class RSFPulseAudioController(SinkController, SinkInputController):
+    '''
+    My wrapper around PulseAudio to allow for easier controlling.
+    '''
+
+    def __init__(self, clientobj=None, interactive=False):
+        '''
+        Create a controller for PulseAudio.
+
+        :param Pulse clientobj: The client to use or None
+        '''
+        client = clientobj or Pulse('rsfpac')
+        SinkController.__init__(self, client)
+        SinkInputController.__init__(self, client)
+        self.__parser = RSFPACParser(interactive=interactive)
+
+    def __enter__(self):
+        '''
+        Return the object for use within a with statement.
+
+        :return: The current object
+        :rtype: RSFAudioController
+        '''
+        return self
+
+    def __exit__(self, *args, **kw):
+        '''
+        Closes the client connection to the PulseAudio server. This method is
+        provided for use within a with statement.
+
+        :param tuple args: The argument list. These are ignored.
+        :param dict kw: The keyword dict. These are ignored.
+        '''
+        self._client.close()
+
+    def __parse(self, command):
+        '''
+        Parse a command and run the parsed command.
+
+        :param command: The command to parse and run
+        :type command: tuple or list
+        :return: The result, if any
+        :rtype: Varies
+        '''
+        # Parse arguments
+        try:
+            args = self.__parser.parse_args(command)
+        except SystemExit:
+            return
+
+        # Run appropriate command
+        if args.command in ('sinks', 's'):
+            # Either display a single sink or all sinks
+            if args.sink:
+                return self.display_sink(args.sink, props=args.props)
+            else:
+                return self.display_sinks(props=args.props)
+        elif args.command in ('sink-default', 'sd'):
+            # Either set the default sink, show a status block, or retrieve
+            # the default sink
+            if args.sink:
+                self.default_sink = args.sink
+            elif args.i3block:
+                return self.display_default_sink_status()
+            else:
+                return self.default_sink
+        elif args.command in ('sink-mute', 'sm'):
+            # Either show mute status or mute a sink
+            if args.mute:
+                return self.mute_sink(args.sink, args.mute)
+            else:
+                return self.is_sink_muted(args.sink)
+        elif args.command in ('sink-volume', 'sv'):
+            # Either show the volumes or set the volumes for a sink
+            if args.volumes:
+                return self.set_sink_volumes(args.sink, args.volumes)
+            else:
+                return self.get_sink_volumes(args.sink, names=args.names)
+        elif args.command in ('sink-inputs', 'si'):
+            # Either display a single sink-input or all sink-inputs
+            if args.sinkinput:
+                return self.display_sink_input(args.sinkinput, pid=args.pid,
+                                               props=args.props)
+            else:
+                return self.display_sink_inputs(props=args.props,
+                                                shall=args.showall)
+        elif args.command in ('sink-input-mute', 'sim'):
+            # Eithr show mute status or mute a sink-input
+            if args.mute:
+                return self.mute_sink_input(args.sinkinput, args.mute,
+                                            pid=args.pid)
+            else:
+                return self.is_sink_input_muted(args.sinkinput, pid=args.pid)
+        elif args.command in ('sink-input-pid', 'sip'):
+            # Show the pid for a sink-input
+            return self.get_sink_input_pid(args.sinkinput)
+        elif args.command in ('sink-input-sink', 'sis'):
+            # Either show the sink that a sink-input is set to or move a
+            # sink-input to a sink
+            if args.sink:
+                return self.move_sink_input(args.sinkinput, args.sink,
+                                            pid=args.pid)
+            else:
+                return self.get_sink_input_sink(args.sinkinput, pid=args.pid)
+        elif args.command in ('sink-input-volumes', 'siv'):
+            # Either show the volumes or set the volumes for a sink-input
+            if args.volumes:
+                return self.set_sink_input_volumes(args.sinkinput,
+                                                   args.volumes, pid=args.pid)
+            else:
+                return self.get_sink_input_volumes(args.sinkinput,
+                                                   names=args.names,
+                                                   pid=args.pid)
+
+    def repl(self):
+        '''
+        Run in the interactive REPL mode.
+        '''
+        while True:
+            command = input('rsfpac> ')
+            try:
+                result = self.run(command)
+                if result is not None:
+                    print(result)
+            except SystemExit:
+                raise
+            except Exception as ex:
+                print(ex)
+
+    def run(self, command):
+        '''
+        Execute a command.
+
+        :param command: The command to run
+        :type command: tuple or list or str
+        :return: The result if any
+        '''
+        # If the command is a string, split into a list
+        if isinstance(command, str):
+            command = shlex.split(command)
+
+        # If the command is 'exit' or 'quit', then do so. If it is 'help, show
+        # help. Otherwise, evaluate
+        if len(command) == 1 and command[0] in ('exit', 'quit'):
+            raise SystemExit()
+        elif len(command) == 1 and command[0] == 'help':
+            return self.__parse(('-h', ))
+        else:
+            return self.__parse(command)
+
+
+if __name__ == "__main__":
+    interactive = len(sys.argv) == 1
+    with RSFPulseAudioController(interactive=interactive) as rsfpac:
+        if interactive:
+            rsfpac.repl()
+        else:
+            rsfpac.run(sys.argv[1:])
+
+# vim:ft=python:ts=4:sts=4:et:fdm=indent
