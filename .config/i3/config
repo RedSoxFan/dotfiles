@@ -284,6 +284,7 @@ mode "launcher" {
 
         # Shell + Editors
         bindsym a exec urxvt -name agenda -e ~/.local/share/bin/agenda; mode "default"
+        bindsym p exec urxvt -name rsfpac -e ~/.local/share/bin/rsfpac; mode "default"
         bindsym v exec urxvt -name vim -e vim; mode "default"
 
         # Misc
@@ -298,7 +299,7 @@ mode "launcher" {
         bindsym Return mode "default"
         bindsym Escape mode "default"
 
-        # Available Letters: ---d----ijklm--pqr--u---yz
+        # Available Letters: ---d----ijklm---q---u---yz
         # Available Numbers: 1234567890
 }
 
@@ -402,6 +403,13 @@ for_window [class="URxvt" instance="agenda"] resize set 600 px 720 px
 
 # Corebird
 for_window [class="Corebird" window_type="dialog"] fullscreen
+
+# rsfpac
+for_window [class="URxvt" instance="rsfpac"] floating enable
+for_window [class="URxvt" instance="rsfpac"] move scratchpad
+for_window [class="URxvt" instance="rsfpac"] mark "r"
+for_window [class="URxvt" instance="rsfpac"] move absolute position 1020 px 65 px
+for_window [class="URxvt" instance="rsfpac"] resize set 820 px 950 px
 
 # Spotify
 assign [class="Spotify"] $WS2

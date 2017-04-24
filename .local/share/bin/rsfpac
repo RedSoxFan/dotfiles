@@ -97,6 +97,47 @@ class BaseController(metaclass=abc.ABCMeta):
         '''
         pass
 
+    @property
+    def max_sink_width(self):
+        '''
+        Retrieve the maximum length of a sink name.
+
+        :return: The maximum length of a sink name
+        :rtype: int
+        '''
+        return len(max(self.sinks, key=lambda s: len(s.name)).name)
+
+
+    @property
+    def max_sink_input_width(self):
+        '''
+        Retrieve the maximum length of a sink-input name.
+
+        :return: The maximum length of a sink-input name
+        :rtype: int
+        '''
+        return len(max(self.sink_inputs, key=lambda si: len(si.name)).name)
+
+    @property
+    def sinks(self):
+        '''
+        Retrieve a tuple of sinks on the server.
+
+        :return: A tuple of PulseSinkInfo objects
+        :rtype: tuple
+        '''
+        return self._client.sink_list()
+
+    @property
+    def sink_inputs(self):
+        '''
+        Retrieve a tuple of sink-inputs on the server.
+
+        :return: A tuple of PulseSinkInputInfo objects
+        :rtype: tuple
+        '''
+        return self._client.sink_input_list()
+
 
 class SinkController(BaseController):
     '''
@@ -160,7 +201,7 @@ class SinkController(BaseController):
 
         :param sink: The sink object or sink query string
         :type sink: PulseSinkInfo or str or int
-        :param props: Whether or not to display property list
+        :param bool props: Whether or not to display property list
         :raises ValueError: If sink not found
         '''
         # Find sink object
@@ -173,7 +214,8 @@ class SinkController(BaseController):
         muteind = sobj.mute and 'M' or ' '
 
         # Print the information
-        print(f"{defind} {sobj.index:2} {sobj.name:30} {muteind}", end='')
+        width = max(30, self.max_sink_width)
+        print(f"{defind} {sobj.index:2} {sobj.name:{width}} {muteind}", end='')
         for value in sobj.volume.values:
             print(f"  {trueround(value * 100):3}", end='')
         print(f"\t{sobj.description}")
@@ -305,16 +347,6 @@ class SinkController(BaseController):
 
         self._client.sink_volume_set(sobj.index, volinfo)
 
-    @property
-    def sinks(self):
-        '''
-        Retrieve a tuple of sinks on the server.
-
-        :return: A tuple of PulseSinkInfo objects
-        :rtype: tuple
-        '''
-        return self._client.sink_list()
-
 
 class SinkInputController(BaseController):
     '''
@@ -356,8 +388,10 @@ class SinkInputController(BaseController):
         muteind = siobj.mute and 'M' or ' '
 
         # Print basic information
-        print(f"{siobj.index:6} {siobj.name:30} {siobj.sink:2} {sobj.name:30}",
-              f"{muteind}", end='')
+        width = max(30, self.max_sink_input_width)
+        sinkwidth = max(30, self.max_sink_width)
+        print(f"{siobj.index:6} {siobj.name:{width}} {siobj.sink:2} ",
+              f"{sobj.name:{sinkwidth}} {muteind}", end='')
         for value in siobj.volume.values:
             print(f" {trueround(value * 100):3}", end='')
         print()
@@ -553,16 +587,6 @@ class SinkInputController(BaseController):
                              "single flat volume")
 
         self._client.sink_input_volume_set(siobj.index, volinfo)
-
-    @property
-    def sink_inputs(self):
-        '''
-        Retrieve a tuple of sink-inputs on the server.
-
-        :return: A tuple of PulseSinkInputInfo objects
-        :rtype: tuple
-        '''
-        return self._client.sink_input_list()
 
 
 class RSFPACParser(object):
