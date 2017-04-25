@@ -151,50 +151,50 @@ bindsym $mod+z exec ~/.local/share/bin/enablepointer toggle
 workspace_auto_back_and_forth yes
 
 # switch to workspace
-bindsym $mod+1 workspace $WS1
-bindsym $mod+2 workspace $WS2
-bindsym $mod+3 workspace $WS3
-bindsym $mod+4 workspace $WS4
-bindsym $mod+5 workspace $WS5
-bindsym $mod+6 workspace $WS6
-bindsym $mod+7 workspace $WS7
-bindsym $mod+8 workspace $WS8
-bindsym $mod+9 workspace $WS9
-bindsym $mod+0 workspace $WSA
-bindsym $mod+Mod1+1 workspace $WSB
-bindsym $mod+Mod1+2 workspace $WSC
-bindsym $mod+Mod1+3 workspace $WSD
-bindsym $mod+Mod1+4 workspace $WSE
-bindsym $mod+Mod1+5 workspace $WSF
-bindsym $mod+Mod1+6 workspace $WSG
-bindsym $mod+Mod1+7 workspace $WSH
-bindsym $mod+Mod1+8 workspace $WSI
-bindsym $mod+Mod1+9 workspace $WSJ
-bindsym $mod+Mod1+0 workspace $WSK
-bindsym $mod+Mod1+v workspace $WSV
+bindsym $mod+1 workspace number $WS1
+bindsym $mod+2 workspace number $WS2
+bindsym $mod+3 workspace number $WS3
+bindsym $mod+4 workspace number $WS4
+bindsym $mod+5 workspace number $WS5
+bindsym $mod+6 workspace number $WS6
+bindsym $mod+7 workspace number $WS7
+bindsym $mod+8 workspace number $WS8
+bindsym $mod+9 workspace number $WS9
+bindsym $mod+0 workspace number $WSA
+bindsym $mod+Mod1+1 workspace number $WSB
+bindsym $mod+Mod1+2 workspace number $WSC
+bindsym $mod+Mod1+3 workspace number $WSD
+bindsym $mod+Mod1+4 workspace number $WSE
+bindsym $mod+Mod1+5 workspace number $WSF
+bindsym $mod+Mod1+6 workspace number $WSG
+bindsym $mod+Mod1+7 workspace number $WSH
+bindsym $mod+Mod1+8 workspace number $WSI
+bindsym $mod+Mod1+9 workspace number $WSJ
+bindsym $mod+Mod1+0 workspace number $WSK
+bindsym $mod+Mod1+v workspace number $WSV
 
 # move focused container to workspace
-bindsym $mod+Shift+1 move container to workspace $WS1; workspace $WS1
-bindsym $mod+Shift+2 move container to workspace $WS2; workspace $WS2
-bindsym $mod+Shift+3 move container to workspace $WS3; workspace $WS3
-bindsym $mod+Shift+4 move container to workspace $WS4; workspace $WS4
-bindsym $mod+Shift+5 move container to workspace $WS5; workspace $WS5
-bindsym $mod+Shift+6 move container to workspace $WS6; workspace $WS6
-bindsym $mod+Shift+7 move container to workspace $WS7; workspace $WS7
-bindsym $mod+Shift+8 move container to workspace $WS8; workspace $WS8
-bindsym $mod+Shift+9 move container to workspace $WS9; workspace $WS9
-bindsym $mod+Shift+0 move container to workspace $WSA; workspace $WSA
-bindsym $mod+Mod1+Shift+1 move container to workspace $WSB; workspace $WSB
-bindsym $mod+Mod1+Shift+2 move container to workspace $WSC; workspace $WSC
-bindsym $mod+Mod1+Shift+3 move container to workspace $WSD; workspace $WSD
-bindsym $mod+Mod1+Shift+4 move container to workspace $WSE; workspace $WSE
-bindsym $mod+Mod1+Shift+5 move container to workspace $WSF; workspace $WSF
-bindsym $mod+Mod1+Shift+6 move container to workspace $WSG; workspace $WSG
-bindsym $mod+Mod1+Shift+7 move container to workspace $WSH; workspace $WSH
-bindsym $mod+Mod1+Shift+8 move container to workspace $WSI; workspace $WSI
-bindsym $mod+Mod1+Shift+9 move container to workspace $WSJ; workspace $WSJ
-bindsym $mod+Mod1+Shift+0 move container to workspace $WSK; workspace $WSK
-bindsym $mod+Mod1+Shift+v move container to workspace $WSV; workspace $WSV
+bindsym $mod+Shift+1 move container to workspace number $WS1; workspace number $WS1
+bindsym $mod+Shift+2 move container to workspace number $WS2; workspace number $WS2
+bindsym $mod+Shift+3 move container to workspace number $WS3; workspace number $WS3
+bindsym $mod+Shift+4 move container to workspace number $WS4; workspace number $WS4
+bindsym $mod+Shift+5 move container to workspace number $WS5; workspace number $WS5
+bindsym $mod+Shift+6 move container to workspace number $WS6; workspace number $WS6
+bindsym $mod+Shift+7 move container to workspace number $WS7; workspace number $WS7
+bindsym $mod+Shift+8 move container to workspace number $WS8; workspace number $WS8
+bindsym $mod+Shift+9 move container to workspace number $WS9; workspace number $WS9
+bindsym $mod+Shift+0 move container to workspace number $WSA; workspace number $WSA
+bindsym $mod+Mod1+Shift+1 move container to workspace number $WSB; workspace number $WSB
+bindsym $mod+Mod1+Shift+2 move container to workspace number $WSC; workspace number $WSC
+bindsym $mod+Mod1+Shift+3 move container to workspace number $WSD; workspace number $WSD
+bindsym $mod+Mod1+Shift+4 move container to workspace number $WSE; workspace number $WSE
+bindsym $mod+Mod1+Shift+5 move container to workspace number $WSF; workspace number $WSF
+bindsym $mod+Mod1+Shift+6 move container to workspace number $WSG; workspace number $WSG
+bindsym $mod+Mod1+Shift+7 move container to workspace number $WSH; workspace number $WSH
+bindsym $mod+Mod1+Shift+8 move container to workspace number $WSI; workspace number $WSI
+bindsym $mod+Mod1+Shift+9 move container to workspace number $WSJ; workspace number $WSJ
+bindsym $mod+Mod1+Shift+0 move container to workspace number $WSK; workspace number $WSK
+bindsym $mod+Mod1+Shift+v move container to workspace number $WSV; workspace number $WSV
 
 # scratchpad
 bindsym $mod+Shift+minus move scratchpad
@@ -205,7 +205,8 @@ bindsym $mod+Control+minus exec i3-input -F '[%s] scratchpad show' -P 'Scratchpa
 bindsym $mod+equal sticky toggle
 
 # rename
-bindsym $mod+Shift+equal exec i3-input -F 'rename workspace to "%s"' -P 'Name: '
+bindsym $mod+Shift+equal exec bash -c "i3-input -F 'rename workspace to \"$(~/.local/share/bin/i3-get-workspace prefix)%s\"' -P 'Name (retain number): '"
+bindsym $mod+Control+equal exec i3-input -F 'rename workspace to "%s"' -P 'Name: '
 
 # marks
 bindsym $mod+Shift+m exec i3-input -F 'mark %s' -P 'Mark: '
@@ -395,6 +396,7 @@ client.background		#111111
 
 # Agenda
 for_window [class="URxvt" instance="agenda"] floating enable
+for_window [class="URxvt" instance="agenda"] sticky enable
 for_window [class="URxvt" instance="agenda"] move scratchpad
 for_window [class="URxvt" instance="agenda"] scratchpad show
 for_window [class="URxvt" instance="agenda"] mark "a"
@@ -406,6 +408,7 @@ for_window [class="Corebird" window_type="dialog"] fullscreen
 
 # rsfpac
 for_window [class="URxvt" instance="rsfpac"] floating enable
+for_window [class="URxvt" instance="rsfpac"] sticky enable
 for_window [class="URxvt" instance="rsfpac"] move scratchpad
 for_window [class="URxvt" instance="rsfpac"] mark "r"
 for_window [class="URxvt" instance="rsfpac"] move absolute position 1020 px 65 px

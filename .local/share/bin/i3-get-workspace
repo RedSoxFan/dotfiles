@@ -1,2 +1,21 @@
 #!/bin/sh
-echo $(wmctrl -d | grep "*" | sed -E 's/^.+ ([^\s]+)$/\1/g')
+# Get the workspace and parts
+WS=$(i3-msg -t get_workspaces | jq '.[] | select(.focused==true).name')
+NAME=$(echo $WS | grep -Po '(?<=:).*(?=")')
+NUM=$(echo $WS | grep -Po '(?<=^")[0-9]+')
+
+# If both parts are empty, award it all to the name
+if [ "x"$NAME == "x" ] && [ "x"$NUM == "x" ]; then
+	NAME=$(echo $WS | cut -d'"' -f2)
+fi;
+
+# Echo the desired information
+if [ "$#" == "0" ]; then
+	echo $WS | cut -d'"' -f2
+elif [ "$1" == "name" ]; then
+	echo $NAME
+elif [ "$1" == "number" ]; then
+	echo $NUM
+elif [ "$1" == "prefix" ]; then
+	echo $NUM":" | sed 's/^:$//'
+fi;
