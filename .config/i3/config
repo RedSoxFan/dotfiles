@@ -3,6 +3,7 @@
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
 set $mod Mod4
+set $sec Mod1
 
 # Set Outputs
 set $LAPTOP "eDP1"
@@ -161,17 +162,17 @@ bindsym $mod+7 workspace number $WS7
 bindsym $mod+8 workspace number $WS8
 bindsym $mod+9 workspace number $WS9
 bindsym $mod+0 workspace number $WSA
-bindsym $mod+Mod1+1 workspace number $WSB
-bindsym $mod+Mod1+2 workspace number $WSC
-bindsym $mod+Mod1+3 workspace number $WSD
-bindsym $mod+Mod1+4 workspace number $WSE
-bindsym $mod+Mod1+5 workspace number $WSF
-bindsym $mod+Mod1+6 workspace number $WSG
-bindsym $mod+Mod1+7 workspace number $WSH
-bindsym $mod+Mod1+8 workspace number $WSI
-bindsym $mod+Mod1+9 workspace number $WSJ
-bindsym $mod+Mod1+0 workspace number $WSK
-bindsym $mod+Mod1+v workspace number $WSV
+bindsym $mod+$sec+1 workspace number $WSB
+bindsym $mod+$sec+2 workspace number $WSC
+bindsym $mod+$sec+3 workspace number $WSD
+bindsym $mod+$sec+4 workspace number $WSE
+bindsym $mod+$sec+5 workspace number $WSF
+bindsym $mod+$sec+6 workspace number $WSG
+bindsym $mod+$sec+7 workspace number $WSH
+bindsym $mod+$sec+8 workspace number $WSI
+bindsym $mod+$sec+9 workspace number $WSJ
+bindsym $mod+$sec+0 workspace number $WSK
+bindsym $mod+$sec+v workspace number $WSV
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace number $WS1; workspace number $WS1
@@ -184,17 +185,17 @@ bindsym $mod+Shift+7 move container to workspace number $WS7; workspace number $
 bindsym $mod+Shift+8 move container to workspace number $WS8; workspace number $WS8
 bindsym $mod+Shift+9 move container to workspace number $WS9; workspace number $WS9
 bindsym $mod+Shift+0 move container to workspace number $WSA; workspace number $WSA
-bindsym $mod+Mod1+Shift+1 move container to workspace number $WSB; workspace number $WSB
-bindsym $mod+Mod1+Shift+2 move container to workspace number $WSC; workspace number $WSC
-bindsym $mod+Mod1+Shift+3 move container to workspace number $WSD; workspace number $WSD
-bindsym $mod+Mod1+Shift+4 move container to workspace number $WSE; workspace number $WSE
-bindsym $mod+Mod1+Shift+5 move container to workspace number $WSF; workspace number $WSF
-bindsym $mod+Mod1+Shift+6 move container to workspace number $WSG; workspace number $WSG
-bindsym $mod+Mod1+Shift+7 move container to workspace number $WSH; workspace number $WSH
-bindsym $mod+Mod1+Shift+8 move container to workspace number $WSI; workspace number $WSI
-bindsym $mod+Mod1+Shift+9 move container to workspace number $WSJ; workspace number $WSJ
-bindsym $mod+Mod1+Shift+0 move container to workspace number $WSK; workspace number $WSK
-bindsym $mod+Mod1+Shift+v move container to workspace number $WSV; workspace number $WSV
+bindsym $mod+$sec+Shift+1 move container to workspace number $WSB; workspace number $WSB
+bindsym $mod+$sec+Shift+2 move container to workspace number $WSC; workspace number $WSC
+bindsym $mod+$sec+Shift+3 move container to workspace number $WSD; workspace number $WSD
+bindsym $mod+$sec+Shift+4 move container to workspace number $WSE; workspace number $WSE
+bindsym $mod+$sec+Shift+5 move container to workspace number $WSF; workspace number $WSF
+bindsym $mod+$sec+Shift+6 move container to workspace number $WSG; workspace number $WSG
+bindsym $mod+$sec+Shift+7 move container to workspace number $WSH; workspace number $WSH
+bindsym $mod+$sec+Shift+8 move container to workspace number $WSI; workspace number $WSI
+bindsym $mod+$sec+Shift+9 move container to workspace number $WSJ; workspace number $WSJ
+bindsym $mod+$sec+Shift+0 move container to workspace number $WSK; workspace number $WSK
+bindsym $mod+$sec+Shift+v move container to workspace number $WSV; workspace number $WSV
 
 # scratchpad
 bindsym $mod+Shift+minus move scratchpad
@@ -238,7 +239,7 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
 # Lock
-bindsym Control+Mod1+l exec i3lock -c 111111
+bindsym Control+$sec+l exec i3lock -c 111111
 
 # Screenshot
 bindsym --release $mod+t exec --no-startup-id import -window-id `xdotool getactivewindow` ~/Pictures/screenshot-`/bin/date +%Y%m%d-%H:%M:%S`.png
@@ -281,7 +282,6 @@ mode "launcher" {
         bindsym n exec thunar; mode "default"
         bindsym o exec bash -c "GTK2_RC_FILES=/usr/share/themes/Vertex-Light/gtk-2.0/gtkrc opera-developer"; mode "default"
         bindsym r exec urxvt -name ranger -e ranger; mode "default"
-        bindsym x exec ~/opt/xfinitytv; mode "default"
 
         # Shell + Editors
         bindsym a exec urxvt -name agenda -e ~/.local/share/bin/agenda; mode "default"
@@ -300,7 +300,7 @@ mode "launcher" {
         bindsym Return mode "default"
         bindsym Escape mode "default"
 
-        # Available Letters: ---d----ijklm---q---u---yz
+        # Available Letters: ---d----ijklm---q---u--xyz
         # Available Numbers: 1234567890
 }
 
@@ -349,17 +349,17 @@ mode "restore" {
         bindsym 8 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS8"; mode "default"
         bindsym 9 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS9"; mode "default"
         bindsym 0 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSA"; mode "default"
-        bindsym Mod1+1 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSB"; mode "default"
-        bindsym Mod1+2 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSC"; mode "default"
-        bindsym Mod1+3 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSD"; mode "default"
-        bindsym Mod1+4 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSE"; mode "default"
-        bindsym Mod1+5 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSF"; mode "default"
-        bindsym Mod1+6 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSG"; mode "default"
-        bindsym Mod1+7 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH"; mode "default"
-        bindsym Mod1+8 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSI"; mode "default"
-        bindsym Mod1+9 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSJ"; mode "default"
-        bindsym Mod1+0 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSK"; mode "default"
-        bindsym Mod1+v exec /home/brian/.local/share/bin/i3-restore-workspace "$WSV"; mode "default"
+        bindsym $sec+1 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSB"; mode "default"
+        bindsym $sec+2 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSC"; mode "default"
+        bindsym $sec+3 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSD"; mode "default"
+        bindsym $sec+4 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSE"; mode "default"
+        bindsym $sec+5 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSF"; mode "default"
+        bindsym $sec+6 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSG"; mode "default"
+        bindsym $sec+7 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH"; mode "default"
+        bindsym $sec+8 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSI"; mode "default"
+        bindsym $sec+9 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSJ"; mode "default"
+        bindsym $sec+0 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSK"; mode "default"
+        bindsym $sec+v exec /home/brian/.local/share/bin/i3-restore-workspace "$WSV"; mode "default"
 
         # Back to normal
         bindsym Return mode "default"
