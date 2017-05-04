@@ -11,50 +11,50 @@ set $EXTERNAL "HDMI2"
 set $VGAOUT "DP1"
 
 # Set Workspace Names
-set $WS1 "1:MAIN"
-set $WS2 "2:MEDIA"
-set $WS3 "3:DEVEL"
-set $WS4 "4:GAMES"
-set $WS5 "5:LPTP5"
-set $WS6 "6:LPTP6"
-set $WS7 "7:LPTP7"
-set $WS8 "8:LPTP8"
-set $WS9 "9:LPTP9"
-set $WSA "10:LPTP0"
-set $WSB "11:ALT"
-set $WSC "12:VIDEO"
-set $WSD "13:DOCS"
-set $WSE "14:HDMI4"
-set $WSF "15:HDMI5"
-set $WSG "16:HDMI6"
-set $WSH "17:HDMI7"
-set $WSI "18:HDMI8"
-set $WSJ "19:HDMI9"
-set $WSK "20:HDMI0"
-set $WSV "21:VGAOUT"
+set $WSL1 "1:MAIN"
+set $WSL2 "2:MEDIA"
+set $WSL3 "3:DEVEL"
+set $WSL4 "4:GAMES"
+set $WSL5 "5:LPTP5"
+set $WSL6 "6:LPTP6"
+set $WSL7 "7:LPTP7"
+set $WSL8 "8:LPTP8"
+set $WSL9 "9:LPTP9"
+set $WSL0 "10:LPTP0"
+set $WSH1 "11:ALT"
+set $WSH2 "12:VIDEO"
+set $WSH3 "13:DOCS"
+set $WSH4 "14:HDMI4"
+set $WSH5 "15:HDMI5"
+set $WSH6 "16:HDMI6"
+set $WSH7 "17:HDMI7"
+set $WSH8 "18:HDMI8"
+set $WSH9 "19:HDMI9"
+set $WSH0 "20:HDMI0"
+set $WSVG "21:VGAOUT"
 
 # Set Workspace Outputs
-workspace $WS1 output $LAPTOP
-workspace $WS2 output $LAPTOP
-workspace $WS3 output $LAPTOP
-workspace $WS4 output $LAPTOP
-workspace $WS5 output $LAPTOP
-workspace $WS6 output $LAPTOP
-workspace $WS7 output $LAPTOP
-workspace $WS8 output $LAPTOP
-workspace $WS9 output $LAPTOP
-workspace $WSA output $LAPTOP
-workspace $WSB output $EXTERNAL
-workspace $WSC output $EXTERNAL
-workspace $WSD output $EXTERNAL
-workspace $WSE output $EXTERNAL
-workspace $WSF output $EXTERNAL
-workspace $WSG output $EXTERNAL
-workspace $WSH output $EXTERNAL
-workspace $WSI output $EXTERNAL
-workspace $WSJ output $EXTERNAL
-workspace $WSK output $EXTERNAL
-workspace $WSV output $VGAOUT
+workspace $WSL1 output $LAPTOP
+workspace $WSL2 output $LAPTOP
+workspace $WSL3 output $LAPTOP
+workspace $WSL4 output $LAPTOP
+workspace $WSL5 output $LAPTOP
+workspace $WSL6 output $LAPTOP
+workspace $WSL7 output $LAPTOP
+workspace $WSL8 output $LAPTOP
+workspace $WSL9 output $LAPTOP
+workspace $WSL0 output $LAPTOP
+workspace $WSH1 output $EXTERNAL
+workspace $WSH2 output $EXTERNAL
+workspace $WSH3 output $EXTERNAL
+workspace $WSH4 output $EXTERNAL
+workspace $WSH5 output $EXTERNAL
+workspace $WSH6 output $EXTERNAL
+workspace $WSH7 output $EXTERNAL
+workspace $WSH8 output $EXTERNAL
+workspace $WSH9 output $EXTERNAL
+workspace $WSH0 output $EXTERNAL
+workspace $WSVG output $VGAOUT
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -152,50 +152,50 @@ bindsym $mod+z exec ~/.local/share/bin/enablepointer toggle
 workspace_auto_back_and_forth yes
 
 # switch to workspace
-bindsym $mod+1 workspace number $WS1
-bindsym $mod+2 workspace number $WS2
-bindsym $mod+3 workspace number $WS3
-bindsym $mod+4 workspace number $WS4
-bindsym $mod+5 workspace number $WS5
-bindsym $mod+6 workspace number $WS6
-bindsym $mod+7 workspace number $WS7
-bindsym $mod+8 workspace number $WS8
-bindsym $mod+9 workspace number $WS9
-bindsym $mod+0 workspace number $WSA
-bindsym $mod+$sec+1 workspace number $WSB
-bindsym $mod+$sec+2 workspace number $WSC
-bindsym $mod+$sec+3 workspace number $WSD
-bindsym $mod+$sec+4 workspace number $WSE
-bindsym $mod+$sec+5 workspace number $WSF
-bindsym $mod+$sec+6 workspace number $WSG
-bindsym $mod+$sec+7 workspace number $WSH
-bindsym $mod+$sec+8 workspace number $WSI
-bindsym $mod+$sec+9 workspace number $WSJ
-bindsym $mod+$sec+0 workspace number $WSK
-bindsym $mod+$sec+v workspace number $WSV
+bindsym $mod+1 workspace number $WSL1
+bindsym $mod+2 workspace number $WSL2
+bindsym $mod+3 workspace number $WSL3
+bindsym $mod+4 workspace number $WSL4
+bindsym $mod+5 workspace number $WSL5
+bindsym $mod+6 workspace number $WSL6
+bindsym $mod+7 workspace number $WSL7
+bindsym $mod+8 workspace number $WSL8
+bindsym $mod+9 workspace number $WSL9
+bindsym $mod+0 workspace number $WSL0
+bindsym $mod+$sec+1 workspace number $WSH1
+bindsym $mod+$sec+2 workspace number $WSH2
+bindsym $mod+$sec+3 workspace number $WSH3
+bindsym $mod+$sec+4 workspace number $WSH4
+bindsym $mod+$sec+5 workspace number $WSH5
+bindsym $mod+$sec+6 workspace number $WSH6
+bindsym $mod+$sec+7 workspace number $WSH7
+bindsym $mod+$sec+8 workspace number $WSH8
+bindsym $mod+$sec+9 workspace number $WSH9
+bindsym $mod+$sec+0 workspace number $WSH0
+bindsym $mod+$sec+v workspace number $WSVG
 
 # move focused container to workspace
-bindsym $mod+Shift+1 move container to workspace number $WS1; workspace number $WS1
-bindsym $mod+Shift+2 move container to workspace number $WS2; workspace number $WS2
-bindsym $mod+Shift+3 move container to workspace number $WS3; workspace number $WS3
-bindsym $mod+Shift+4 move container to workspace number $WS4; workspace number $WS4
-bindsym $mod+Shift+5 move container to workspace number $WS5; workspace number $WS5
-bindsym $mod+Shift+6 move container to workspace number $WS6; workspace number $WS6
-bindsym $mod+Shift+7 move container to workspace number $WS7; workspace number $WS7
-bindsym $mod+Shift+8 move container to workspace number $WS8; workspace number $WS8
-bindsym $mod+Shift+9 move container to workspace number $WS9; workspace number $WS9
-bindsym $mod+Shift+0 move container to workspace number $WSA; workspace number $WSA
-bindsym $mod+$sec+Shift+1 move container to workspace number $WSB; workspace number $WSB
-bindsym $mod+$sec+Shift+2 move container to workspace number $WSC; workspace number $WSC
-bindsym $mod+$sec+Shift+3 move container to workspace number $WSD; workspace number $WSD
-bindsym $mod+$sec+Shift+4 move container to workspace number $WSE; workspace number $WSE
-bindsym $mod+$sec+Shift+5 move container to workspace number $WSF; workspace number $WSF
-bindsym $mod+$sec+Shift+6 move container to workspace number $WSG; workspace number $WSG
-bindsym $mod+$sec+Shift+7 move container to workspace number $WSH; workspace number $WSH
-bindsym $mod+$sec+Shift+8 move container to workspace number $WSI; workspace number $WSI
-bindsym $mod+$sec+Shift+9 move container to workspace number $WSJ; workspace number $WSJ
-bindsym $mod+$sec+Shift+0 move container to workspace number $WSK; workspace number $WSK
-bindsym $mod+$sec+Shift+v move container to workspace number $WSV; workspace number $WSV
+bindsym $mod+Shift+1 move container to workspace number $WSL1; workspace number $WSL1
+bindsym $mod+Shift+2 move container to workspace number $WSL2; workspace number $WSL2
+bindsym $mod+Shift+3 move container to workspace number $WSL3; workspace number $WSL3
+bindsym $mod+Shift+4 move container to workspace number $WSL4; workspace number $WSL4
+bindsym $mod+Shift+5 move container to workspace number $WSL5; workspace number $WSL5
+bindsym $mod+Shift+6 move container to workspace number $WSL6; workspace number $WSL6
+bindsym $mod+Shift+7 move container to workspace number $WSL7; workspace number $WSL7
+bindsym $mod+Shift+8 move container to workspace number $WSL8; workspace number $WSL8
+bindsym $mod+Shift+9 move container to workspace number $WSL9; workspace number $WSL9
+bindsym $mod+Shift+0 move container to workspace number $WSL0; workspace number $WSL0
+bindsym $mod+$sec+Shift+1 move container to workspace number $WSH1; workspace number $WSH1
+bindsym $mod+$sec+Shift+2 move container to workspace number $WSH2; workspace number $WSH2
+bindsym $mod+$sec+Shift+3 move container to workspace number $WSH3; workspace number $WSH3
+bindsym $mod+$sec+Shift+4 move container to workspace number $WSH4; workspace number $WSH4
+bindsym $mod+$sec+Shift+5 move container to workspace number $WSH5; workspace number $WSH5
+bindsym $mod+$sec+Shift+6 move container to workspace number $WSH6; workspace number $WSH6
+bindsym $mod+$sec+Shift+7 move container to workspace number $WSH7; workspace number $WSH7
+bindsym $mod+$sec+Shift+8 move container to workspace number $WSH8; workspace number $WSH8
+bindsym $mod+$sec+Shift+9 move container to workspace number $WSH9; workspace number $WSH9
+bindsym $mod+$sec+Shift+0 move container to workspace number $WSH0; workspace number $WSH0
+bindsym $mod+$sec+Shift+v move container to workspace number $WSVG; workspace number $WSVG
 
 # scratchpad
 bindsym $mod+Shift+minus move scratchpad
@@ -339,27 +339,27 @@ mode "restore" {
         bindsym space exec /home/brian/.local/share/bin/i3-restore-workspace; mode "default"
 
         # Specifics
-        bindsym 1 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS1"; mode "default"
-        bindsym 2 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS2"; mode "default"
-        bindsym 3 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS3"; mode "default"
-        bindsym 4 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS4"; mode "default"
-        bindsym 5 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS5"; mode "default"
-        bindsym 6 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS6"; mode "default"
-        bindsym 7 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS7"; mode "default"
-        bindsym 8 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS8"; mode "default"
-        bindsym 9 exec /home/brian/.local/share/bin/i3-restore-workspace "$WS9"; mode "default"
-        bindsym 0 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSA"; mode "default"
-        bindsym $sec+1 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSB"; mode "default"
-        bindsym $sec+2 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSC"; mode "default"
-        bindsym $sec+3 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSD"; mode "default"
-        bindsym $sec+4 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSE"; mode "default"
-        bindsym $sec+5 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSF"; mode "default"
-        bindsym $sec+6 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSG"; mode "default"
-        bindsym $sec+7 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH"; mode "default"
-        bindsym $sec+8 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSI"; mode "default"
-        bindsym $sec+9 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSJ"; mode "default"
-        bindsym $sec+0 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSK"; mode "default"
-        bindsym $sec+v exec /home/brian/.local/share/bin/i3-restore-workspace "$WSV"; mode "default"
+        bindsym 1 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL1"; mode "default"
+        bindsym 2 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL2"; mode "default"
+        bindsym 3 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL3"; mode "default"
+        bindsym 4 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL4"; mode "default"
+        bindsym 5 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL5"; mode "default"
+        bindsym 6 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL6"; mode "default"
+        bindsym 7 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL7"; mode "default"
+        bindsym 8 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL8"; mode "default"
+        bindsym 9 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL9"; mode "default"
+        bindsym 0 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL0"; mode "default"
+        bindsym $sec+1 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH1"; mode "default"
+        bindsym $sec+2 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH2"; mode "default"
+        bindsym $sec+3 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH3"; mode "default"
+        bindsym $sec+4 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH4"; mode "default"
+        bindsym $sec+5 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH5"; mode "default"
+        bindsym $sec+6 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH6"; mode "default"
+        bindsym $sec+7 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH7"; mode "default"
+        bindsym $sec+8 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH8"; mode "default"
+        bindsym $sec+9 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH9"; mode "default"
+        bindsym $sec+0 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH0"; mode "default"
+        bindsym $sec+v exec /home/brian/.local/share/bin/i3-restore-workspace "$WSVG"; mode "default"
 
         # Back to normal
         bindsym Return mode "default"
@@ -415,14 +415,14 @@ for_window [class="URxvt" instance="rsfpac"] move absolute position 1020 px 65 p
 for_window [class="URxvt" instance="rsfpac"] resize set 820 px 950 px
 
 # Spotify
-assign [class="Spotify"] $WS2
+assign [class="Spotify"] $WSL2
 
 # Slack
-assign [class="Slack"] $WS8
+assign [class="Slack"] $WSL8
 for_window [class="Slack"] mark "sl"
 
 # Opera (Twitch)
-assign [class="Opera"] $WSC
+assign [class="Opera"] $WSL2
 
 ## End App Settings##
 
