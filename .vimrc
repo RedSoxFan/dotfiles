@@ -114,12 +114,13 @@ command W w
 command Q q
 
 """ Custom keybinds
-nmap ,t :tabs<Enter>
-nmap ,r :registers<Enter>
-nmap ,b :<C-U>exec (v:count ? "b" . v:count : "ls")<Enter>
-nmap ,; :bp<Enter>
-nmap ,' :bn<Enter>
-nmap ,m :marks<Enter>
-nmap ,f :set ff=unix<Enter>
-nmap ,d :set ff=dos<Enter>
+let mapleader=","
+nmap <Leader>t :tabs<Enter>
+nmap <Leader>r :registers<Enter>
+nmap <Leader>b :<C-U>exec (v:count ? "b" . v:count : "ls")<Enter>
+nmap <Leader>; :bp<Enter>
+nmap <Leader>' :bn<Enter>
+nmap <Leader>m :marks<Enter>
+nmap <Leader>f :set ff=unix<Enter>
+nmap <Leader>d :set ff=dos<Enter>
 nmap <F9> :TagbarToggle<Enter>
