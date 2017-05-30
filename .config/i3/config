@@ -278,7 +278,7 @@ mode "launcher" {
         bindsym c exec chromium --incognito; mode "default"
         bindsym f exec firefox; mode "default"
         bindsym g exec google-chrome-stable --incognito; mode "default"
-        bindsym h exec chromium --app=http://www.accuweather.com/en/us/pittsburgh-pa/15213/hourly-weather-forecast/1310; mode "default"
+        bindsym h exec chromium --app=http://www.accuweather.com/en/us/nashua-nh/03064/hourly-weather-forecast/329509; mode "default"
         bindsym n exec thunar; mode "default"
         bindsym o exec bash -c "GTK2_RC_FILES=/usr/share/themes/Vertex-Light/gtk-2.0/gtkrc opera-developer"; mode "default"
         bindsym r exec urxvt -name ranger -e ranger; mode "default"
