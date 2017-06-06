@@ -1,9 +1,0 @@
-#!/bin/bash
-xdg-open "$1" &
-
-pr=$(echo -e "Yes\nNo" | dmenu -p "Send to Mobile Print (Color)?" -b -l 2)
-
-if [ $pr == "Yes" ]; then
-    mutt -s "Mobile Print" colorprint@pitt.edu -a "$1" -F /home/brian/.muttrc-pitt
-    echo -e "Sent to Mobile Print (Color)" | dmenu -b -l 1
-fi;
