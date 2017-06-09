@@ -347,6 +347,33 @@ class SinkController(BaseController):
 
         self._client.sink_volume_set(sobj.index, volinfo)
 
+    def set_sink_volumes_relative(self, sink, volumes):
+        '''
+        Adjust the volume for the channels of a sink by a relative amount
+
+        :param sink: The sink object or query string
+        :type sink: PulseSinkInfo or str or int
+        :param volumes: The relative volume(s) to adjust by
+        :type volumes: list or tuple
+        :raises ValueError: If sink not found or incorrect channel count given
+        '''
+        sobj = self.find_sink(sink)
+        if not sobj:
+            raise ValueError(f"Sink {sink} not found")
+
+        current = sobj.volume.values
+        if len(volumes) == sobj.channel_count:
+            volinfo = PulseVolumeInfo([c + v / 100
+                                       for c, v in zip(current, volumes)])
+        elif len(volumes) == 1:
+            volinfo = PulseVolumeInfo([c + volumes[0] / 100 for c in current])
+        else:
+            raise ValueError(f"Sink {sink} has {sobj.channel_count} channels. "
+                             "Provide a volume per channel or a single flat "
+                             "volume")
+
+        self._client.sink_volume_set(sobj.index, volinfo)
+
 
 class SinkInputController(BaseController):
     '''
@@ -588,6 +615,34 @@ class SinkInputController(BaseController):
 
         self._client.sink_input_volume_set(siobj.index, volinfo)
 
+    def set_sink_input_volumes_relative(self, sinput, volumes, pid=False):
+        '''
+        Adjust the volume for the channels of a sink-input by a relative amount.
+
+        :param sinput: The sink-input object or query string
+        :type sinput: PulseSinkInputInfo or str or int
+        :param volumes: The relative volume(s) to adjust by
+        :type volumes: list or tuple
+        :param bool pid: Whether or not to interpret the query as a pid
+        :raises ValueError: If sink not found or incorrect channel count given
+        '''
+        siobj = self.find_sink_input(sinput, pid=pid)
+        if not siobj:
+            raise ValueError(f"Sink-input {sinput} not found")
+
+        current = siobj.volume.values
+        if len(volumes) == siobj.channel_count:
+            volinfo = PulseVolumeInfo([c + v / 100
+                                       for c, v in zip(current, volumes)])
+        elif len(volumes) == 1:
+            volinfo = PulseVolumeInfo([c + volumes[0] / 100 for c in current])
+        else:
+            raise ValueError(f"Sink-input {sinput} has {siobj.channel_count} "
+                             "channels. Provide a volume per channel or a "
+                             "single flat volume")
+
+        self._client.sink_input_volume_set(siobj.index, volinfo)
+
 
 class RSFPACParser(object):
     '''
@@ -648,6 +703,14 @@ class RSFPACParser(object):
         sinkvol.add_argument('volumes', type=int, nargs='*',
                 help="the volume(s) to set the sink channel(s) to")
 
+        # sink-volume-relative sub-parser
+        sinkvolrel = subpar.add_parser('sink-volume-relative', aliases=['svr'],
+                help="set the relative volumes for a sink")
+        sinkvolrel.add_argument('sink', type=str,
+                help="the sink to get/set the volumes for ('-' for default)")
+        sinkvolrel.add_argument('volumes', type=int, nargs='+',
+                help="the relative volume(s) to adjust the sink channel(s) by")
+
         # sink-inputs sub-parser
         sinputs = subpar.add_parser('sink-inputs', aliases=['si'],
                 help="retrieve information about one or more sink-inputs")
@@ -686,7 +749,7 @@ class RSFPACParser(object):
         sinpsink.add_argument('sink', type=str, nargs='?',
                 help="the sink to move the sink to ('-' for default)")
 
-        # sink-input-volumes
+        # sink-input-volumes sub-parser
         sinpvol = subpar.add_parser('sink-input-volumes', aliases=['siv'],
                 help="retrieve or set the volume(s) for a sink-input")
         sinpvol.add_argument('-n', '--names', action='store_true',
@@ -696,6 +759,17 @@ class RSFPACParser(object):
         sinpvol.add_argument('sinkinput', type=str,
                 help="the sink-input to retrieve/set the volume for")
         sinpvol.add_argument('volumes', type=int, nargs='*',
+                help="the volume(s) to set the sink-input channel(s) to")
+
+        # sink-input-volumes-relative sub-parser
+        sinpvol = subpar.add_parser('sink-input-volumes-relative',
+                aliases=['sivr'],
+                help="adjust the volume(s) for a sink-input relatively")
+        sinpvol.add_argument('-p', '--pid', action='store_true',
+                help="attempt to search for a sink for a pid")
+        sinpvol.add_argument('sinkinput', type=str,
+                help="the sink-input to retrieve/set the volume for")
+        sinpvol.add_argument('volumes', type=int, nargs='+',
                 help="the volume(s) to set the sink-input channel(s) to")
 
     def parse_args(self, args):
@@ -804,6 +878,9 @@ class RSFPulseAudioController(SinkController, SinkInputController):
                 return self.set_sink_volumes(args.sink, args.volumes)
             else:
                 return self.get_sink_volumes(args.sink, names=args.names)
+        elif args.command in ('sink-volume-relative', 'svr'):
+            # Adjust the sink channel(s) by the relative volume(s)
+            return self.set_sink_volumes_relative(args.sink, args.volumes)
         elif args.command in ('sink-inputs', 'si'):
             # Either display a single sink-input or all sink-inputs
             if args.sinkinput:
@@ -839,6 +916,11 @@ class RSFPulseAudioController(SinkController, SinkInputController):
                 return self.get_sink_input_volumes(args.sinkinput,
                                                    names=args.names,
                                                    pid=args.pid)
+        elif args.command in ('sink-input-volumes-relative', 'sivr'):
+            # Adjust the volumes for a sink-input by a relative amount
+            return self.set_sink_input_volumes_relative(args.sinkinput,
+                                                        args.volumes,
+                                                        pid=args.pid)
 
     def repl(self):
         '''
