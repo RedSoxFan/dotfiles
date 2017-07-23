@@ -1,0 +1,104 @@
+#!/usr/bin/env python3
+
+try:
+    import mlbgame
+except ImportError:
+    raise SystemExit("Please install the mlbgame module")
+try:
+    import parsedatetime
+except ImportError:
+    raise SystemExit("Please install the parsedatetime module")
+
+
+import argparse
+import datetime
+import sys
+
+
+def get_games(team, day):
+    '''
+    Get the information for games a team plays on the specified day
+    :param str team: The MLB team to get games for
+    :param datetime day: The day to get games for
+    '''
+    games = mlbgame.day(day.year, day.month, day.day, home=team, away=team)
+    return tuple(mlbgame.game.overview(game.game_id) for game in games)
+
+
+def get_game_state(game):
+    '''
+    Get a one line status for the game
+    :param dict game: The game information
+    :return str: The game status
+    '''
+    if game['status'] == 'In Progress':
+        return f"{game['away_name_abbrev']} {game['away_team_runs']}, "\
+               f"{game['home_name_abbrev']} {game['home_team_runs']}, "\
+               f"{game['inning_state']} {number_with_suffix(game['inning'])}"
+    elif game['status'] == 'Preview':
+        return f"{game['away_name_abbrev']} @ {game['home_name_abbrev']} "\
+               f"{time_24hour(game['time'], game['ampm'])}"
+    elif game['status'] in ['Game Over', 'Final']:
+        return f"{game['away_name_abbrev']} {game['away_team_runs']}, "\
+               f"{game['home_name_abbrev']} {game['home_team_runs']}, "\
+               f"Final{game['inning'] != '9' and '/%s' % game['inning'] or ''}"
+    else:
+        return f"{game['away_name_abbrev']} @ {game['home_name_abbrev']} "\
+               f"{game['status']}"
+
+
+def number_with_suffix(num):
+    '''
+    Determine the suffix that goes with a number
+    :param str num: The number to get the suffix for
+    :return str: The number with an appropriate suffix
+    '''
+    num = int(num)
+    suf = {1:"st", 2:"nd", 3:"rd"}.get(num if num < 20 else num % 10, "th")
+    return f"{num}{suf}"
+
+
+def time_24hour(time, ampm):
+    '''
+    Converts a 12 hour time to 24 hour time
+    :param str time: The 12 hour time in the for hours:minutes
+    :param str ampm: Either AM or PM
+    :return str: The 24 hour time
+    '''
+    hour, minute = map(int, time.split(':'))
+    if hour < 12:
+        if ampm == 'AM':
+            return f"{hour:02}:{minute:02}"
+        elif ampm == 'PM':
+            return f"{hour + 12}:{minute:02}"
+    elif ampm == 'AM':
+        return f"00:{minute}"
+    else:
+        return f"12:{minute}"
+
+
+if __name__ == "__main__":
+    # Parse arguments
+    parser = argparse.ArgumentParser(description='Display state of MLB games')
+    parser.add_argument('team', nargs='?', default='Red Sox',
+                        help='The team to show game info for (def: Red Sox)')
+    parser.add_argument('date', nargs='?',
+                        help='The date to show game info for (def: Today)')
+    args = parser.parse_args()
+
+    # Either parse the requested day or use today/tomorrow (0600 cutoff)
+    day = datetime.datetime.now()
+    if args.date:
+        parsed, _ = parsedatetime.Calendar().parse(args.date)
+        day = datetime.datetime(*parsed[:6])
+    elif day.hour < 6:
+        day = day - datetime.timedelta(days=1)
+
+    # Get the game info requested
+    info = []
+    for game in get_games(team=args.team, day=day):
+        info.append(get_game_state(game))
+
+    # Print results
+    print(' / '.join(info))
+

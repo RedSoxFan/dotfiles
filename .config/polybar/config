@@ -49,8 +49,8 @@ font-2 = HeavyData Nerd Font:size=20;2
 line-size = 0
 
 modules-left = weather cornerbl
-modules-center = pkg
-modules-right = cornerbr
+modules-center = mlb
+modules-right = cornerbr pkg
 
 tray-position = right
 tray-maxsize = 16
@@ -99,15 +99,8 @@ exec-if = "ping -q -w 2 -c 1 8.8.8.8 > /dev/null"
 format = <label>
 format-background = ${colors.dark}
 format-foreground = ${colors.white}
-label = "%output:0:30%"
-
-format-prefix = ${symbols.cornerbr}
-format-prefix-foreground = ${colors.dark}
-format-prefix-background = ${colors.darkest}
-
-format-suffix = ${symbols.cornerbl}
-format-suffix-foreground = ${colors.dark}
-format-suffix-background = ${colors.darkest}
+format-padding = 1
+label = "%output:0:30%  "
 
 
 [module/weather]
@@ -119,6 +112,23 @@ format =  <label>
 format-foreground = ${colors.white}
 format-background = ${colors.dark}
 format-padding = 1
+
+
+[module/mlb]
+type = custom/script
+exec = ~/.local/share/bin/mlb
+interval = 900
+
+format-foreground = ${colors.white}
+format-background = ${colors.dark}
+
+format-prefix = ${symbols.cornerbr}
+format-prefix-foreground = ${colors.dark}
+format-prefix-background = ${colors.darkest}
+
+format-suffix = ${symbols.cornerbl}
+format-suffix-foreground = ${colors.dark}
+format-suffix-background = ${colors.darkest}
 
 
 [module/music]
