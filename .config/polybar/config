@@ -1,0 +1,264 @@
+[colors]
+darkest = #111
+dark = #222
+lessdark = #444
+lesslight = #aaa
+light = #ccc
+white = #fff
+urgent = #f00
+
+
+[symbols]
+cornertl = 
+cornertr = 
+cornerbl = 
+cornerbr = 
+
+
+[bar/top]
+monitor = ${env:MONITOR:eDP-1}
+bottom = false
+width = 100%
+height = 20
+fixed-center = true
+
+background = ${colors.darkest}
+foreground = ${colors.white}
+font-0 = DejaVu Sans Mono for Powerline:style=Book:size=8
+font-1 = FontAwesome:size=8
+font-2 = HeavyData Nerd Font:size=20;2
+line-size = 0
+
+modules-left = i3wm
+modules-center = music
+modules-right = cornertr audio ethernet wireless temperature battery date
+
+
+[bar/bottom]
+monitor = ${env:MONITOR:eDP-1}
+bottom = true
+width = 100%
+height = 20
+fixed-center = true
+
+background = ${colors.darkest}
+foreground = ${colors.white}
+font-0 = DejaVu Sans Mono for Powerline:style=Book:size=8
+font-1 = FontAwesome:size=8
+font-2 = HeavyData Nerd Font:size=20;2
+line-size = 0
+
+modules-left = weather cornerbl
+modules-center = pkg
+modules-right = cornerbr
+
+tray-position = right
+tray-maxsize = 16
+tray-background = ${colors.dark}
+
+
+[module/i3wm]
+type = internal/i3
+pin-workspaces = true
+strip-wsnumbers = true
+index-sort = true
+
+format = <label-state><label-mode>
+format-foreground = ${colors.dark}
+
+label-focused = %name%
+label-focused-background = ${colors.dark}
+label-focused-foreground = ${colors.white}
+label-focused-padding = 1
+
+label-unfocused = %name%
+label-unfocused-background = ${colors.dark}
+label-unfocused-foreground = ${colors.lesslight}
+label-unfocused-padding = 1
+
+label-visible = %name%
+label-visible-background = ${colors.dark}
+label-visible-foreground = ${colors.light}
+label-visible-padding = 1
+
+label-urgent = %name%
+label-urgent-background = ${colors.dark}
+label-urgent-foreground = ${colors.urgent}
+label-urgent-padding = 1
+
+label-mode = %mode%
+label-mode-foreground = ${colors.white}
+
+
+[module/pkg]
+type = custom/script
+interval = 1200
+exec = ~/.config/polybar/pkg.sh
+exec-if = "ping -q -w 2 -c 1 8.8.8.8 > /dev/null"
+
+format = <label>
+format-background = ${colors.dark}
+format-foreground = ${colors.white}
+label = "%output:0:30%"
+
+format-prefix = ${symbols.cornerbr}
+format-prefix-foreground = ${colors.dark}
+format-prefix-background = ${colors.darkest}
+
+format-suffix = ${symbols.cornerbl}
+format-suffix-foreground = ${colors.dark}
+format-suffix-background = ${colors.darkest}
+
+
+[module/weather]
+type = custom/script
+exec = echo $(inxi -xxxw -c 0 | grep -E -o "[-]?[1]?[0-9]?[0-9] F" | sed 's/ /°/')" ("$(inxi -xxxw -c 0 | grep -E -o "Conditions: [-]?[0-9]+ F \([-]?[0-9]+ C\) - [A-Za-z0-9 ]+\:" | grep -E -o "\- [A-Za-z0-9 ]+ [A-Za-z]+\:" | cut -d" " -f2- | rev | cut -d" " -f2- | rev)")" | sed -r "s/^\s*\(\)$//"
+interval = 1800
+
+format =  <label>
+format-foreground = ${colors.white}
+format-background = ${colors.dark}
+format-padding = 1
+
+
+[module/music]
+type = custom/script
+exec = echo $(playerctl status 2>/dev/null | sed "s/Playing//" | sed -r "s/Paused//")" "$(playerctl metadata 'xesam:artist' 2> /dev/null)" - "$(playerctl metadata 'xesam:title' 2> /dev/null) | sed "s/  - //"
+interval = 2.0
+
+format-foreground = ${colors.white}
+format-background = ${colors.dark}
+
+format-prefix = ${symbols.cornertr}
+format-prefix-foreground = ${colors.dark}
+format-prefix-background = ${colors.darkest}
+
+format-suffix = ${symbols.cornertl}
+format-suffix-foreground = ${colors.dark}
+format-suffix-background = ${colors.darkest}
+
+
+[module/cornerbl]
+type = custom/text
+content = ${symbols.cornerbl}
+content-foreground = ${colors.dark}
+content-background = ${colors.darkest}
+
+
+[module/cornerbr]
+type = custom/text
+content = ${symbols.cornerbr}
+content-foreground = ${colors.dark}
+content-background = ${colors.darkest}
+
+
+[module/cornertl]
+type = custom/text
+content = ${symbols.cornertl}
+content-foreground = ${colors.dark}
+content-background = ${colors.darkest}
+
+
+[module/cornertr]
+type = custom/text
+content = ${symbols.cornertr}
+content-foreground = ${colors.dark}
+content-background = ${colors.darkest}
+
+
+[module/audio]
+type = custom/script
+exec = ~/.local/share/bin/rsfpac sd -i3
+interval = 2.0
+
+click-left = ~/.local/share/bin/rsfpac sm - t
+scroll-up = ~/.local/share/bin/rsfpac svr - 1
+scroll-down = ~/.local/share/bin/rsfpac svr - -1
+
+format-foreground = ${colors.white}
+format-background = ${colors.dark}
+format-padding = 1
+
+
+[module/ethernet]
+type = internal/network
+interface = enp2s0
+format-connected =  <label-connected>
+format-disconnected =
+label-connected = %linkspeed%
+
+format-foreground = ${colors.white}
+format-background = ${colors.dark}
+format-padding = 1
+
+
+[module/wireless]
+type = internal/network
+interface = wlp3s0
+
+format-connected =  <label-connected>
+format-disconnected =
+label-connected = %essid%
+
+format-connected-foreground = ${colors.white}
+format-connected-background = ${colors.dark}
+format-connected-padding = 1
+
+
+[module/temperature]
+type = custom/script
+exec = acpi -tf | grep -E -o "[0-9]+\.[0-9]+ degrees F" | sed "s/ degrees F/°F/"
+format-prefix = " "
+format-prefix-foreground = ${colors.white}
+
+format-foreground = ${colors.white}
+format-background = ${colors.dark}
+format-padding = 1
+
+
+[module/battery]
+type = internal/battery
+battery = BAT0
+adapter = AC0
+poll-interval = 5
+
+format-charging =  <label-charging>
+format-charging-foreground = ${colors.white}
+format-charging-background = ${colors.dark}
+format-charging-padding = 1
+
+format-discharging = <ramp-capacity> <label-discharging>
+format-discharging-foreground = ${colors.white}
+format-discharging-background = ${colors.dark}
+format-discharging-padding = 1
+
+format-full =  <label-full>
+format-full-foreground = ${colors.white}
+format-full-background = ${colors.dark}
+format-full-padding = 1
+
+label-charging = %percentage%%
+label-discharging = %percentage%%
+label-full = %percentage%%
+
+ramp-capacity-0 = 
+ramp-capacity-1 = 
+ramp-capacity-2 = 
+ramp-capacity-3 = 
+ramp-capacity-4 = 
+
+
+[module/date]
+type = internal/date
+interval = 1.0
+date = "%a %d %b"
+time = "%H:%M:%S"
+
+format =  <label>
+format-background = ${colors.dark}
+format-foreground = ${colors.white}
+format-padding = 1
+
+label = %date% %time%
+
+# vim:ft=cfg

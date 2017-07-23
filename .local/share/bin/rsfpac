@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 import abc
 import argparse
@@ -10,6 +10,7 @@ import sys
 
 try:
     from pulsectl import Pulse, PulseSinkInfo, PulseSinkInputInfo, \
+                         PulseSourceInfo, PulseSourceOutputInfo, \
                          PulseVolumeInfo
 except ImportError:
     print('Please install pulsectl for Python 3 (pip3 install pulsectl)')
@@ -28,8 +29,8 @@ def trueround(val):
 @property
 def is_flat_volume(self):
     '''
-    Determine whether all channels have the same volume for a sink or sink
-    input.
+    Determine whether all channels have the same volume for a sink, sink-
+    input, source, or source-output.
 
     :return: Whether or not all channels have a flat volume
     :rtype: bool
@@ -37,26 +38,30 @@ def is_flat_volume(self):
     return len(set(self.volume.values)) == 1
 
 
-# For conviency, add the property to the PulseSinkInfo and PulseSinkInputInfo
-# classes.
+# For conviency, add the property to the PulseSinkInfo, PulseSinkInputInfo,
+# PulseSourceInfo, and PulseSourceOutputInfo classes.
 PulseSinkInfo.is_flat_volume = is_flat_volume
 PulseSinkInputInfo.is_flat_volume = is_flat_volume
+PulseSourceInfo.is_flat_volume = is_flat_volume
+PulseSourceOutputInfo.is_flat_volume = is_flat_volume
 
 
 @property
-def sink_input_pid(self):
+def sink_input_or_source_output_pid(self):
     '''
-    Retrieve the pid for a sink-input.
+    Retrieve the pid for a sink-input or source-output.
 
-    :return: The pid for the sink-input or None if not set
+    :return: The pid for the sink-input/source-output or None if not set
     :rtype: int or None
     '''
     key = 'application.process.id'
     return key in self.proplist and self.proplist[key] or None
 
 
-# For conviency, add the property to the PulseSinkInputInfo class
-PulseSinkInputInfo.pid = sink_input_pid
+# For conviency, add the property to the PulseSinkInputInfo and
+# PulseSourceOutputInfo classes
+PulseSinkInputInfo.pid = sink_input_or_source_output_pid
+PulseSourceOutputInfo.pid = sink_input_or_source_output_pid
 
 
 class BaseController(metaclass=abc.ABCMeta):
@@ -97,6 +102,33 @@ class BaseController(metaclass=abc.ABCMeta):
         '''
         pass
 
+    @abc.abstractmethod
+    def find_source(self, query):
+        '''
+        Find a source based on a query.
+
+        :param query: The query string
+        :type query: PulseSourceInfo or str or int
+        :return: The source that was found
+        :rtype: PulseSourceInfo or None
+        '''
+        pass
+
+    @abc.abstractmethod
+    def find_source_output(self, query, pid=False):
+        '''
+        Find a source-output based on a query. If the pid keyword is set, then
+        the query string will search the application.process.id in the
+        proplist instead of the name or id of the source-output.
+
+        :param query: The query string
+        :type query: PulseSourceOutputInfo or str or int
+        :param pid: Whether to check the pid
+        :return: The source-output that was found
+        :rtype: PulseSourceOutputInfo or None
+        '''
+        pass
+
     @property
     def max_sink_width(self):
         '''
@@ -107,7 +139,6 @@ class BaseController(metaclass=abc.ABCMeta):
         '''
         return len(max(self.sinks, key=lambda s: len(s.name)).name)
 
-
     @property
     def max_sink_input_width(self):
         '''
@@ -117,6 +148,26 @@ class BaseController(metaclass=abc.ABCMeta):
         :rtype: int
         '''
         return len(max(self.sink_inputs, key=lambda si: len(si.name)).name)
+
+    @property
+    def max_source_width(self):
+        '''
+        Retrieve the maximum length of a source name.
+
+        :return: The maximum length of a source name
+        :rtype: int
+        '''
+        return len(max(self.sources, key=lambda s: len(s.name)).name)
+
+    @property
+    def max_source_output_width(self):
+        '''
+        Retrieve the maximum length of a source-output name.
+
+        :return: The maximum length of a source-output name
+        :rtype: int
+        '''
+        return len(max(self.source_outputs, key=lambda so: len(so.name)).name)
 
     @property
     def sinks(self):
@@ -137,6 +188,26 @@ class BaseController(metaclass=abc.ABCMeta):
         :rtype: tuple
         '''
         return self._client.sink_input_list()
+
+    @property
+    def sources(self):
+        '''
+        Retrieve a tuple of sources on the server.
+
+        :return: A tuple of PulseSourceInfo objects
+        :rtype: tuple
+        '''
+        return self._client.source_list()
+
+    @property
+    def source_outputs(self):
+        '''
+        Retrieve a tuple of source-outputs on the server.
+
+        :return: A tuple of PulseSourceOutputInfo objects
+        :rtype: tuple
+        '''
+        return self._client.source_output_list()
 
 
 class SinkController(BaseController):
@@ -617,7 +688,8 @@ class SinkInputController(BaseController):
 
     def set_sink_input_volumes_relative(self, sinput, volumes, pid=False):
         '''
-        Adjust the volume for the channels of a sink-input by a relative amount.
+        Adjust the volume for the channels of a sink-input by a relative
+        amount.
 
         :param sinput: The sink-input object or query string
         :type sinput: PulseSinkInputInfo or str or int
@@ -642,6 +714,494 @@ class SinkInputController(BaseController):
                              "single flat volume")
 
         self._client.sink_input_volume_set(siobj.index, volinfo)
+
+
+class SourceController(BaseController):
+    '''
+    Wrapper around source related tasks in PulseAudio.
+    '''
+
+    def __init__(self, clientobj):
+        '''
+        Create a wrapper for source related tasks.
+        '''
+        BaseController.__init__(self, clientobj)
+
+    @property
+    def default_source(self):
+        '''
+        Retrieve the default source name.
+
+        :return: The default source name
+        :rtype: str
+        '''
+        return self._client.server_info().default_source_name
+
+    @default_source.setter
+    def default_source(self, source):
+        '''
+        Set the default source.
+
+        :param source: The source object or source query string
+        :type source: PulseSourceInfo or str or int
+        :raises ValueError: If the source is not found
+        '''
+        scobj = self.find_source(source)
+        if scobj:
+            self._client.source_default_set(scobj)
+        else:
+            raise ValueError(f"Source {source} not found")
+
+    def display_source(self, source, props=False):
+        '''
+        Display formatted information for a source. If props is set, then
+        display the property list for the source as well.
+
+        :param sink: The source object or source query string
+        :type sink: PulseSourceInfo or str or int
+        :param bool props: Whether or not to display property list
+        :raises ValueError: If source not found
+        '''
+        # Find source object
+        scobj = self.find_source(source)
+        if not scobj:
+            raise ValueError(f"Source {source} not found")
+
+        # Status indicators
+        defind = scobj.name == self.default_source and '*' or ' '
+        muteind = scobj.mute and 'M' or ' '
+
+        # Print the information
+        width = max(30, self.max_source_width)
+        print(f"{defind} {scobj.index:2} {scobj.name:{width}} {muteind}",
+              end='')
+        for value in scobj.volume.values:
+            print(f"  {trueround(value * 100):3}", end='')
+        print(f"\t{scobj.description}")
+
+        # If requested, print the property list
+        if props:
+            size = len(max(scobj.proplist.keys(), key=len))
+            for key, value in sorted(scobj.proplist.items()):
+                print(f"\t{key:{size}}\t{value}")
+            print()
+
+    def display_sources(self, shall=True, props=False):
+        '''
+        Display a formatted table of the sources. If props is given, then
+        display the property lists for each sources as well.
+
+        :param bool shall: Whether to show monitors (defaults to True)
+        :param bool props: Display the property list for each source
+        '''
+        for source in self.sources:
+            if shall or source.proplist.get("device.class", None) != "monitor":
+                self.display_source(source, props=props)
+
+    def find_source(self, query):
+        '''
+        Try to find a source that matches the given input query. The method of
+        searching is to see if the query is an exact match to the source name,
+        description, or index. A hyphen (-) can be given as the query to
+        return the default source. If the query does not match _exactly_ one
+        source, then None is returned. For convience, if a PulseSourceInfo
+        object is given, it will be returned.
+
+        :param query: The query of the source to search for
+        :type query: str or int or PulseSourceInfo
+        :return: The source found
+        :rtype: PulseSourceInfo or None
+        '''
+        if isinstance(query, PulseSourceInfo):
+            return query
+
+        query = str(query) if query != '-' else self.default_source
+        res = tuple(sc for sc in self.sources
+                    if query in (sc.name, sc.description, str(sc.index)))
+
+        return len(res) == 1 and res[0] or None
+
+    def get_source_volumes(self, source, names=False):
+        '''
+        Retrieve the volumes for each channel of a source. If names is set,
+        then the result will be a dict with the channel name as the key and
+        volume as the value.
+
+        :param source: The source object or query string
+        :type source: PulseSourceInfo or str or int
+        :param bool names: Whether or not to include channel names
+        :return: A tuple of volumes or dict of name:volume pairs
+        :rtype: tuple or dict
+        :raises ValueError: If source not found
+        '''
+        scobj = self.find_source(source)
+        if not scobj:
+            raise ValueError(f"Source {source} not found")
+
+        if names:
+            return {n: trueround(v * 100)
+                    for n, v in zip(scobj.channel_list, scobj.volume.values)}
+        else:
+            return tuple(trueround(value * 100)
+                         for value in scobj.volume.values)
+
+    def is_source_muted(self, source):
+        '''
+        Retrieves whether or not a source is muted.
+
+        :param source: The source object or query string
+        :type source: PulseSourceInfo or str or int
+        :return: The mute status of the source
+        :rtype: int
+        :raises ValueError: If source not found
+        '''
+        scobj = self.find_source(source)
+        if not scobj:
+            raise ValueError(f"Source {source} not found")
+        return scobj.mute
+
+    def mute_source(self, source, mute):
+        '''
+        Set the mute status of a source.
+
+        :param source: The source object or query string
+        :type source: PulseSourceInfo or str or int
+        :param mute: '0' (mute), '1' (audible), or 't' (toggle)
+        :type mute: str or int
+        :raises ValueError: If source not found or the mute state is invalid
+        '''
+        scobj = self.find_source(source)
+        if not scobj:
+            raise ValueError(f"Source {source} not found")
+
+        if mute == 't':
+            mute = 0 if scobj.mute else 1
+
+        if mute is not None:
+            self._client.source_mute(scobj.index, int(mute))
+        else:
+            raise ValueError(f"Mute should be '0', '1', or 't' not {mute}")
+
+    def set_source_volumes(self, source, volumes):
+        '''
+        Set the volume for the channels of a source.
+
+        :param source: The source object or query string
+        :type source: PulseSourceInfo or str or int
+        :param volumes: The volumes for each channel or a flat volume
+        :type volumes: list or tuple
+        :raises ValueError: If source not found or incorrect channel count
+        '''
+        scobj = self.find_source(source)
+        if not scobj:
+            raise ValueError(f"Source {source} not found")
+
+        if len(volumes) == scobj.channel_count:
+            volinfo = PulseVolumeInfo([v / 100 for v in volumes])
+        elif len(volumes) == 1:
+            flatvol = [v / 100 for v in volumes]
+            volinfo = PulseVolumeInfo(flatvol * scobj.channel_count)
+        else:
+            raise ValueError(f"Source {source} has {scobj.channel_count} "
+                             "channels. Provide a volume per channel or a "
+                             "single flat volume")
+
+        self._client.source_volume_set(scobj.index, volinfo)
+
+    def set_source_volumes_relative(self, source, volumes):
+        '''
+        Adjust the volume for the channels of a source by a relative amount
+
+        :param source: The source object or query string
+        :type source: PulseSourceInfo or str or int
+        :param volumes: The relative volume(s) to adjust by
+        :type volumes: list or tuple
+        :raises ValueError: If source not found or incorrect channel count
+        '''
+        scobj = self.find_source(source)
+        if not scobj:
+            raise ValueError(f"Source {source} not found")
+
+        current = scobj.volume.values
+        if len(volumes) == scobj.channel_count:
+            volinfo = PulseVolumeInfo([c + v / 100
+                                       for c, v in zip(current, volumes)])
+        elif len(volumes) == 1:
+            volinfo = PulseVolumeInfo([c + volumes[0] / 100 for c in current])
+        else:
+            raise ValueError(f"Source {source} has {scobj.channel_count}"
+                             "channels. Provide a volume per channel or a "
+                             "single flat volume")
+
+        self._client.source_volume_set(scobj.index, volinfo)
+
+
+class SourceOutputController(BaseController):
+    '''
+    Wrapper around source-outputs in PulseAudio.
+    '''
+
+    def __init__(self, clientobj):
+        '''
+        Create a wrapper around source-outputs.
+        '''
+        BaseController.__init__(self, clientobj)
+
+    def display_source_output(self, soutput, pid=False, props=False):
+        '''
+        Display source-outputs for the client. The source-output may be given
+        as a query or PulseSourceOutputInfo object. If a query is given, the
+        pid keyword will control whether or not to search based on the pid of
+        the application associated with the source-output. If props is given,
+        the property list will be outputted.
+
+        :param soutput: The source-output or query
+        :type soutput: PulseSourceInfo or None
+        :param bool pid: Whether or not to interpret the query as a pid
+        :param bool props: Whether or not to output the property lists
+        :raises ValueError: If the source-output is not found
+        :raises RuntimeError: If output is associated with an unknown source
+        '''
+        # Find the source-output
+        soobj = self.find_source_output(soutput, pid=pid)
+        if not soobj:
+            raise ValueError(f"source-output {soutput} not found")
+
+        # Find the source that it is being outputted to
+        sobj = self.find_source(soobj.source)
+        if not soobj:
+            raise RuntimeError(f"source-output {soutput} is using unknown "
+                               "source")
+
+        # Indicitors
+        muteind = soobj.mute and 'M' or ' '
+
+        # Print basic information
+        width = max(30, self.max_source_output_width)
+        sourcewidth = max(30, self.max_source_width)
+        print(f"{soobj.index:6} {soobj.name:{width}} {soobj.source:2} ",
+              f"{sobj.name:{sourcewidth}} {muteind}", end='')
+        for value in soobj.volume.values:
+            print(f" {trueround(value * 100):3}", end='')
+        print()
+
+        # If desired, print proplist
+        if props:
+            size = len(max(soobj.proplist.keys(), key=len))
+            for key, value in sorted(soobj.proplist.items()):
+                print(f"\t{key:{size}}\t{value}")
+            print()
+
+    def display_source_outputs(self, shall=False, props=False):
+        '''
+        Display the source-outputs in a table. If the props keyword is
+        True, then the property lists will be outputted.
+        '''
+        for soutput in self.source_outputs:
+            self.display_source_output(soutput, props=props)
+
+    def find_source_output(self, query, pid=False):
+        '''
+        Try to find a source-output that matches a given output query. By
+        default, the search checks to see if the name or index of any
+        source-output matches the query. If the pid keyword is set to True,
+        then the property `application.process.id` is checked instead. If the
+        query does not match _exactly_ one source-output, then None is
+        returned. For convience, if a PulseSourceOutputInfo is given as the
+        query, it will be returned.
+
+        :param query: The query of the source-output to search for
+        :type query: str or int or PulseSourceOutputInfo
+        :param bool pid: Check the associated pid instead (default is False)
+        :return: The source-output found
+        :rtype: PulseSourceOutputInfo or None
+        '''
+        if isinstance(query, PulseSourceOutputInfo):
+            return query
+
+        query = str(query)
+        if pid:
+            res = tuple(s for s in self.source_outputs
+                        if str(query) in (s.pid, ))
+        else:
+            res = tuple(s for s in self.source_outputs
+                        if str(query) in (s.name, str(s.index)))
+
+        return len(res) == 1 and res[0] or None
+
+    def get_source_output_pid(self, soutput):
+        '''
+        Retrieve the pid of the source-output.
+
+        :param soutput: The source-output or query string
+        :type soutput: PulseSourceOutputInfo or str or int
+        :return: The pid of the source-output, if one is associated
+        :rtype: int or None
+        '''
+        soobj = self.find_source_output(soutput, pid=False)
+        if not soobj:
+            raise ValueError(f"Source-output {soutput} not found")
+        return soobj.pid
+
+    def get_source_output_source(self, soutput, pid=False):
+        '''
+        Retrieve which source a source-output is playing out of.
+
+        :param soutput: The source-output object or query string
+        :type soutput: PulseSourceOutputInfo or str or int
+        :param bool pid: Whether or not to interpret the query as a pid
+        :return: The source
+        :rtype: PulseSourceInfo
+        :raises ValueError: If the source-output is not found
+        '''
+        soobj = self.find_source_output(soutput, pid=pid)
+        if not soobj:
+            raise ValueError(f"Source-output {soutput} not found")
+        return self.find_source(soobj.source)
+
+    def get_source_output_volumes(self, soutput, names=False, pid=False):
+        '''
+        Retrieve the volumes for each channel of a source-output. If names is
+        set, then the result will be a dict with the channel name as the key
+        and volume as the value.
+
+        :param soutput: The source-output object or query string
+        :type soutput: PulseSourceOutputInfo or str or int
+        :param bool names: Whether or not to include channel names
+        :param bool pid: Whether or not to interpret the query as a pid
+        :return: A tuple of volumes or dict of name:volume pairs
+        :rtype: tuple or dict
+        :raises ValueError: If source-output not found
+        '''
+        soobj = self.find_source_output(soutput, pid=pid)
+        if not soobj:
+            raise ValueError(f"Source-output {soutput} not found")
+
+        if names:
+            return {n: trueround(v * 100)
+                    for n, v in zip(soobj.channel_list, soobj.volume.values)}
+        else:
+            return tuple(trueround(value * 100)
+                         for value in soobj.volume.values)
+
+    def is_source_output_muted(self, soutput, pid=False):
+        '''
+        Retrieves whether or not a source-output is muted.
+
+        :param soutput: The source-output object or query string
+        :type soutput: PulseSourceOutputInfo or str or int
+        :param bool pid: Whether or not to treat the query as a pid
+        :return: The mute status of the source-output
+        :rtype: int
+        :raises ValueError: If source-output not found
+        '''
+        soobj = self.find_source_output(soutput, pid=pid)
+        if not soobj:
+            raise ValueError(f"Source-output {soutput} not found")
+        return soobj.mute
+
+    def move_source_output(self, soutput, source, pid=False):
+        '''
+        Move a source-output to a source.
+
+        :param soutput: The source-output object or query string
+        :type soutput: PulseSourceOutputInfo or str or int
+        :param source: The source object or query string
+        :type source: PulseSourceInfo or str or int
+        :param bool pid: Whether or not to interpret the query as a pid
+        :raises ValueError: If the source-output or source is not found
+        '''
+        # Find source-output
+        soobj = self.find_source_output(soutput, pid=pid)
+        if not soobj:
+            raise ValueError(f"Source-output {soutput} not found")
+
+        # Find source
+        sobj = self.find_source(source)
+        if not sobj:
+            raise ValueError(f"Source {source} not found")
+
+        # Move to source
+        self._client.source_output_move(soobj.index, sobj.index)
+
+    def mute_source_output(self, soutput, mute, pid=False):
+        '''
+        Set the mute status of a source-output.
+
+        :param soutput: The source-output object or query string
+        :type soutput: PulseSourceOutputInfo or str or int
+        :param mute: '0' (mute), '1' (audible), or 't' (toggle)
+        :type mute: str or int
+        :param bool pid: Whether or not to treat the query as a pid
+        :raises ValueError: If source-output not found or invalid mute status
+        '''
+        soobj = self.find_source_output(soutput)
+        if not soobj:
+            raise ValueError(f"Source-output {soutput} not found")
+
+        if mute == 't':
+            mute = 0 if soobj.mute else 1
+
+        if mute is not None:
+            self._client.source_output_mute(soobj.index, int(mute))
+        else:
+            raise ValueError(f"Mute should be '0', '1', or 't' not {mute}")
+
+    def set_source_output_volumes(self, soutput, volumes, pid=False):
+        '''
+        Set the volume for the channels of a source-output.
+
+        :param soutput: The source-output object or query string
+        :type soutput: PulseSourceOutputInfo or str or int
+        :param volumes: The volumes for each channel or a flat volume
+        :type volumes: list or tuple
+        :param bool pid: Whether or not to interpret the query as a pid
+        :raises ValueError: If source not found or incorrect channel count
+        '''
+        soobj = self.find_source_output(soutput, pid=pid)
+        if not soobj:
+            raise ValueError(f"Source-output {soutput} not found")
+
+        if len(volumes) == soobj.channel_count:
+            volinfo = PulseVolumeInfo([v / 100 for v in volumes])
+        elif len(volumes) == 1:
+            flatvol = [v / 100 for v in volumes]
+            volinfo = PulseVolumeInfo(flatvol * soobj.channel_count)
+        else:
+            raise ValueError(f"Source-output {soutput} has "
+                             f"{soobj.channel_count} channels. Provide a "
+                             "volume per channel or a single flat volume")
+
+        self._client.source_output_volume_set(soobj.index, volinfo)
+
+    def set_source_output_volumes_relative(self, soutput, volumes, pid=False):
+        '''
+        Adjust the volume for the channels of a source-output by a relative
+        amount.
+
+        :param soutput: The source-output object or query string
+        :type soutput: PulseSourceOutputInfo or str or int
+        :param volumes: The relative volume(s) to adjust by
+        :type volumes: list or tuple
+        :param bool pid: Whether or not to interpret the query as a pid
+        :raises ValueError: If source not found or incorrect channel count
+        '''
+        soobj = self.find_source_output(soutput, pid=pid)
+        if not soobj:
+            raise ValueError(f"Source-output {soutput} not found")
+
+        current = soobj.volume.values
+        if len(volumes) == soobj.channel_count:
+            volinfo = PulseVolumeInfo([c + v / 100
+                                       for c, v in zip(current, volumes)])
+        elif len(volumes) == 1:
+            volinfo = PulseVolumeInfo([c + volumes[0] / 100 for c in current])
+        else:
+            raise ValueError(f"Source-output {soutput} has "
+                             f"{soobj.channel_count} channels. Provide a "
+                             "volume per channel or a single flat volume")
+
+        self._client.source_output_volume_set(soobj.index, volinfo)
 
 
 class RSFPACParser(object):
@@ -772,6 +1332,107 @@ class RSFPACParser(object):
         sinpvol.add_argument('volumes', type=int, nargs='+',
                 help="the volume(s) to set the sink-input channel(s) to")
 
+        # sources sub-parser
+        sources = subpar.add_parser('sources', aliases=['sc'],
+                help="retrieve information about one or more sources")
+        sources.add_argument('-m', '--nomonitors', action='store_false',
+                help="exclude monitors from source list")
+        sources.add_argument('-P', '--props', action='store_true',
+                help="show the property list for source")
+        sources.add_argument('source', type=str, nargs='?',
+                help="the source to display information for ('-' for default)")
+
+        # source-default sub-parser
+        sourcedef = subpar.add_parser('source-default', aliases=['scd'],
+                help="retrieve or set the default source")
+        sourcedef.add_argument('source', type=str, nargs='?',
+                help="the source to set as default")
+
+        # source-mute sub-parser
+        sourcemute = subpar.add_parser('source-mute', aliases=['scm'],
+                help="retrieve or set the mute status of a source")
+        sourcemute.add_argument('source', type=str,
+                help="the source to g/set the mute state of ('-' for default)")
+        sourcemute.add_argument('mute', type=str, choices=['0', '1', 't'],
+                nargs='?', help="the mute status to set")
+
+        # source-volume sub-parser
+        sourcevol = subpar.add_parser('source-volume', aliases=['scv'],
+                help="retrieve or set the volumes for a source")
+        sourcevol.add_argument('-n', '--names', action='store_true',
+                help='display the channel name(s) with the volume')
+        sourcevol.add_argument('source', type=str,
+                help="the source to get/set the volumes for ('-' for default)")
+        sourcevol.add_argument('volumes', type=int, nargs='*',
+                help="the volume(s) to set the source channel(s) to")
+
+        # source-volume-relative sub-parser
+        sourcevolrel = subpar.add_parser('source-volume-relative',
+                aliases=['scvr'], help="set the relative volumes for a source")
+        sourcevolrel.add_argument('source', type=str,
+                help="the source to get/set the volumes for ('-' for default)")
+        sourcevolrel.add_argument('volumes', type=int, nargs='+',
+                help="the relative volume(s) to adjust the source channel(s)")
+
+        # source-outputs sub-parser
+        soutputs = subpar.add_parser('source-outputs', aliases=['so'],
+                help="retrieve information about one or more source-outputs")
+        soutputs.add_argument('-P', '--props', action='store_true',
+                help="show the property list for the source-outputs")
+        soutputs.add_argument('-p', '--pid', action='store_true',
+                help="attempt to search for a source-output for a pid")
+        soutputs.add_argument('sourceoutput', type=str, nargs='?',
+                help="the source-output to display information for")
+
+        # source-output-mute sub-parser
+        soutmute = subpar.add_parser('source-output-mute', aliases=['som'],
+                help="retrieve or set the mute status of a source-output")
+        soutmute.add_argument('-p', '--pid', action='store_true',
+                help="attempt to search for a source-output for a pid")
+        soutmute.add_argument('sourceoutput', type=str,
+                help="the source-output to retrieve/set the mute status for")
+        soutmute.add_argument('mute', type=str, choices=['0', '1', 't'],
+                nargs='?', help="the mute status to set")
+
+        # source-output-pid sub-parser
+        soutpid = subpar.add_parser('source-output-pid', aliases=['sop'],
+                help="retrieve the pid of a source-output")
+        soutpid.add_argument('sourceoutput', type=str,
+                help="the source-output to retrieve the pid for")
+
+        # source-output-source sub-parser
+        soutsource = subpar.add_parser('source-output-source', aliases=['sos'],
+                help="retrieve/set the source that a source-output is using")
+        soutsource.add_argument('-p', '--pid', action='store_true',
+                help="attempt to search for a source for a pid")
+        soutsource.add_argument('sourceoutput', type=str,
+                help="the source-output to retrieve/set the source for")
+        soutsource.add_argument('source', type=str, nargs='?',
+                help="the source to move the source to ('-' for default)")
+
+        # source-output-volumes sub-parser
+        soutvol = subpar.add_parser('source-output-volumes', aliases=['sov'],
+                help="retrieve or set the volume(s) for a source-output")
+        soutvol.add_argument('-n', '--names', action='store_true',
+                help='display the channel name(s) with the volume')
+        soutvol.add_argument('-p', '--pid', action='store_true',
+                help="attempt to search for a source for a pid")
+        soutvol.add_argument('sourceoutput', type=str,
+                help="the source-output to retrieve/set the volume for")
+        soutvol.add_argument('volumes', type=int, nargs='*',
+                help="the volume(s) to set the source-output channel(s) to")
+
+        # source-output-volumes-relative sub-parser
+        soutvol = subpar.add_parser('source-output-volumes-relative',
+                aliases=['sovr'],
+                help="adjust the volume(s) for a source-output relatively")
+        soutvol.add_argument('-p', '--pid', action='store_true',
+                help="attempt to search for a source for a pid")
+        soutvol.add_argument('sourceoutput', type=str,
+                help="the source-output to retrieve/set the volume for")
+        soutvol.add_argument('volumes', type=int, nargs='+',
+                help="the volume(s) to set the source-output channel(s) to")
+
     def parse_args(self, args):
         '''
         Parse the arguments.
@@ -800,7 +1461,8 @@ class RSFPACParser(object):
                 raise
 
 
-class RSFPulseAudioController(SinkController, SinkInputController):
+class RSFPulseAudioController(SinkController, SinkInputController,
+                              SourceController, SourceOutputController):
     '''
     My wrapper around PulseAudio to allow for easier controlling.
     '''
@@ -814,6 +1476,7 @@ class RSFPulseAudioController(SinkController, SinkInputController):
         client = clientobj or Pulse('rsfpac')
         SinkController.__init__(self, client)
         SinkInputController.__init__(self, client)
+        SourceController.__init__(self, client)
         self.__parser = RSFPACParser(interactive=interactive)
 
     def __enter__(self):
@@ -890,7 +1553,7 @@ class RSFPulseAudioController(SinkController, SinkInputController):
                 return self.display_sink_inputs(props=args.props,
                                                 shall=args.showall)
         elif args.command in ('sink-input-mute', 'sim'):
-            # Eithr show mute status or mute a sink-input
+            # Either show mute status or mute a sink-input
             if args.mute:
                 return self.mute_sink_input(args.sinkinput, args.mute,
                                             pid=args.pid)
@@ -921,6 +1584,79 @@ class RSFPulseAudioController(SinkController, SinkInputController):
             return self.set_sink_input_volumes_relative(args.sinkinput,
                                                         args.volumes,
                                                         pid=args.pid)
+        elif args.command in ('sources', 'sc'):
+            # Show the information for one or more sources
+            if args.source:
+                return self.display_source(args.source, props=args.props)
+            else:
+                return self.display_sources(shall=args.nomonitors,
+                                            props=args.props)
+        elif args.command in ('source-default', 'scd'):
+            # Either display the default source or set it
+            if args.source:
+                self.default_source = args.source
+            else:
+                return self.default_source
+        elif args.command in ('source-mute', 'scm'):
+            # Either show mute status or mute a source
+            if args.mute:
+                return self.mute_source(args.source, args.mute)
+            else:
+                return self.is_source_muted(args.source)
+        elif args.command in ('source-volume', 'scv'):
+            # Either show the volumes or set the volumes for a source
+            if args.volumes:
+                return self.set_source_volumes(args.source, args.volumes)
+            else:
+                return self.get_source_volumes(args.source, names=args.names)
+        elif args.command in ('source-volume-relative', 'scvr'):
+            # Adjust the source channel(s) by the relative volume(s)
+            return self.set_source_volumes_relative(args.source, args.volumes)
+        elif args.command in ('source-outputs', 'so'):
+            # Either display a single source-output or all source-outputs
+            if args.sourceoutput:
+                return self.display_source_output(args.sourceoutput,
+                                                  pid=args.pid,
+                                                  props=args.props)
+            else:
+                return self.display_source_outputs(props=args.props)
+        elif args.command in ('source-output-mute', 'som'):
+            # Either show mute status or mute a source-output
+            if args.mute:
+                return self.mute_source_output(args.sourceoutput, args.mute,
+                                               pid=args.pid)
+            else:
+                return self.is_source_output_muted(args.sourceoutput,
+                                                   pid=args.pid)
+        elif args.command in ('source-output-pid', 'sop'):
+            # Show the pid for a source-output
+            return self.get_source_output_pid(args.sourceoutput)
+        elif args.command in ('source-output-source', 'sos'):
+            # Either show the source that a source-output is set to or move a
+            # source-output to a source
+            if args.source:
+                return self.move_source_output(args.sourceoutput, args.source,
+                                               pid=args.pid)
+            else:
+                return self.get_source_output_source(args.sourceoutput,
+                                                     pid=args.pid)
+        elif args.command in ('source-output-volumes', 'sov'):
+            # Either show the volumes or set the volumes for a source-output
+            if args.volumes:
+                return self.set_source_output_volumes(args.sourceoutput,
+                                                      args.volumes,
+                                                      pid=args.pid)
+            else:
+                return self.get_source_output_volumes(args.sourceoutput,
+                                                      names=args.names,
+                                                      pid=args.pid)
+        elif args.command in ('source-output-volumes-relative', 'sovr'):
+            # Adjust the volumes for a source-output by a relative amount
+            return self.set_source_output_volumes_relative(args.sourceoutput,
+                                                           args.volumes,
+                                                           pid=args.pid)
+        else:
+            return "Unknown Command: {args.command}"
 
     def repl(self):
         '''
@@ -965,6 +1701,8 @@ if __name__ == "__main__":
         if interactive:
             rsfpac.repl()
         else:
-            rsfpac.run(sys.argv[1:])
+            val = rsfpac.run(sys.argv[1:])
+            if val is not None:
+                print(val)
 
 # vim:ft=python:ts=4:sts=4:et:fdm=indent

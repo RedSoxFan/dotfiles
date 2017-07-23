@@ -16,7 +16,7 @@ label=
 command=echo $(playerctl status 2>/dev/null | sed "s/Playing//" | sed -r "s/Paused//")" "$(playerctl metadata 'xesam:artist' 2> /dev/null)" - "$(playerctl metadata 'xesam:title' 2> /dev/null) | sed "s/  - //"
 
 [volume]
-command=SINK=$(pactl info | grep -E -o "Default Sink: [A-Za-z0-9_.]+" | cut -d" " -f3-) && echo $(pacmd list-sinks | grep -P '(name: <'$SINK'>|(?<!base )volume:|muted:)' | grep -A2 $SINK | grep -E -o "($SINK|[0-9]+%|yes|no)") | sed -r "s/^(.*) (yes|no)$/\2 \1/" | sed "s/yes//" | sed "s/no//" | sed -r "s/^(.*) ([0-9]+%) \2$/\1 \2/" | sed "s/bluez_sink.00_14_BE_88_3A_CD.a2dp_sink/BHS-730/"
+command=~/.local/share/bin/rsfpac sd -i3
 interval=1
 
 [ethernet]

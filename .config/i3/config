@@ -215,9 +215,12 @@ bindsym $mod+m exec i3-input -F '[con_mark="^%s$"] focus' -P 'Go to: '
 bindsym $mod+Control+m exec i3-input -F 'unmark %s' -P 'Mark: '
 
 # audio
-bindsym XF86AudioMute exec "amixer sset Master,0 toggle"
-bindsym XF86AudioRaiseVolume exec "amixer sset Master,0 500+"; exec "amixer sset Master,0 $(amixer sget Master,0 | grep -P -o 'Left:\s*Playback\s*\d+' | cut -d' ' -f3)"
-bindsym XF86AudioLowerVolume exec "amixer sset Master,0 500-"; exec "amixer sset Master,0 $(amixer sget Master,0 | grep -P -o 'Left:\s*Playback\s*\d+' | cut -d' ' -f3)"
+set $RSFPAC ~/.local/share/bin/rsfpac
+bindsym XF86AudioMute exec $RSFPAC sm - t
+bindsym XF86AudioRaiseVolume exec $RSFPAC svr - 5
+bindsym Shift+XF86AudioRaiseVolume exec $RSFPAC svr - 1
+bindsym XF86AudioLowerVolume exec $RSFPAC svr - -5
+bindsym Shift+XF86AudioLowerVolume exec $RSFPAC svr - -1
 bindsym XF86AudioPlay exec playerctl play-pause
 bindsym XF86AudioStop exec playerctl stop
 bindsym XF86AudioPrev exec playerctl previous
@@ -280,13 +283,16 @@ mode "launcher" {
         bindsym g exec google-chrome-stable --incognito; mode "default"
         bindsym h exec chromium --app=http://www.accuweather.com/en/us/nashua-nh/03064/hourly-weather-forecast/329509; mode "default"
         bindsym n exec thunar; mode "default"
-        bindsym o exec bash -c "GTK2_RC_FILES=/usr/share/themes/Vertex-Light/gtk-2.0/gtkrc opera-developer"; mode "default"
+        bindsym o exec bash -c "GTK2_RC_FILES=/usr/share/themes/Vertex-Light/gtk-2.0/gtkrc opera"; mode "default"
         bindsym r exec urxvt -name ranger -e ranger; mode "default"
 
         # Shell + Editors
         bindsym a exec urxvt -name agenda -e ~/.local/share/bin/agenda; mode "default"
         bindsym p exec urxvt -name rsfpac -e ~/.local/share/bin/rsfpac; mode "default"
         bindsym v exec urxvt -name vim -e vim; mode "default"
+
+        # Documents
+        bindsym l exec libreoffice -writer; mode "default"
 
         # Misc
         bindsym s exec spotify; mode "default"
@@ -300,7 +306,7 @@ mode "launcher" {
         bindsym Return mode "default"
         bindsym Escape mode "default"
 
-        # Available Letters: ---d----ijklm---q---u--xyz
+        # Available Letters: ---d----ijk-m---q---u--xyz
         # Available Numbers: 1234567890
 }
 
@@ -333,33 +339,35 @@ bindsym $mod+i mode "video"
 # restore workspaces
 mode "restore" {
         # All
-        bindsym grave exec /home/brian/.local/share/bin/i3-restore-workspace -; mode "default"
+        bindsym grave exec ~/.local/share/bin/i3-restore-workspace -; mode "default"
 
         # Current
-        bindsym space exec /home/brian/.local/share/bin/i3-restore-workspace; mode "default"
+        bindsym space exec ~/.local/share/bin/i3-restore-workspace; mode "default"
 
         # Specifics
-        bindsym 1 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL1"; mode "default"
-        bindsym 2 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL2"; mode "default"
-        bindsym 3 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL3"; mode "default"
-        bindsym 4 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL4"; mode "default"
-        bindsym 5 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL5"; mode "default"
-        bindsym 6 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL6"; mode "default"
-        bindsym 7 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL7"; mode "default"
-        bindsym 8 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL8"; mode "default"
-        bindsym 9 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL9"; mode "default"
-        bindsym 0 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSL0"; mode "default"
-        bindsym $sec+1 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH1"; mode "default"
-        bindsym $sec+2 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH2"; mode "default"
-        bindsym $sec+3 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH3"; mode "default"
-        bindsym $sec+4 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH4"; mode "default"
-        bindsym $sec+5 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH5"; mode "default"
-        bindsym $sec+6 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH6"; mode "default"
-        bindsym $sec+7 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH7"; mode "default"
-        bindsym $sec+8 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH8"; mode "default"
-        bindsym $sec+9 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH9"; mode "default"
-        bindsym $sec+0 exec /home/brian/.local/share/bin/i3-restore-workspace "$WSH0"; mode "default"
-        bindsym $sec+v exec /home/brian/.local/share/bin/i3-restore-workspace "$WSVG"; mode "default"
+        bindsym 1 exec ~/.local/share/bin/i3-restore-workspace "$WSL1"; mode "default"
+        bindsym 2 exec ~/.local/share/bin/i3-restore-workspace "$WSL2"; mode "default"
+        bindsym 3 exec ~/.local/share/bin/i3-restore-workspace "$WSL3"; mode "default"
+        bindsym 4 exec ~/.local/share/bin/i3-restore-workspace "$WSL4"; mode "default"
+        bindsym 5 exec ~/.local/share/bin/i3-restore-workspace "$WSL5"; mode "default"
+        bindsym 6 exec ~/.local/share/bin/i3-restore-workspace "$WSL6"; mode "default"
+        bindsym 7 exec ~/.local/share/bin/i3-restore-workspace "$WSL7"; mode "default"
+        bindsym 8 exec ~/.local/share/bin/i3-restore-workspace "$WSL8"; mode "default"
+        bindsym 9 exec ~/.local/share/bin/i3-restore-workspace "$WSL9"; mode "default"
+        bindsym 0 exec ~/.local/share/bin/i3-restore-workspace "$WSL0"; mode "default"
+        bindsym $sec+1 exec ~/.local/share/bin/i3-restore-workspace "$WSH1"; mode "default"
+        bindsym $sec+2 exec ~/.local/share/bin/i3-restore-workspace "$WSH2"; mode "default"
+        bindsym $sec+3 exec ~/.local/share/bin/i3-restore-workspace "$WSH3"; mode "default"
+        bindsym $sec+4 exec ~/.local/share/bin/i3-restore-workspace "$WSH4"; mode "default"
+        bindsym $sec+5 exec ~/.local/share/bin/i3-restore-workspace "$WSH5"; mode "default"
+        bindsym $sec+6 exec ~/.local/share/bin/i3-restore-workspace "$WSH6"; mode "default"
+        bindsym $sec+7 exec ~/.local/share/bin/i3-restore-workspace "$WSH7"; mode "default"
+        bindsym $sec+8 exec ~/.local/share/bin/i3-restore-workspace "$WSH8"; mode "default"
+        bindsym $sec+9 exec ~/.local/share/bin/i3-restore-workspace "$WSH9"; mode "default"
+        bindsym $sec+0 exec ~/.local/share/bin/i3-restore-workspace "$WSH0"; mode "default"
+        bindsym $sec+v exec ~/.local/share/bin/i3-restore-workspace "$WSVG"; mode "default"
+
+        bindsym s exec urxvt -e ~/.local/share/bin/i3-save-workspace; mode "default"
 
         # Back to normal
         bindsym Return mode "default"
@@ -385,10 +393,10 @@ mode "android" {
 }
 bindsym $mod+b mode "android"
 
-# Colors
-client.focused 			#666666 #666666 #ffffff #999999 #666666
-client.focused_inactive	#222222 #222222 #ffffff #222222 #222222
-client.unfocused		#000000 #000000 #ffffff #000000 #000000
+# Colors                        border  back    text    ind     child
+client.focused 			#666666 #222222 #ffffff #444444 #666666
+client.focused_inactive	        #222222 #222222 #ffffff #222222 #222222
+client.unfocused		#111111 #111111 #ffffff #111111 #000000
 client.urgent			#881000 #881000 #000000 #881000 #881000
 client.background		#111111
 
@@ -426,55 +434,8 @@ assign [class="Opera"] $WSL2
 
 ## End App Settings##
 
-# Start i3blocks
-bar {
-        colors {
-                background #111111
-                statusline #ffffff
-                separator #444444
-                focused_background #111111
-                focused_statusline #ffffff
-                focused_separator #444444
-
-                focused_workspace #666666 #666666 #ffffff
-                active_workspace #444444 #444444 #ffffff
-                inactive_workspace #222222 #222222 #ffffff
-                urgent_workspace #111111 #111111 #ff0000
-
-                binding_mode #ffffff #111111 #ffffff
-        }
-
-        strip_workspace_numbers yes
-        status_command i3blocks
-        output $LAPTOP
-        tray_output primary
-}
-
-bar {
-        colors {
-                background #111111
-                statusline #ffffff
-                separator #444444
-                focused_background #111111
-                focused_statusline #ffffff
-                focused_separator #444444
-
-                focused_workspace #666666 #666666 #ffffff
-                active_workspace #444444 #444444 #ffffff
-                inactive_workspace #222222 #222222 #ffffff
-                urgent_workspace #111111 #111111 #ff0000
-
-                binding_mode #ffffff #111111 #ffffff
-        }
-
-        strip_workspace_numbers yes
-        status_command i3blocks -c /home/brian/.config/i3blocks/config-external
-        output $EXTERNAL
-        output $VGAOUT
-        tray_output primary
-}
-
 # Startup
+exec --no-startup-id ~/.config/polybar/launch.sh
 exec --no-startup-id "amixer -c sset Master,0 87"
 exec --no-startup-id nm-applet
 exec --no-startup-id blueman-applet
