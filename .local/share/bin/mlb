@@ -35,7 +35,7 @@ def get_game_state(game):
         return f"{game['away_name_abbrev']} {game['away_team_runs']}, "\
                f"{game['home_name_abbrev']} {game['home_team_runs']}, "\
                f"{game['inning_state']} {number_with_suffix(game['inning'])}"
-    elif game['status'] == 'Preview':
+    elif game['status'] in ['Preview', 'Pre-Game']:
         return f"{game['away_name_abbrev']} @ {game['home_name_abbrev']} "\
                f"{time_24hour(game['time'], game['ampm'])}"
     elif game['status'] in ['Game Over', 'Final']:

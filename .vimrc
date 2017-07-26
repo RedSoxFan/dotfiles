@@ -55,6 +55,9 @@ Plugin 'Valloric/YouCompleteMe'
 let g:ycm_server_python_interpreter = '/usr/bin/python2'
 let g:ycm_autoclose_preview_window_after_completion = 1
 
+" Enable enhanced bulk modification
+Plugin 'terryma/vim-multiple-cursors'
+
 "" Syntax Files and Language Specific Enhancements
 
 " i3-vim-syntax
@@ -95,6 +98,13 @@ nnoremap <silent> <Esc><Esc> :let @/=""<CR>
 set backup
 set backupdir=~/.vim/backup
 set directory=/tmp
+
+""" netrw settings
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_browse_split = 4
+let g:netrw_altv = 1
+let g:netrw_winsize = 20
 
 """ Syntax defaults
 set tabstop=8 softtabstop=8 shiftwidth=8 noexpandtab
