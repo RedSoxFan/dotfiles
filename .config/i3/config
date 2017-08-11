@@ -445,7 +445,7 @@ exec --no-startup-id xset s 18000 18000
 exec --no-startup-id xset -dpms
 exec_always --no-startup-id numlockx on
 exec_always --no-startup-id xrandr --output $EXTERNAL --mode 1920x1080 --pos 1920x0
-exec_always --no-startup-id feh --bg-fill ~/.wallpaper
+exec_always --no-startup-id feh --bg-fill --no-fehbg ~/.wallpaper
 exec_always --no-startup-id synclient VertEdgeScroll=1
 exec_always --no-startup-id synclient TapButton1=1
 

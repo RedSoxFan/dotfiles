@@ -49,7 +49,7 @@ font-2 = HeavyData Nerd Font:size=20;2
 line-size = 0
 
 modules-left = weather cornerbl
-modules-center = mlb
+modules-center = sports
 modules-right = cornerbr pkg
 
 tray-position = right
@@ -105,7 +105,7 @@ label = "%output:0:30%  "
 
 [module/weather]
 type = custom/script
-exec = echo $(inxi -xxxw -c 0 | grep -E -o "[-]?[1]?[0-9]?[0-9] F" | sed 's/ /°/')" ("$(inxi -xxxw -c 0 | grep -E -o "Conditions: [-]?[0-9]+ F \([-]?[0-9]+ C\) - [A-Za-z0-9 ]+\:" | grep -E -o "\- [A-Za-z0-9 ]+ [A-Za-z]+\:" | cut -d" " -f2- | rev | cut -d" " -f2- | rev)")" | sed -r "s/^\s*\(\)$//"
+exec = echo $(inxi -xxxw -c 0 | grep -E -o "[-]?[1]?[0-9]?[0-9] F" | sed 's/ /°/' | tr '\n' ' ' | sed -r 's/^(.+)\1$/\1/')"("$(inxi -xxxw -c 0 | tee /home/brian/.weather | grep -E -o "Conditions: [-]?[0-9]+ F \([-]?[0-9]+ C\) - [A-Za-z0-9 ]+\:" | grep -E -o "\- [A-Za-z0-9 ]+ [A-Za-z]+\:" | cut -d" " -f2- | rev | cut -d" " -f2- | rev)")" | sed -r "s/^\s*\(\)$//"
 interval = 1800
 
 format =  <label>
@@ -114,10 +114,10 @@ format-background = ${colors.dark}
 format-padding = 1
 
 
-[module/mlb]
+[module/sports]
 type = custom/script
-exec = ~/.local/share/bin/mlb
-interval = 900
+exec = ~/.local/share/bin/sports
+interval = 300
 
 format-foreground = ${colors.white}
 format-background = ${colors.dark}

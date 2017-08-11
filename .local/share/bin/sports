@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+
+SOX=$(mlb)
+PATS=$(nfl --today)
+
+echo -e $SOX"         "$PATS | sed -r "s/^\s+|\s+$//g"

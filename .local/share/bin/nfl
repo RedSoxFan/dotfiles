@@ -1,0 +1,154 @@
+#!/usr/bin/env python2
+
+try:
+    import nflgame
+except ImportError:
+    raise SystemExit("Please install nflgame module (pip2 install nflgame)")
+
+
+import argparse
+import datetime
+import sys
+
+
+def games_for_week(year=None, week=None, phase=None, team=None, today=False):
+    '''
+    Retrieve the games for a given year/week/phase. If team is given, then
+    only return games if the team is involved.
+    :param int year: The year of the season (None for current)
+    :param int week: The week to look at (None for current)
+    :param str phase: 'PRE', 'REG', or 'POST' (None for current)
+    :param str team: The team abbreviation/name/city (None for all teams)
+    :param bool today: Only show today's games (default is this weeks)
+    :return tuple: The (year, week, phase) used and list of queried games
+    '''
+    # Get the current year/week/phase info and use them as defaults
+    nflgame.live._update_week_number()
+    year = int(year or nflgame.live._cur_year)
+    week = int(week or nflgame.live._cur_week)
+    phase = phase or nflgame.live._cur_season_phase
+
+    # Lookup the abbreviation in case the team city and/or name was provided
+    team = nflgame.standard_team(team)
+
+    # Get the games for the year/week/phase and if provided team criteria
+    games = []
+    for gid, info in nflgame.sched.games.items():
+        if info['year'] == year and info['week'] == week\
+                and info['season_type'] == phase \
+                and (not(today) or info['day'] == datetime.date.today().day) \
+                and (not(team) or team in (info['home'], info['away'])):
+            games.append(info)
+
+    # Return the resulting week info and games
+    return (year, week, phase), games
+
+
+def game_summary(game):
+    '''
+    Get the game summary. If final/halftime, display score. If playing,
+    display info. If future, display time.
+    :param nflgame.game.Game game: The game to format summary for
+    :return str: The game summary
+    '''
+    # Try to get the game state
+    state = nflgame.game.Game(eid=game['eid'])
+
+    # If there is no state or it is pregame, then return the game time
+    if not state or str(state.time).lower() == 'pregame':
+        # Get today's date, the game date, and the game time as 24 hour
+        today = datetime.date.today()
+        gmdate = datetime.date(game['year'], game['month'], game['day'])
+        time = time_24hour(game['time'], game['meridiem'])
+
+        # Show the month/day if the game is not today
+        date = ""
+        if today.timetuple() != gmdate.timetuple():
+            date = "{}/{} ".format(game['month'], game['day'])
+
+        # Show AWAY @ HOME [DATE ]TIME
+        return "{} @ {} {}{}".format(game['away'], game['home'], date, time)
+
+    # If it is halftime or the game is over, then just show the score
+    elif str(state.time).lower() in ['halftime', 'final', 'final overtime']:
+        # Display 'final overtime' as the cleaner 'Final/OT'
+        if str(state.time).lower() == 'final overtime':
+            state.time = "Final/OT"
+
+        # Show AWAY AWAY_SCORE, HOME HOME_SCORE, TIME
+        return "{} {}, {} {}, {}".format(state.away, state.score_away,
+                                         state.home, state.score_home,
+                                         state.time)
+
+    # If the game is actively being played, show basic summary
+    else:
+        # Determine possession indicators
+        aPos = state.data['posteam'] == state.away and '*' or ''
+        hPos = state.data['posteam'] == state.home and '*' or ''
+
+        # Away section: [POSSESSION]TEAM SCORE (TIMEOUTS)
+        away = "{}{} {} ({})".format(aPos, state.away, state.score_away,
+                                     state.data['away']['to'])
+
+        # Home section: [POSSESSION]TEAM SCORE (TIMEOUTS)
+        home = "{}{} {} ({})".format(hPos, state.home, state.score_home,
+                                     state.data['home']['to'])
+
+        # Info section: QUARTER MM:SS (DOWN-TOGO-YARDLINE)
+        info = "{} ({}-{}-{})".format(state.time, state.down, state.togo,
+                                      state.data['yl'])
+
+        # Combine the sections
+        return "{}, {}, {}".format(away, home, info)
+
+
+def time_24hour(time, ampm):
+    '''
+    Converts a 12 hour time to 24 hour time
+    :param str time: The 12 hour time in the form hours:minutes
+    :param str ampm: Either AM or PM
+    :return str: The 24 hour time
+    '''
+    hour, minute = map(int, time.split(':'))
+    if hour < 12:
+        if ampm == 'AM':
+            return "%02d:%02d" % (hour, minute)
+        else:
+            return "%02d:%02d" % (hour + 12, minute)
+    elif ampm == 'AM':
+        return "00:%02d" % (minute)
+    else:
+        return "12:%02d" % (minute)
+
+
+if __name__ == '__main__':
+    # Parse arguments
+    parser = argparse.ArgumentParser(description='Display state of NFL games')
+    parser.add_argument('team', nargs='?', default='Patriots',
+                        help="The team city, name, or abbrev (def: Patriots)")
+    parser.add_argument('year', nargs='?', default=None,
+                        help="The year of the season to query (def: Current)")
+    parser.add_argument('week', nargs='?', default=None,
+                        help="The week of the season to query (def: Current)")
+    parser.add_argument('phase', nargs='?', default=None,
+                        choices=['PRE', 'REG', 'POST'],
+                        help="The phase of season to query (def: Current)")
+    parser.add_argument('--today', action='store_true',
+                        help="Show today's game(s) instead of this week's")
+    args = parser.parse_args()
+
+    # Query the games for the week
+    (yr, wk, ph), games = games_for_week(year=args.year, week=args.week,
+                                         phase=args.phase, team=args.team,
+                                         today=args.today)
+
+    # If there is more than one game returned, show the week header since
+    # all games for the week were requested and not a single team's game
+    if len(games) > 1:
+        phase = {"PRE": "Pre-", "REG": "Regular ", "POST": "Post-"}
+        print "Week {} of the {} {}Season".format(wk, yr, phase[ph])
+        print "=" * 40
+
+    # Print the summary for all the games returned
+    for game in games:
+        print game_summary(game)

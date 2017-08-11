@@ -38,3 +38,6 @@ shopt -s autocd
 
 # Window Sizing Fix
 shopt -s checkwinsize
+
+# Set vi keybinds
+set -o vi

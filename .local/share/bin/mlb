@@ -31,7 +31,7 @@ def get_game_state(game):
     :param dict game: The game information
     :return str: The game status
     '''
-    if game['status'] == 'In Progress':
+    if game['status'] in ['In Progress', 'Manager Challenge']:
         return f"{game['away_name_abbrev']} {game['away_team_runs']}, "\
                f"{game['home_name_abbrev']} {game['home_team_runs']}, "\
                f"{game['inning_state']} {number_with_suffix(game['inning'])}"
@@ -61,7 +61,7 @@ def number_with_suffix(num):
 def time_24hour(time, ampm):
     '''
     Converts a 12 hour time to 24 hour time
-    :param str time: The 12 hour time in the for hours:minutes
+    :param str time: The 12 hour time in the form hours:minutes
     :param str ampm: Either AM or PM
     :return str: The 24 hour time
     '''
