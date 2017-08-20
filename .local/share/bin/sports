@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-SOX=$(mlb)
-PATS=$(nfl --today)
+SOX=$(mlb 2>/dev/null)
+PATS=$(nfl --today 2>/dev/null)
 
 echo -e $SOX"         "$PATS | sed -r "s/^\s+|\s+$//g"

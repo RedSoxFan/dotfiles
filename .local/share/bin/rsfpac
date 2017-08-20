@@ -246,18 +246,25 @@ class SinkController(BaseController):
         else:
             raise ValueError(f"Sink {sink} not found")
 
-    def display_default_sink_status(self):
+    def display_default_sink_status(self, description=False, volsym='\uf028',
+                                    mutesym='\uf026'):
         '''
-        Retrieve information about the default sink. This is designed to be
-        used with i3block and font awesome, but should work for any status
-        monitor.
+        Retrieve information about the default sink. This has been designed
+        to be used for status monitors. It has been tested with both i3blocks
+        and polybar with the FontAwesome font, but should work with any status
+        monitor. If you are using a font other than FontAwesome, you may need
+        to set volsym and mutesym.
 
+        :param bool description: Display the description instead of name
+        :param str volsym: The symbol to show for volume (def: \uf028)
+        :param str mutesym: The symbol to show when muted (def: \uf026)
         :return: The default sink status line
         :rtype: str
         '''
         defsink = self.find_sink('-')
-        muteind = defsink.mute and '\uf026' or '\uf028'
-        print(f"{muteind} {defsink.name}", end='')
+        muteind = defsink.mute and mutesym or volsym
+        title = defsink.description if description else defsink.name
+        print(f"{muteind} {title}", end='')
         if defsink.is_flat_volume:
             print(f" {trueround(defsink.volume.values[0] * 100)}%")
         else:
@@ -1240,8 +1247,14 @@ class RSFPACParser(object):
         # sink-default sub-parser
         sinkdef = subpar.add_parser('sink-default', aliases=['sd'],
                 help="retrieve or set the default sink")
-        sinkdef.add_argument('-i3', '--i3block', action='store_true',
-                help="format the default sink for an i3block")
+        sinkdef.add_argument('-s', '--status', action='store_true',
+                help="format the default sink for an status monitor")
+        sinkdef.add_argument('-d', '--description', action='store_true',
+                help="(-s only) show description instead of name")
+        sinkdef.add_argument('-v', '--volsym', type=str,
+                help="(-s only) set the volume indicator symbol")
+        sinkdef.add_argument('-m', '--mutesym', type=str,
+                help="(-s only) set the muted indicator symbol")
         sinkdef.add_argument('sink', type=str, nargs='?',
                 help="the sink to set as default")
 
@@ -1525,8 +1538,10 @@ class RSFPulseAudioController(SinkController, SinkInputController,
             # the default sink
             if args.sink:
                 self.default_sink = args.sink
-            elif args.i3block:
-                return self.display_default_sink_status()
+            elif args.status:
+                kws = {k:v for k,v in args.__dict__.items()
+                       if k in ('description', 'volsym', 'mutesym') and v}
+                return self.display_default_sink_status(**kws)
             else:
                 return self.default_sink
         elif args.command in ('sink-mute', 'sm'):

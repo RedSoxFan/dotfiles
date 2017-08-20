@@ -12,17 +12,37 @@ except ImportError:
 
 import argparse
 import datetime
+import re
 import sys
 
 
 def get_games(team, day):
     '''
     Get the information for games a team plays on the specified day
-    :param str team: The MLB team to get games for
-    :param datetime day: The day to get games for
+    :param str team: The MLB team to get games for (empty string for all)
+    :param datetime.datetime day: The day to get games for
+    :return tuple: A tuple of dicts representing game overviews
     '''
+    if not team:
+        team = None
+
     games = mlbgame.day(day.year, day.month, day.day, home=team, away=team)
+
+    # This shouldn't be needed, but mlbgame is occasionally returning games
+    # for an adjacent day
+    games = tuple(game for game in games if validate_date(game, day))
+
     return tuple(mlbgame.game.overview(game.game_id) for game in games)
+
+
+def validate_date(game, day):
+    '''
+    Validate whether the game actually occurs on the specified day or not
+    :param mlbgame.game.GameScoreboard game: The game to validate the date for
+    :param datetime day: The date to validate
+    :return bool: Whether or not the dates match
+    '''
+    return game.date.date().timetuple() == day.date().timetuple()
 
 
 def get_game_state(game):
@@ -45,6 +65,23 @@ def get_game_state(game):
     else:
         return f"{game['away_name_abbrev']} @ {game['home_name_abbrev']} "\
                f"{game['status']}"
+
+
+def print_game_plays(game_id):
+    '''
+    Print out the plays that have occured during a game
+    :param str game_id: The id of the game to get plays for
+    '''
+    events = mlbgame.game_events(game_id)
+    for inning in events:
+        for side in events[inning]:
+            if len(events[inning][side]) == 0:
+                continue
+
+            print(f"\t{side.title()} of the {number_with_suffix(inning)}")
+            for play in events[inning][side]:
+                fixed = re.sub('\s+', ' ', str(play))
+                print(f"\t\t{fixed}")
 
 
 def number_with_suffix(num):
@@ -84,6 +121,10 @@ if __name__ == "__main__":
                         help='The team to show game info for (def: Red Sox)')
     parser.add_argument('date', nargs='?',
                         help='The date to show game info for (def: Today)')
+    parser.add_argument('--list', '-1', action='store_true',
+                        help='List each game on new lines (def: / separated)')
+    parser.add_argument('--plays', action='store_true',
+                        help='Show the plays of the game (implies --list)')
     args = parser.parse_args()
 
     # Either parse the requested day or use today/tomorrow (0600 cutoff)
@@ -96,9 +137,19 @@ if __name__ == "__main__":
 
     # Get the game info requested
     info = []
+    gids = []
     for game in get_games(team=args.team, day=day):
         info.append(get_game_state(game))
+        gids.append(game['gameday_link'])
 
     # Print results
-    print(' / '.join(info))
+    if args.plays:
+        for game, game_id in zip(info, gids):
+            print(game)
+            print_game_plays(game_id)
+            print()
+    elif args.list:
+        print("\n".join(info))
+    else:
+        print(' / '.join(info))
 
