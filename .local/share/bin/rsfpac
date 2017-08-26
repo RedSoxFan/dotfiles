@@ -654,7 +654,7 @@ class SinkInputController(BaseController):
         :param bool pid: Whether or not to treat the query as a pid
         :raises ValueError: If sink-input not found or mute status is invalid
         '''
-        siobj = self.find_sink_input(sinput)
+        siobj = self.find_sink_input(sinput, pid=pid)
         if not siobj:
             raise ValueError(f"Sink-input {sinput} not found")
 
@@ -1142,7 +1142,7 @@ class SourceOutputController(BaseController):
         :param bool pid: Whether or not to treat the query as a pid
         :raises ValueError: If source-output not found or invalid mute status
         '''
-        soobj = self.find_source_output(soutput)
+        soobj = self.find_source_output(soutput, pid=pid)
         if not soobj:
             raise ValueError(f"Source-output {soutput} not found")
 
