@@ -1,16 +1,17 @@
-# i3 config file (v4)
-#
-# Please see http://i3wm.org/docs/userguide.html for a complete reference!
+# i3 config file - http://i3wm.org/docs/userguide.html
 
+# Preferences
 set $mod Mod4
 set $sec Mod1
+set $term urxvt -e zsh
+set $menu "rofi -show run -modi window,run"
 
-# Set Outputs
+# Devices
 set $LAPTOP "eDP1"
-set $EXTERNAL "HDMI2"
+set $HDMI "HDMI2"
 set $VGAOUT "DP1"
 
-# Set Workspace Names
+# Workspace Names
 set $WSL1 "1:MAIN"
 set $WSL2 "2:MEDIA"
 set $WSL3 "3:DEVEL"
@@ -44,46 +45,43 @@ workspace $WSL7 output $LAPTOP
 workspace $WSL8 output $LAPTOP
 workspace $WSL9 output $LAPTOP
 workspace $WSL0 output $LAPTOP
-workspace $WSH1 output $EXTERNAL
-workspace $WSH2 output $EXTERNAL
-workspace $WSH3 output $EXTERNAL
-workspace $WSH4 output $EXTERNAL
-workspace $WSH5 output $EXTERNAL
-workspace $WSH6 output $EXTERNAL
-workspace $WSH7 output $EXTERNAL
-workspace $WSH8 output $EXTERNAL
-workspace $WSH9 output $EXTERNAL
-workspace $WSH0 output $EXTERNAL
+workspace $WSH1 output $HDMI
+workspace $WSH2 output $HDMI
+workspace $WSH3 output $HDMI
+workspace $WSH4 output $HDMI
+workspace $WSH5 output $HDMI
+workspace $WSH6 output $HDMI
+workspace $WSH7 output $HDMI
+workspace $WSH8 output $HDMI
+workspace $WSH9 output $HDMI
+workspace $WSH0 output $HDMI
 workspace $WSVG output $VGAOUT
 
-# Font for window titles. Will also be used by the bar unless a different font
-# is used in the bar {} block below.
+# Font for window titles
 font pango:monospace,FontAwesome 8
 
-# Use Mouse+$mod to drag floating windows to their wanted position
+# Allow floating windows to be moved with LMB+$mod
 floating_modifier $mod
 
-# start a terminal
+# Launch a terminal
 bindsym $mod+Return exec urxvt -e zsh
-bindsym $mod+Shift+Return exec urxvt -e bash
 
 # kill focused window
 bindsym $mod+Shift+q kill
 # for when the window is subborn...
 bindsym $mod+Control+Shift+q exec kill -9 $(xdotool getactivewindow getwindowpid)
 
-# start rofi (a program launcher)
-bindsym $mod+d exec "rofi -show run -modi window,run"
+# Launch the run menu
+bindsym $mod+d exec $menu 
 
-# change focus
+# Move the window focus with home row
 bindsym $mod+j focus left
 bindsym $mod+k focus down
 bindsym $mod+l focus up
 bindsym $mod+semicolon focus right
 bindsym $mod+Control+j focus output left
 bindsym $mod+Control+semicolon focus output right
-
-# alternatively, you can use the cursor keys:
+# or with arrow keys
 bindsym $mod+Left focus left
 bindsym $mod+Down focus down
 bindsym $mod+Up focus up
@@ -91,7 +89,7 @@ bindsym $mod+Right focus right
 bindsym $mod+Control+Left focus output left
 bindsym $mod+Control+Right focus output right
 
-# move focused window
+# Move the focused element with home row
 bindsym $mod+Shift+j move left
 bindsym $mod+Shift+k move down
 bindsym $mod+Shift+l move up
@@ -100,8 +98,7 @@ bindsym $mod+Control+Shift+j move container to output left
 bindsym $mod+Control+Shift+semicolon move container to output right
 bindsym $mod+Control+Shift+k move workspace to output left
 bindsym $mod+Control+Shift+l move workspace to output right
-
-# alternatively, you can use the cursor keys:
+# or with arrow keys
 bindsym $mod+Shift+Left move left
 bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
@@ -111,47 +108,35 @@ bindsym $mod+Control+Shift+Right move container to output right
 bindsym $mod+Control+Shift+Up move workspace to output left
 bindsym $mod+Control+Shift+Down move workspace to output right
 
-# split in horizontal orientation
-bindsym $mod+h split h
-
-# split in vertical orientation
-bindsym $mod+v split v
-
-# enter fullscreen mode for the focused container
+# Switch layout and viewing modes
 bindsym $mod+f fullscreen toggle
-bindsym $mod+g fullscreen toggle global
-
-# change container layout (stacked, tabbed, toggle split)
 bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
-
-# toggle tiling / floating
+bindsym $mod+h split h
+bindsym $mod+v split v
 bindsym $mod+Shift+space floating toggle
 
-# change focus between tiling / floating windows
+# Toggle focus between tiling and floating windows
 bindsym $mod+space focus mode_toggle
 
-# focus the parent container
+# Focus the parent container
 bindsym $mod+a focus parent
 
-# focus the child container
-#bindsym $mod+d focus child
-
-# focus settings
+# Focus settings
 focus_follows_mouse no
 mouse_warping none
 
-# move cursor to the bottom out of the way
+# Move cursor to the bottom out of the way
 bindsym $mod+c exec xdotool mousemove 0 1079
 
-# allow the pointer to be locked/unlocked
+# Allow the pointer to be locked/unlocked
 bindsym $mod+z exec ~/.local/share/bin/enablepointer toggle
 
-# workspace settings
+# Workspace settings
 workspace_auto_back_and_forth yes
 
-# switch to workspace
+# Switch to workspace
 bindsym $mod+1 workspace number $WSL1
 bindsym $mod+2 workspace number $WSL2
 bindsym $mod+3 workspace number $WSL3
@@ -174,7 +159,7 @@ bindsym $mod+$sec+9 workspace number $WSH9
 bindsym $mod+$sec+0 workspace number $WSH0
 bindsym $mod+$sec+v workspace number $WSVG
 
-# move focused container to workspace
+# Move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace number $WSL1; workspace number $WSL1
 bindsym $mod+Shift+2 move container to workspace number $WSL2; workspace number $WSL2
 bindsym $mod+Shift+3 move container to workspace number $WSL3; workspace number $WSL3
@@ -197,26 +182,27 @@ bindsym $mod+$sec+Shift+9 move container to workspace number $WSH9; workspace nu
 bindsym $mod+$sec+Shift+0 move container to workspace number $WSH0; workspace number $WSH0
 bindsym $mod+$sec+Shift+v move container to workspace number $WSVG; workspace number $WSVG
 
-# scratchpad
+# Scratchpad
 bindsym $mod+Shift+minus move scratchpad
 bindsym $mod+minus scratchpad show
 bindsym $mod+Control+minus exec i3-input -F '[%s] scratchpad show' -P 'Scratchpad: '
 
-# sticky
+# Sticky
 bindsym $mod+equal sticky toggle
 
-# rename
+# Rename
 bindsym $mod+Shift+equal exec bash -c "i3-input -F 'rename workspace to \"$(~/.local/share/bin/i3-get-workspace prefix)%s\"' -P 'Name (retain number): '"
 bindsym $mod+Control+equal exec i3-input -F 'rename workspace to "%s"' -P 'Name: '
 
-# marks
+# Marks
 bindsym $mod+Shift+m exec i3-input -F 'mark %s' -P 'Mark: '
 bindsym $mod+m exec i3-input -F '[con_mark="^%s$"] focus' -P 'Go to: '
 bindsym $mod+Control+m exec i3-input -F 'unmark %s' -P 'Mark: '
 
-# audio
+# Audio
 set $RSFPAC ~/.local/share/bin/rsfpac
 bindsym XF86AudioMute exec $RSFPAC sm - t
+bindsym Control+XF86AudioMute exec bash -c "$RSFPAC sim -p $(xdotool getactivewindow getwindowpid) t"
 bindsym XF86AudioRaiseVolume exec $RSFPAC svr - 5
 bindsym Shift+XF86AudioRaiseVolume exec $RSFPAC svr - 1
 bindsym XF86AudioLowerVolume exec $RSFPAC svr - -5
@@ -226,21 +212,19 @@ bindsym XF86AudioStop exec playerctl stop
 bindsym XF86AudioPrev exec playerctl previous
 bindsym XF86AudioNext exec playerctl next
 
-# Rofi
-bindsym $mod+grave exec bash -c "pactl set-default-sink "$(pactl list sinks | grep Name | cut -d" " -f2 | rofi -dmenu -p "Default Sink")
+# Show the window switcher
 bindsym $mod+Tab exec "rofi -show window -modi window,run"
 
-# border settings
+# Border settings
 new_window pixel 1
 bindsym $mod+F12 border toggle
 
-# reload the configuration file for both i3 and polybar
+# Reload the configuration file for both i3 and polybar
 bindsym $mod+Shift+c reload; exec ~/.config/polybar/launch.sh
-# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+# Restart i3
 bindsym $mod+Shift+r restart
-# exit i3 (logs you out of your X session)
+# Logout
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
-
 # Lock
 bindsym Control+$sec+l exec i3lock -c 111111
 
@@ -248,33 +232,26 @@ bindsym Control+$sec+l exec i3lock -c 111111
 bindsym --release $mod+t exec --no-startup-id import -window-id `xdotool getactivewindow` ~/Pictures/screenshot-`/bin/date +%Y%m%d-%H:%M:%S`.png
 bindsym --release $mod+y exec --no-startup-id import -window root ~/Pictures/screenshot-`/bin/date +%Y%m%d-%H:%M:%S`.png
 
-# resize window (you can also use the mouse for that)
-mode "resize" {
-        # These bindings trigger as soon as you enter the resize mode
+## Modes ##
 
-        # Pressing left will shrink the window’s width.
-        # Pressing right will grow the window’s width.
-        # Pressing up will shrink the window’s height.
-        # Pressing down will grow the window’s height.
+mode "resize" {
+        # Grow/Shrink in either direction with home row
         bindsym j resize shrink width 10 px or 10 ppt
         bindsym k resize grow height 10 px or 10 ppt
         bindsym l resize shrink height 10 px or 10 ppt
         bindsym semicolon resize grow width 10 px or 10 ppt
-
-        # same bindings, but for the arrow keys
+        # or with arrow keys
         bindsym Left resize shrink width 10 px or 10 ppt
         bindsym Down resize grow height 10 px or 10 ppt
         bindsym Up resize shrink height 10 px or 10 ppt
         bindsym Right resize grow width 10 px or 10 ppt
 
-        # back to normal: Enter or Escape
+        # Return to default mode
         bindsym Return mode "default"
         bindsym Escape mode "default"
 }
-
 bindsym $mod+r mode "resize"
 
-# mode launcher
 mode "launcher" {
         # Web + Files
         bindsym b exec vivaldi-stable; mode "default"
@@ -302,41 +279,37 @@ mode "launcher" {
         bindsym e exec ~/opt/steam-wine64; mode "default"
         bindsym w exec steam-native; mode "default"
 
-        # Back to normal
+        # Return to default mode
         bindsym Return mode "default"
         bindsym Escape mode "default"
 
         # Available Letters: ---d----ijk-m---q---u--xyz
         # Available Numbers: 1234567890
 }
-
 bindsym $mod+o mode "launcher"
 
-# video modes
 mode "video" {
         # Just laptop
-        bindsym q exec xrandr --output $LAPTOP --primary --mode 1920x1080 --pos 0x0 --output $EXTERNAL --off --output $VGAOUT --off
+        bindsym q exec xrandr --output $LAPTOP --primary --mode 1920x1080 --pos 0x0 --output $HDMI --off --output $VGAOUT --off
 
         # Laptop + HDMI
-        bindsym w exec xrandr --output $LAPTOP --primary --mode 1920x1080 --pos 0x0 --output $EXTERNAL --mode 1920x1080 --pos 1920x0 --output $VGAOUT --off
+        bindsym w exec xrandr --output $LAPTOP --primary --mode 1920x1080 --pos 0x0 --output $HDMI --mode 1920x1080 --pos 1920x0 --output $VGAOUT --off
 
         # Laptop + VGA
-        bindsym e exec xrandr --output $LAPTOP --primary --mode 1920x1080 --pos 0x0 --output $EXTERNAL --off --output $VGAOUT --mode 1024x768 --pos 1920x0
+        bindsym e exec xrandr --output $LAPTOP --primary --mode 1920x1080 --pos 0x0 --output $HDMI --off --output $VGAOUT --mode 1024x768 --pos 1920x0
 
         # Clone Laptop to HDMI
-        bindsym r exec xrandr --output $LAPTOP --primary --mode 1920x1080 --pos 0x0 --output $EXTERNAL --mode 1920x1080 --pos 0x0 --output $VGAOUT --off
+        bindsym r exec xrandr --output $LAPTOP --primary --mode 1920x1080 --pos 0x0 --output $HDMI --mode 1920x1080 --pos 0x0 --output $VGAOUT --off
 
         # Clone Laptop to VGA
-        bindsym t exec xrandr --output $LAPTOP --primary --mode 1024x768 --pos 0x0 --output $EXTERNAL --off --output $VGAOUT --mode 1024x768 --pos 0x0
+        bindsym t exec xrandr --output $LAPTOP --primary --mode 1024x768 --pos 0x0 --output $HDMI --off --output $VGAOUT --mode 1024x768 --pos 0x0
 
-        # Back to normal
+        # Return to default mode
         bindsym Return mode "default"
         bindsym Escape mode "default"
 }
-
 bindsym $mod+i mode "video"
 
-# restore workspaces
 mode "restore" {
         # All
         bindsym grave exec ~/.local/share/bin/i3-restore-workspace -; mode "default"
@@ -369,29 +342,11 @@ mode "restore" {
 
         bindsym s exec urxvt -e ~/.local/share/bin/i3-save-workspace; mode "default"
 
-        # Back to normal
+        # Return to default mode
         bindsym Return mode "default"
         bindsym Escape mode "default"
 }
-
 bindsym $mod+Escape mode "restore"
-
-# android stuff
-mode "android" {
-        # AirDroid
-        bindsym a exec vivaldi-stable --app=http://web.airdroid.com
-
-        # Show battery
-        bindsym b exec notify-send "Galaxy S7" "Battery: "$(adb shell "dumpsys battery" | grep level | cut -d' ' -f4)"%"; mode "default"
-
-        # Toggle display
-        bindsym d exec adb shell input keyevent 26; mode "default"
-
-        # Back to normal
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-}
-bindsym $mod+b mode "android"
 
 # Colors                        border  back    text    ind     child
 client.focused 			#666666 #222222 #ffffff #444444 #666666
@@ -444,7 +399,7 @@ exec --no-startup-id onedrive-d start
 exec --no-startup-id xset s 18000 18000
 exec --no-startup-id xset -dpms
 exec_always --no-startup-id numlockx on
-exec_always --no-startup-id xrandr --output $EXTERNAL --mode 1920x1080 --pos 1920x0
+exec_always --no-startup-id xrandr --output $HDMI --mode 1920x1080 --pos 1920x0
 exec_always --no-startup-id feh --bg-fill --no-fehbg ~/.wallpaper
 exec_always --no-startup-id synclient VertEdgeScroll=1
 exec_always --no-startup-id synclient TapButton1=1

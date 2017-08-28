@@ -1,9 +1,12 @@
-### Variables
+# sway config file - man sway.5
 
 # Preferences
 set $mod Mod4
+set $sec Mod1
 set $term urxvt -e zsh
-set $menu rofi -show run -mode run
+set $menu dmenu_run
+set $prompt echo | dmenu -p
+set $environ GTK_THEME=Vertex-Dark
 
 # Device names
 set $LAPTOP eDP-1
@@ -16,28 +19,25 @@ set $WSL1 "1:MAIN"
 set $WSL2 "2:MEDIA"
 set $WSL3 "3:DEVEL"
 set $WSL4 "4:GAMES"
-set $WSL5 "5:TMPLA"
-set $WSL6 "6:TMPLB"
-set $WSL7 "7:TMPLC"
-set $WSL8 "8:TMPLD"
-set $WSL9 "9:TMPLE"
-set $WSL0 "10:TMPF"
+set $WSL5 "5:LPTP5"
+set $WSL6 "6:LPTP6"
+set $WSL7 "7:LPTP7"
+set $WSL8 "8:LPTP8"
+set $WSL9 "9:LPTP9"
+set $WSL0 "10:TMP0"
 set $WSH1 "11:ALT"
 set $WSH2 "12:VIDEO"
 set $WSH3 "13:DOCS"
-set $WSH4 "14:TMPHA"
-set $WSH5 "15:TMPHB"
-set $WSH6 "16:TMPHC"
-set $WSH7 "17:TMPHD"
-set $WSH8 "18:TMPHE"
-set $WSH9 "19:TMPHF"
-set $WSH0 "20:TMPHG"
-set $WSVP "21:PRESENT"
+set $WSH4 "14:HDMI4"
+set $WSH5 "15:HDMI5"
+set $WSH6 "16:HDMI6"
+set $WSH7 "17:HDMI7"
+set $WSH8 "18:HDMI8"
+set $WSH9 "19:HDMI9"
+set $WSH0 "20:HDMI0"
+set $WSVG "21:VGAOUT"
 
-### Font configuration
-font pango:monospace,FontAwesome 8
-
-### Input configuration
+# Input configuration
 input $TOUCHPAD {
     dwt enabled
     natural_scroll disabled
@@ -45,11 +45,11 @@ input $TOUCHPAD {
     tap enabled
 }
 
-### Output configuration
+# Output configuration
 output $LAPTOP resolution 1920x1080 position 0,0 bg ~/.wallpaper fill
 output $HDMI resolution 1920x1080 position 1920,0 bg ~/.wallpaper fill
 
-### Workspace outputs
+# Set Workspace Outputs
 workspace $WSL1 output $LAPTOP
 workspace $WSL2 output $LAPTOP
 workspace $WSL3 output $LAPTOP
@@ -70,28 +70,31 @@ workspace $WSH7 output $HDMI
 workspace $WSH8 output $HDMI
 workspace $WSH9 output $HDMI
 workspace $WSH0 output $HDMI
-workspace $WSVP output $VGA
+workspace $WSVG output $VGA
 
-### Key bindings
-floating_modifier $mod normal
+# Font for window titles and swaybar
+font pango:monospace,FontAwesome 8
 
-# Terminal
-bindsym $mod+Return exec $term
+# Allow floating windows to be moved with LMB+$mod and resized with RMB+$mod
+floating_modifier $mod
+
+# Launch a terminal
+bindsym $mod+Return exec $environ $term
 
 # Kill focused window
 bindsym $mod+Shift+q kill
 
-# Start your launcher
-bindsym $mod+d exec $menu
+# Launch the run menu
+bindsym $mod+d exec $environ $menu
 
-# Move your focus around
+# Move the window focus with home row
 bindsym $mod+h focus left
 bindsym $mod+j focus down
 bindsym $mod+k focus up
 bindsym $mod+l focus right
 bindsym $mod+Control+h focus output left
 bindsym $mod+Control+l focus output right
-# or use $mod+[up|down|left|right]
+# or with arrow keys
 bindsym $mod+Left focus left
 bindsym $mod+Down focus down
 bindsym $mod+Up focus up
@@ -99,7 +102,7 @@ bindsym $mod+Right focus right
 bindsym $mod+Control+Left focus output left
 bindsym $mod+Control+Right focus output right
 
-# _move_ the focused window with the same, but add Shift
+# Move the focused element with home row
 bindsym $mod+Shift+h move left
 bindsym $mod+Shift+j move down
 bindsym $mod+Shift+k move up
@@ -108,7 +111,7 @@ bindsym $mod+Control+Shift+h move container to output left
 bindsym $mod+Control+Shift+l move container to output right
 bindsym $mod+Control+Shift+j move workspace to output left
 bindsym $mod+Control+Shift+k move workspace to output right
-# ditto, with arrow keys
+# or with arrow keys
 bindsym $mod+Shift+Left move left
 bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
@@ -118,35 +121,29 @@ bindsym $mod+Control+Shift+Right move container to output right
 bindsym $mod+Control+Shift+Up move workspace to output left
 bindsym $mod+Control+Shift+Down move workspace to output right
 
-# Splits
-bindsym $mod+b splith
-bindsym $mod+v splitv
-
-# Switch the current container between different layout styles
+# Switch layout and viewing modes
+bindsym $mod+f fullscreen toggle
 bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
-
-# Make the current focus fullscreen
-bindsym $mod+f fullscreen
-
-# Toggle the current focus between tiling and floating mode
+bindsym $mod+b splith
+bindsym $mod+v splitv
 bindsym $mod+Shift+space floating toggle
 
-# Swap focus between the tiling area and the floating area
+# Toggle focus between tiling and floating windows
 bindsym $mod+space focus mode_toggle
 
-# move focus to the parent container
+# Focus the parent container
 bindsym $mod+a focus parent
 
-# focus settings
+# Focus settings
 focus_follows_mouse no
 mouse_warping no
 
-# workspace settings
+# Workspace settings
 workspace_auto_back_and_forth yes
 
-# switch to workspace
+# Switch to workspace
 bindsym $mod+1 workspace $WSL1
 bindsym $mod+2 workspace $WSL2
 bindsym $mod+3 workspace $WSL3
@@ -167,9 +164,9 @@ bindsym $mod+Mod1+7 workspace $WSH7
 bindsym $mod+Mod1+8 workspace $WSH8
 bindsym $mod+Mod1+9 workspace $WSH9
 bindsym $mod+Mod1+0 workspace $WSH0
-bindsym $mod+p workspace $WSVP
+bindsym $mod+p workspace $WSVG
 
-# move focused container to workspace
+# Move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace $WSL1; workspace $WSL1
 bindsym $mod+Shift+2 move container to workspace $WSL2; workspace $WSL2
 bindsym $mod+Shift+3 move container to workspace $WSL3; workspace $WSL3
@@ -190,58 +187,59 @@ bindsym $mod+Mod1+Shift+7 move container to workspace $WSH7; workspace $WSH7
 bindsym $mod+Mod1+Shift+8 move container to workspace $WSH8; workspace $WSH8
 bindsym $mod+Mod1+Shift+9 move container to workspace $WSH9; workspace $WSH9
 bindsym $mod+Mod1+Shift+0 move container to workspace $WSH0; workspace $WSH0
-bindsym $mod+Shift+p move container to workspace $WSVP; workspace $WSVP
+bindsym $mod+Shift+p move container to workspace $WSVG; workspace $WSVP
 
-# scratchpad
+# Scratchpad
 bindsym $mod+Shift+minus move scratchpad
 bindsym $mod+minus scratchpad show
 
-# sticky
+# Sticky
 bindsym $mod+equal stick toggle
 
-# marks (does not appear to be working completely)
-bindsym $mod+m exec echo | rofi -dmenu -p Mark: -lines 1 | xargs swaymsg mark
+# Marks
+bindsym $mod+Shift+m exec $environ $prompt Mark | xargs swaymsg mark
+bindsym $mod+m exec $environ $prompt 'Go To' | xargs -I {} swaymsg '[con_mark="^{}$"] focus'
+bindsym $mod+Control+m exec $environ $prompt Unmark | xargs swaymsg unmark
 
-# audio (keys not working)
-bindsym XF86AudioMute exec amixer sset Master,0 toggle
-bindsym XF86AudioRaiseVolume exec "amixer sset Master,0 500+"; exec "amixer sset Master,0 $(amixer sget Master,0 | grep -P -o 'Left:\s*Playback\s*\d+' | cut -d' ' -f3)"
-bindsym XF86AudioLowerVolume exec "amixer sset Master,0 500-"; exec "amixer sset Master,0 $(amixer sget Master,0 | grep -P -o 'Left:\s*Playback\s*\d+' | cut -d' ' -f3)"
-bindsym XF86AudioPlay exec playerctl play-pause
-bindsym XF86AudioStop exec playerctl stop
-bindsym XF86AudioPrev exec playerctl previous
-bindsym XF86AudioNext exec playerctl next
+# Audio
+set $RSFPAC ~/.local/share/bin/rsfpac
+bindsym XF86AudioMute exec $environ $RSFPAC sm - t
+bindsym XF86AudioRaiseVolume exec $environ $RSFPAC svr - 5
+bindsym Shift+XF86AudioRaiseVolume exec $environ $RSFPAC svr - 1
+bindsym XF86AudioLowerVolume exec $environ $RSFPAC svr - -5
+bindsym Shift+XF86AudioLowerVolume exec $environ $RSFPAC svr - -1
+bindsym XF86AudioPlay exec $environ playerctl play-pause
+bindsym XF86AudioStop exec $environ playerctl stop
+bindsym XF86AudioPrev exec $environ playerctl previous
+bindsym XF86AudioNext exec $environ playerctl next
 
-# border settings
+# Border settings
 new_window pixel 1
 bindsym $mod+F12 border toggle
 
 # Reload the configuration file
 bindsym $mod+Shift+c reload
-
-# Exit sway (logs you out of your wayland session)
+# Logout
 bindsym $mod+Shift+e exit
-
 # Lock
-bindsym Control+Mod1+l exec swaylock -c 111111
+bindsym Control+$sec+l exec $environ swaylock -c 111111
 
 # Screenshot + Recording
-bindsym $mod+t exec swaygrab -f ~/Pictures/screenshot-`/bin/date +%Y%m%d-%H:%M:%S`.png
-bindsym $mod+y exec swaygrab ~/Pictures/screenshot-`/bin/date +%Y%m%d-%H:%M:%S`.png
-bindsym $mod+Shift+t exec swaygrab -c -f ~/Videos/recording-`/bin/date +%Y%m%d-%H:%M:%S`.mp4
-bindsym $mod+Shift+y exec swaygrab -c ~/Videos/recording-`/bin/date +%Y%m%d-%H:%M:%S`.mp4
-bindsym $mod+Control+t exec killall swaygrab
+bindsym $mod+t exec $environ swaygrab -f ~/Pictures/screenshot-`/bin/date +%Y%m%d-%H:%M:%S`.png
+bindsym $mod+y exec $environ swaygrab ~/Pictures/screenshot-`/bin/date +%Y%m%d-%H:%M:%S`.png
+bindsym $mod+Shift+t exec $environ swaygrab -c -f ~/Videos/recording-`/bin/date +%Y%m%d-%H:%M:%S`.mp4
+bindsym $mod+Shift+y exec $environ swaygrab -c ~/Videos/recording-`/bin/date +%Y%m%d-%H:%M:%S`.mp4
+bindsym $mod+Control+t exec $environ killall swaygrab
+
+## Modes ##
 
 mode "resize" {
-    # left will shrink the containers width
-    # right will grow the containers width
-    # up will shrink the containers height
-    # down will grow the containers height
-    bindsym $left resize shrink width 10 px or 10 ppt
-    bindsym $down resize grow height 10 px or 10 ppt
-    bindsym $up resize shrink height 10 px or 10 ppt
-    bindsym $right resize grow width 10 px or 10 ppt
-
-    # ditto, with arrow keys
+    # Grow/Shrink in either direction with home row
+    bindsym h resize shrink width 10 px or 10 ppt
+    bindsym j resize grow height 10 px or 10 ppt
+    bindsym k resize shrink height 10 px or 10 ppt
+    bindsym l resize grow width 10 px or 10 ppt
+    # or with arrow keys
     bindsym Left resize shrink width 10 px or 10 ppt
     bindsym Down resize grow height 10 px or 10 ppt
     bindsym Up resize shrink height 10 px or 10 ppt
@@ -255,35 +253,42 @@ bindsym $mod+r mode "resize"
 
 mode "launcher" {
     # Web + Files
-    bindsym b exec vivaldi-stable; mode "default"
-    bindsym c exec chromium --incognito; mode "default"
-    bindsym f exec firefox; mode "default"
-    bindsym g exec google-chrome-stable --incognito; mode "default"
-    bindsym h exec chromium --app=http://www.accuweather.com/en/us/pittsburgh-pa/15213/hourly-weather-forecast/1310; mode "default"
-    bindsym n exec thunar; mode "default"
-    bindsym o exec bash -c "GTK2_RC_FILES=/usr/share/themes/Vertex-Light/gtk-2.0/gtkrc opera-developer"; mode "default"
-    bindsym r exec urxvt -name ranger -e ranger; mode "default"
-    bindsym x exec ~/opt/xfinitytv; mode "default"
+    bindsym b exec $environ vivaldi-stable; mode "default"
+    bindsym c exec $environ chromium --incognito; mode "default"
+    bindsym f exec $environ firefox; mode "default"
+    bindsym g exec $environ google-chrome-stable --incognito; mode "default"
+    bindsym h exec $environ chromium --app=http://www.accuweather.com/en/us/nashua-nh/03064/hourly-weather-forecast/1310; mode "default"
+    bindsym n exec $environ thunar; mode "default"
+    bindsym o exec $environ bash -c "GTK2_RC_FILES=/usr/share/themes/Vertex-Light/gtk-2.0/gtkrc opera-developer"; mode "default"
+    bindsym r exec $environ urxvt -e ranger; mode "default"
 
     # Shell + Editors
-    bindsym v exec urxvt -name vim -e vim; mode "default"
+    bindsym a exec $environ urxvt -e ~/.local/share/bin/agenda; mode "default"
+    bindsym p exec $environ urxvt -e ~/.local/share/bin/rsfpac; mode "default"
+    bindsym v exec $environ urxvt -e vim; mode "default"
+
+    # Documents
+    bindsym l exec libreoffice -writer; mode "default"
 
     # Misc
-    bindsym s exec spotify; mode "default"
-    bindsym t exec corebird; mode "default"
+    bindsym s exec $environ spotify; mode "default"
+    bindsym t exec $environ corebird; mode "default"
 
-    # return to default
+    # Return to default mode
     bindsym Return mode "default"
     bindsym Escape mode "default"
+
+    # Available Letters: ---de---ijk-m---q---u-wxyz
+    # Available Numbers: 1234567890
 }
 bindsym $mod+o mode "launcher"
 
-# Colors
-client.focused          #666666 #666666 #ffffff #999999 #666666
-client.focused_inactive #222222 #222222 #ffffff #222222 #222222
-client.unfocused        #000000 #000000 #ffffff #000000 #000000
-client.urgent           #881000 #881000 #000000 #881000 #881000
-client.background       #111111
+# Colors                    border  back    text    ind     child
+client.focused              #666666 #222222 #ffffff #444444 #666666
+client.focused_inactive     #222222 #222222 #ffffff #222222 #222222
+client.unfocused            #111111 #111111 #ffffff #111111 #000000
+client.urgent               #881000 #881000 #000000 #881000 #881000
+client.background           #111111
 
 # Status
 bar {
@@ -304,14 +309,16 @@ bar {
     }
 
     strip_workspace_numbers yes
+    separator_symbol "   "
     status_command i3blocks -c /home/brian/.config/i3blocks/config-sway
+    tray_output $LAPTOP
 }
 
 # Startup
-exec "amixer -c sset Master,0 87"
-exec pulseaudio -D
-exec onedrive-d start
-exec dunst
+exec $environ "amixer -c sset Master,0 87"
+exec $environ pulseaudio -D
+exec $environ onedrive-d start
+exec $environ dunst
 
 include /etc/sway/config.d/*
 
