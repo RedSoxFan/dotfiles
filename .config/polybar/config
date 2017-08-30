@@ -5,7 +5,7 @@ lessdark = #444
 lesslight = #aaa
 light = #ccc
 white = #fff
-urgent = #f00
+urgent = #ff3232
 
 
 [symbols]
@@ -50,7 +50,7 @@ line-size = 0
 
 modules-left = weather cornerbl
 modules-center = sports
-modules-right = cornerbr pkg
+modules-right = capslock numlock cornerbr pkg
 
 tray-position = right
 tray-maxsize = 16
@@ -272,5 +272,26 @@ format-foreground = ${colors.white}
 format-padding = 1
 
 label = %date% %time%
+
+
+[module/capslock]
+type = custom/script
+interval = 1.0
+exec = [[ $(xset q | grep -Eo 'Caps Lock\s*:\s*on') ]] && echo "CapsLock"
+
+format-foreground = ${colors.urgent}
+format-background = ${colors.darkest}
+format-padding = 1
+
+
+[module/numlock]
+type = custom/script
+interval = 1.0
+exec = [[ $(xset q | grep -Eo 'Num Lock\s*:\s*off') ]] && echo "NoNumLock"
+
+format-foreground = ${colors.urgent}
+format-background = ${colors.darkest}
+format-padding = 1
+
 
 # vim:ft=cfg
