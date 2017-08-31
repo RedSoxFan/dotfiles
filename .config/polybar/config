@@ -6,6 +6,7 @@ lesslight = #aaa
 light = #ccc
 white = #fff
 urgent = #ff3232
+urgentdark = #800
 
 
 [symbols]
@@ -279,9 +280,16 @@ type = custom/script
 interval = 1.0
 exec = [[ $(xset q | grep -Eo 'Caps Lock\s*:\s*on') ]] && echo "CapsLock"
 
-format-foreground = ${colors.urgent}
-format-background = ${colors.darkest}
-format-padding = 1
+format-foreground = ${colors.white}
+format-background = ${colors.urgentdark}
+
+format-prefix = ${symbols.cornerbr}
+format-prefix-foreground = ${colors.urgentdark}
+format-prefix-background = ${colors.darkest}
+
+format-suffix = ${symbols.cornertl}
+format-suffix-foreground = ${colors.urgentdark}
+format-suffix-background = ${colors.darkest}
 
 
 [module/numlock]
@@ -289,9 +297,16 @@ type = custom/script
 interval = 1.0
 exec = [[ $(xset q | grep -Eo 'Num Lock\s*:\s*off') ]] && echo "NoNumLock"
 
-format-foreground = ${colors.urgent}
-format-background = ${colors.darkest}
-format-padding = 1
+format-foreground = ${colors.white}
+format-background = ${colors.urgentdark}
+
+format-prefix = ${symbols.cornerbr}
+format-prefix-foreground = ${colors.urgentdark}
+format-prefix-background = ${colors.darkest}
+
+format-suffix = ${symbols.cornertl}
+format-suffix-foreground = ${colors.urgentdark}
+format-suffix-background = ${colors.darkest}
 
 
 # vim:ft=cfg
