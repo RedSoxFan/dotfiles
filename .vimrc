@@ -1,27 +1,25 @@
-""" Basic editor stuff
+"" Basic editor stuff
 filetype off
 syntax on
+set backspace=indent,eol,start
 set listchars=tab:>-
 set nocompatible
 set nofoldenable
 set nowrap
 set nrformats+=alpha
 set number
-set modelines=1
 set shell=bash
 set sidescroll=1
 
-""" Vundle stuff
-"" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-Plugin 'gmarik/Vundle.vim'
-
-"" Interface enhancements
+"" Load vim-plug
+if empty(glob("~/.vim/autoload/plug.vim"))
+    execute '!curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.github.com/junegunn/vim-plug/master/plug.vim'
+endif
+call plug#begin('~/.vim/plugged')
 
 " Airline
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
@@ -30,83 +28,75 @@ let g:airline_symbols.space = "\ua0"
 let g:airline_symbols.linenr = ''
 let g:airline_symbols.maxlinenr = ''
 
-set laststatus=2                              " without this the status line is not visible
-set ttimeoutlen=50                            " to prevent delay when leaving insert mode
+set laststatus=2
+set ttimeoutlen=50
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts=1
 let g:airline_theme='powerlineish'
-let g:rehash256=1
+let g:airline_exclude_preview=1
 
-" Buffer for viewing and navigating ctags
-Plugin 'majutsushi/tagbar'
+" Navigation and Editing
+Plug 'kshenoy/vim-signature'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
 let g:tagbar_autofocus = 1
+nmap <F9> :TagbarToggle<Enter>
 
-" Show marks in the gutter
-Plugin 'kshenoy/vim-signature'
+" Git
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
 
-" Show the git branch and diff --status in the statusline
-Plugin 'tpope/vim-fugitive'
+" Syntax Files
+Plug 'PotatoesMaster/i3-vim-syntax', { 'for': 'i3' }
+Plug 'aouelete/sway-vim-syntax', { 'for': 'sway' }
 
-" Show the git changes per line in the gutter
-Plugin 'airblade/vim-gitgutter'
+" Python Development
+Plug 'nvie/vim-flake8', { 'for': 'python' }
+Plug 'davidhalter/jedi-vim'  " In order to have the shebang version detection autocmd below, cannot lazy load
+nmap <Leader>2 :call jedi#force_py_version(2)<Enter>
+nmap <Leader>3 :call jedi#force_py_version(3)<Enter>
+autocmd FileType,BufEnter python call jedi#force_py_version(getline(1)=~#"python2" ? 2 : 3)
 
-" Enable code completion
-Plugin 'Valloric/YouCompleteMe'
-let g:ycm_server_python_interpreter = '/usr/bin/python2'
-let g:ycm_autoclose_preview_window_after_completion = 1
+"" End of vim-plug section
+call plug#end()
 
-" Enable enhanced bulk modification
-Plugin 'terryma/vim-multiple-cursors'
-
-"" Syntax Files and Language Specific Enhancements
-
-" i3-vim-syntax
-Plugin 'PotatoesMaster/i3-vim-syntax'
-
-" sway-vim-syntax
-Plugin 'aouelete/sway-vim-syntax'
-
-" PEP-8 compliance help
-Plugin 'nvie/vim-flake8'
-
-" Preview Colors
-Plugin 'chrisbra/Colorizer'
-let g:colorizer_auto_filetype='css,html,php,js,scss'
-let g:colorizer_fgcontrast=1
-
-"" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
-
-""" Set encoding and color mode
+"" Set encoding and color mode
 set encoding=utf-8
 set t_Co=256
 set t_ut=
 
-""" Colorscheme
+"" Colorscheme
 let g:molokai_original=1
+let g:rehash256=1
 colorscheme molokai
-set background=dark
 
-""" Search customisations
-" highlight search, incremental search and ignore case
-set hlsearch incsearch ignorecase
-" double escape for removing search highlights
+"" Search customizations
+set magic
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
 nnoremap <silent> <Esc><Esc> :let @/=""<CR>
+
+"" Enable very-magic mode so regex works normally
+nnoremap / /\v
+vnoremap / /\v
+cnoremap s/ s/\v
+cnoremap %s/ %s/\v
 
 "" Backup locations
 set backup
 set backupdir=~/.vim/backup
 set directory=/tmp
 
-""" netrw settings
+"" netrw settings
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 let g:netrw_browse_split = 4
 let g:netrw_altv = 1
 let g:netrw_winsize = 20
 
-""" Syntax defaults
+"" FileType defaults
 set tabstop=8 softtabstop=8 shiftwidth=8 noexpandtab
 autocmd FileType css setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
 autocmd FileType groovy setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
@@ -116,14 +106,15 @@ autocmd FileType javascript setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpa
 autocmd FileType kconfig setlocal list
 autocmd FileType php setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
 autocmd FileType python setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
+autocmd FileType help wincmd L
 
-""" Define commands for common typos
+"" Define commands for common typos
 command WQ wq
 command Wq wq
 command W w
 command Q q
 
-""" Custom keybinds
+"" Custom keybinds
 let mapleader=","
 nmap <Leader>t :tabs<Enter>
 nmap <Leader>r :registers<Enter>
@@ -131,6 +122,3 @@ nmap <Leader>b :<C-U>exec (v:count ? "b" . v:count : "ls")<Enter>
 nmap <Leader>; :bp<Enter>
 nmap <Leader>' :bn<Enter>
 nmap <Leader>m :marks<Enter>
-nmap <Leader>f :set ff=unix<Enter>
-nmap <Leader>d :set ff=dos<Enter>
-nmap <F9> :TagbarToggle<Enter>
