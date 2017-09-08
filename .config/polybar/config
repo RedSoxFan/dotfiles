@@ -119,7 +119,7 @@ click-left = notify-send "$(cat .weather)"
 
 [module/sports]
 type = custom/script
-exec = ~/.local/share/bin/sports
+exec = ~/.config/polybar/sports.sh
 interval = 300
 
 format-foreground = ${colors.white}
@@ -230,35 +230,9 @@ format-padding = 1
 
 
 [module/battery]
-type = internal/battery
-battery = BAT0
-adapter = AC0
-poll-interval = 5
-
-format-charging =  <label-charging>
-format-charging-foreground = ${colors.white}
-format-charging-background = ${colors.dark}
-format-charging-padding = 1
-
-format-discharging = <ramp-capacity> <label-discharging>
-format-discharging-foreground = ${colors.white}
-format-discharging-background = ${colors.dark}
-format-discharging-padding = 1
-
-format-full =  <label-full>
-format-full-foreground = ${colors.white}
-format-full-background = ${colors.dark}
-format-full-padding = 1
-
-label-charging = %percentage%%
-label-discharging = %percentage%%
-label-full = %percentage%%
-
-ramp-capacity-0 = 
-ramp-capacity-1 = 
-ramp-capacity-2 = 
-ramp-capacity-3 = 
-ramp-capacity-4 = 
+type = custom/script
+interval = 5.0
+exec = ~/.config/polybar/battery.sh "#FFF" "#222" "#800"
 
 
 [module/date]
