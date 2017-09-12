@@ -136,7 +136,7 @@ format-suffix-background = ${colors.darkest}
 
 [module/music]
 type = custom/script
-exec = echo $(playerctl status 2>/dev/null | sed "s/Playing//" | sed -r "s/Paused//")" "$(playerctl metadata 'xesam:artist' 2> /dev/null)" - "$(playerctl metadata 'xesam:title' 2> /dev/null) | sed "s/  - //"
+exec = ~/.config/polybar/music.sh
 interval = 2.0
 
 format-foreground = ${colors.white}
