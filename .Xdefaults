@@ -43,7 +43,7 @@ URxvt*scrollBar:        false
 URxvt*scrollBar_right:        true
 URxvt*scrollColor:        #000000
 URxvt*letterSpace: -1
-
+URxvt*print-pipe: "cat > /dev/null"
 
 !------------------------------------------------------------------------------
 ! rofi
