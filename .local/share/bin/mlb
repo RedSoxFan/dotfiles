@@ -102,16 +102,20 @@ def time_24hour(time, ampm):
     :param str ampm: Either AM or PM
     :return str: The 24 hour time
     '''
-    hour, minute = map(int, time.split(':'))
-    if hour < 12:
-        if ampm == 'AM':
-            return f"{hour:02}:{minute:02}"
-        elif ampm == 'PM':
-            return f"{hour + 12}:{minute:02}"
-    elif ampm == 'AM':
-        return f"00:{minute}"
-    else:
-        return f"12:{minute}"
+    try:
+        hour, minute = map(int, time.split(':'))
+        if hour < 12:
+            if ampm == 'AM':
+                return f"{hour:02}:{minute:02}"
+            elif ampm == 'PM':
+                return f"{hour + 12}:{minute:02}"
+        elif ampm == 'AM':
+            return f"00:{minute}"
+        else:
+            return f"12:{minute}"
+    except ValueError:
+        # Not a numerical time. Most likely TBD. Just return it raw
+        return time
 
 
 if __name__ == "__main__":
