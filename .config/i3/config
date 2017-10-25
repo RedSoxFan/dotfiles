@@ -235,6 +235,12 @@ bindsym Control+$sec+l exec i3lock -c 111111
 bindsym --release $mod+t exec --no-startup-id import -window-id `xdotool getactivewindow` ~/Pictures/screenshot-`/bin/date +%Y%m%d-%H:%M:%S`.png
 bindsym --release $mod+y exec --no-startup-id import -window root ~/Pictures/screenshot-`/bin/date +%Y%m%d-%H:%M:%S`.png
 
+# Brightness
+bindsym XF86MonBrightnessUp exec light -A 5
+bindsym Control+XF86MonBrightnessUp exec light -A 1
+bindsym XF86MonBrightnessDown exec light -U 5
+bindsym Control+XF86MonBrightnessDown exec light -U 1
+
 ## Modes ##
 
 mode "resize" {
@@ -263,7 +269,7 @@ mode "launcher" {
         bindsym g exec google-chrome-stable --incognito; mode "default"
         bindsym h exec chromium --app=http://www.accuweather.com/en/us/nashua-nh/03064/hourly-weather-forecast/329509; mode "default"
         bindsym n exec thunar; mode "default"
-        bindsym o exec bash -c "GTK2_RC_FILES=/usr/share/themes/Vertex-Light/gtk-2.0/gtkrc opera"; mode "default"
+        bindsym o exec opera-developer; mode "default"
         bindsym r exec urxvt -name ranger -e ranger; mode "default"
 
         # Shell + Editors
@@ -281,6 +287,9 @@ mode "launcher" {
         # Gaming
         bindsym e exec ~/opt/steam-wine64; mode "default"
         bindsym w exec steam-native; mode "default"
+
+        # Placeholder
+        bindsym space exec i3-msg open; mode "default"
 
         # Return to default mode
         bindsym Return mode "default"
