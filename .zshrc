@@ -64,8 +64,8 @@ export EDITOR='vim'
 export VISUAL='vim'
 
 # Other Environment Variables
-export TERM=xterm-256color
-export TERMINAL=xterm-256color
+export TERM=rxvt-unicode-256color
+export TERMINAL=rxvt-unicode-256color
 export BROWSER=/usr/bin/vivaldi-stable
 
 # Fix fonts not showing up in java applications
