@@ -229,7 +229,7 @@ bindsym $mod+Shift+r restart
 # Logout
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 # Lock
-bindsym Control+$sec+l exec i3lock -c 111111
+bindsym Control+$sec+l exec $RSFPAC sm - 1 && i3lock -c 111111
 
 # Screenshot
 bindsym --release $mod+t exec --no-startup-id import -window-id `xdotool getactivewindow` ~/Pictures/screenshot-`/bin/date +%Y%m%d-%H:%M:%S`.png
@@ -269,7 +269,7 @@ mode "launcher" {
         bindsym g exec google-chrome-stable --incognito; mode "default"
         bindsym h exec chromium --app=http://www.accuweather.com/en/us/nashua-nh/03064/hourly-weather-forecast/329509; mode "default"
         bindsym n exec thunar; mode "default"
-        bindsym o exec opera-developer; mode "default"
+        bindsym o exec opera; mode "default"
         bindsym r exec urxvt -name ranger -e ranger; mode "default"
 
         # Shell + Editors
@@ -360,6 +360,11 @@ mode "restore" {
 }
 bindsym $mod+Escape mode "restore"
 
+mode "passthrough" {
+        bindsym Pause mode "default"
+}
+bindsym $mod+p mode "passthrough"
+
 # Colors                        border  back    text    ind     child
 client.focused 			#666666 #222222 #ffffff #444444 #666666
 client.focused_inactive	        #222222 #222222 #ffffff #222222 #222222
@@ -403,11 +408,10 @@ assign [class="Opera"] $WSL2
 
 # Startup
 exec --no-startup-id ~/.config/polybar/launch.sh
-exec --no-startup-id "amixer -c sset Master,0 87"
+exec --no-startup-id "amixer -c 0 sset Master,0 87"
 exec --no-startup-id nm-applet
 exec --no-startup-id blueman-applet
 exec --no-startup-id pulseaudio -D
-exec --no-startup-id onedrive-d start
 exec --no-startup-id xset s 18000 18000
 exec --no-startup-id xset -dpms
 exec_always --no-startup-id numlockx on
