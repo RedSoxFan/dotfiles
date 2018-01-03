@@ -7,6 +7,7 @@ light = #ccc
 white = #fff
 urgent = #ff3232
 urgentdark = #800
+accent = #0f0
 
 
 [symbols]
@@ -26,11 +27,11 @@ fixed-center = true
 background = ${colors.darkest}
 foreground = ${colors.white}
 font-0 = Noto Mono:size=8
-font-1 = FontAwesome:size=8
+font-1 = HeavyData Nerd Font:size=8
 font-2 = HeavyData Nerd Font:size=20;2
 line-size = 0
 
-modules-left = i3wm
+modules-left = i3wm cornertl
 modules-center = music
 modules-right = cornertr audio ethernet wireless temperature battery date
 
@@ -45,7 +46,7 @@ fixed-center = true
 background = ${colors.darkest}
 foreground = ${colors.white}
 font-0 = Noto Mono:size=8
-font-1 = FontAwesome:size=8
+font-1 = HeavyData Nerd Font:size=8
 font-2 = HeavyData Nerd Font:size=20;2
 line-size = 0
 
@@ -64,7 +65,7 @@ pin-workspaces = true
 strip-wsnumbers = true
 index-sort = true
 
-format = <label-state><label-mode>
+format = <label-state><label-mode>
 format-foreground = ${colors.dark}
 
 label-focused = %name%
@@ -88,7 +89,9 @@ label-urgent-foreground = ${colors.urgent}
 label-urgent-padding = 1
 
 label-mode = %mode%
-label-mode-foreground = ${colors.white}
+label-mode-background = ${colors.dark}
+label-mode-foreground = ${colors.accent}
+label-mode-padding = 2
 
 
 [module/pkg]
@@ -128,10 +131,12 @@ format-background = ${colors.dark}
 format-prefix = ${symbols.cornerbr}
 format-prefix-foreground = ${colors.dark}
 format-prefix-background = ${colors.darkest}
+format-prefix-font = 3
 
 format-suffix = ${symbols.cornerbl}
 format-suffix-foreground = ${colors.dark}
 format-suffix-background = ${colors.darkest}
+format-suffix-font = 3
 
 
 [module/music]
@@ -145,36 +150,37 @@ format-background = ${colors.dark}
 format-prefix = ${symbols.cornertr}
 format-prefix-foreground = ${colors.dark}
 format-prefix-background = ${colors.darkest}
+format-prefix-font = 3
 
 format-suffix = ${symbols.cornertl}
 format-suffix-foreground = ${colors.dark}
 format-suffix-background = ${colors.darkest}
+format-suffix-font = 3
 
 
 [module/cornerbl]
 type = custom/text
-content = ${symbols.cornerbl}
+content = %{T3}%{T-}
 content-foreground = ${colors.dark}
 content-background = ${colors.darkest}
 
-
 [module/cornerbr]
 type = custom/text
-content = ${symbols.cornerbr}
+content = %{T3}%{T-}
 content-foreground = ${colors.dark}
 content-background = ${colors.darkest}
 
 
 [module/cornertl]
 type = custom/text
-content = ${symbols.cornertl}
+content = %{T3}%{T-}
 content-foreground = ${colors.dark}
 content-background = ${colors.darkest}
 
 
 [module/cornertr]
 type = custom/text
-content = ${symbols.cornertr}
+content = %{T3}%{T-}
 content-foreground = ${colors.dark}
 content-background = ${colors.darkest}
 
