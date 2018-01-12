@@ -5,7 +5,7 @@ AC=$(acpi -a | grep -o on | sed 's/on//')
 if [ ! -z $AC ]; then
 	echo "%{B$2 F$1} $AC $BAT% "
 elif [ $BAT -lt 20 ]; then
-	echo "%{B$2 F$3}%{B$3 F$1} $BAT%%{B$2 F$3}"
+	echo "%{B$2 F$3 T$4}%{T1}%{B$3 F$1} $BAT%%{B$2 F$3 T$4}%{T1}"
 else
 	SYM=""
 	if [ $BAT -ge 60 ]; then

@@ -238,7 +238,7 @@ format-padding = 1
 [module/battery]
 type = custom/script
 interval = 5.0
-exec = ~/.config/polybar/battery.sh "#FFF" "#222" "#800"
+exec = ~/.config/polybar/battery.sh "#FFF" "#222" "#800" 3
 
 
 [module/date]
