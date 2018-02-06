@@ -2,6 +2,7 @@
 
 try:
     import nflgame
+    import nflgame.update_sched as update_sched
 except ImportError:
     raise SystemExit("Please install nflgame module (pip2 install nflgame)")
 
@@ -11,7 +12,8 @@ import datetime
 import sys
 
 
-def games_for_week(year=None, week=None, phase=None, team=None, today=False):
+def games_for_week(year=None, week=None, phase=None, team=None, today=False,
+                   refresh=True):
     '''
     Retrieve the games for a given year/week/phase. If team is given, then
     only return games if the team is involved.
@@ -20,6 +22,7 @@ def games_for_week(year=None, week=None, phase=None, team=None, today=False):
     :param str phase: 'PRE', 'REG', or 'POST' (None for current)
     :param str team: The team abbreviation/name/city (None for all teams)
     :param bool today: Only show today's games (default is this weeks)
+    :param bool refresh: If no games are found, refresh the schedule (default)
     :return tuple: The (year, week, phase) used and list of queried games
     '''
     # Get the current year/week/phase info and use them as defaults
@@ -29,9 +32,10 @@ def games_for_week(year=None, week=None, phase=None, team=None, today=False):
     phase = phase or nflgame.live._cur_season_phase
 
     # Lookup the abbreviation in case the team city and/or name was provided
-    team = nflgame.standard_team(team)
+    team = team if not team else nflgame.standard_team(team)
 
     # Get the games for the year/week/phase and if provided team criteria
+    found = False
     games = []
     for gid, info in nflgame.sched.games.items():
         if info['year'] == year and info['week'] == week\
@@ -39,6 +43,13 @@ def games_for_week(year=None, week=None, phase=None, team=None, today=False):
                 and (not(today) or info['day'] == datetime.date.today().day) \
                 and (not(team) or team in (info['home'], info['away'])):
             games.append(info)
+            found = True
+
+    # If no games found and refreshing is allowed, refresh the current week
+    if not found and refresh:
+        update_sched.update_week(nflgame.sched.games, year, phase, week)
+        return games_for_week(year=year, week=week, phase=phase,
+                              team=team, today=today, refresh=False)
 
     # Return the resulting week info and games
     return (year, week, phase), games
@@ -58,7 +69,8 @@ def game_summary(game):
     if not state or str(state.time).lower() == 'pregame':
         # Get today's date, the game date, and the game time as 24 hour
         today = datetime.date.today()
-        gmdate = datetime.date(game['year'], game['month'], game['day'])
+        year = int(game['eid'][:4])  # Actual year instead of season
+        gmdate = datetime.date(year, game['month'], game['day'])
         time = time_24hour(game['time'], game['meridiem'])
 
         # Show the month/day if the game is not today
@@ -135,12 +147,15 @@ if __name__ == '__main__':
                         help="The phase of season to query (def: Current)")
     parser.add_argument('--today', action='store_true',
                         help="Show today's game(s) instead of this week's")
+    parser.add_argument('--norefresh', action='store_false',
+                        help="Do not refresh the schedule (def: Refresh)")
     args = parser.parse_args()
 
     # Query the games for the week
     (yr, wk, ph), games = games_for_week(year=args.year, week=args.week,
                                          phase=args.phase, team=args.team,
-                                         today=args.today)
+                                         today=args.today,
+                                         refresh=args.norefresh)
 
     # If there is more than one game returned, show the week header since
     # all games for the week were requested and not a single team's game

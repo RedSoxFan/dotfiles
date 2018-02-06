@@ -51,7 +51,8 @@ font-2 = HeavyData Nerd Font:size=20;2
 line-size = 0
 
 modules-left = weather cornerbl
-modules-center = sports
+; Commented since both mlb and nfl are in the off-season
+; modules-center = sports
 modules-right = capslock numlock cornerbr pkg
 
 tray-position = right
