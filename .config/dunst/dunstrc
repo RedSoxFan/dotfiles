@@ -177,16 +177,19 @@
     # Otherwise the "#" and following would be interpreted as a comment.
     background = "#222222"
     foreground = "#888888"
+    frame_color = "#000000"
     timeout = 10
 
 [urgency_normal]
     background = "#444444"
     foreground = "#ffffff"
+    frame_color = "#aaaaaa"
     timeout = 10
 
 [urgency_critical]
     background = "#900000"
     foreground = "#ffffff"
+    frame_color = "#400000"
     timeout = 0
 
 
@@ -208,6 +211,17 @@
 # to "".
 # NOTE: It might be helpful to run dunst -print in a terminal in order
 # to find fitting options for rules.
+
+[rsfnotify]
+    appname = rsfnotify
+    background = "#A4C639"
+    foreground = "#001100"
+    urgency = low
+    timeout = 0
+
+[spotify]
+    appname = Spotify
+    urgency = normal
 
 #[espeak]
 #    summary = "*"
