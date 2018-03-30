@@ -38,7 +38,7 @@ def is_flat_volume(self):
     return len(set(self.volume.values)) == 1
 
 
-# For conviency, add the property to the PulseSinkInfo, PulseSinkInputInfo,
+# For convenience, add the property to the PulseSinkInfo, PulseSinkInputInfo,
 # PulseSourceInfo, and PulseSourceOutputInfo classes.
 PulseSinkInfo.is_flat_volume = is_flat_volume
 PulseSinkInputInfo.is_flat_volume = is_flat_volume
@@ -58,7 +58,7 @@ def sink_input_or_source_output_pid(self):
     return key in self.proplist and self.proplist[key] or None
 
 
-# For conviency, add the property to the PulseSinkInputInfo and
+# For convenience, add the property to the PulseSinkInputInfo and
 # PulseSourceOutputInfo classes
 PulseSinkInputInfo.pid = sink_input_or_source_output_pid
 PulseSourceOutputInfo.pid = sink_input_or_source_output_pid
@@ -321,7 +321,7 @@ class SinkController(BaseController):
         searching is to see if the query is an exact match to the sink name,
         description, or index. A hyphen (-) can be given as the query to
         return the default sink. If the query does not match _exactly_ one
-        sink, then None is returned. For convience, if a PulseSinkInfo object
+        sink, then None is returned. For convenience, if a PulseSinkInfo object
         is given, it will be returned.
 
         :param query: The query of the sink to search for
@@ -489,7 +489,7 @@ class SinkInputController(BaseController):
         if not siobj:
             raise RuntimeError(f"Sink-input {sinput} is using unknown sink")
 
-        # Indicitors
+        # Indicators
         muteind = siobj.mute and 'M' or ' '
 
         # Print basic information
@@ -512,7 +512,7 @@ class SinkInputController(BaseController):
         '''
         Display the sink-inputs in a table. If the shall keyword is True, then
         all sink-inputs will be displayed. Otherwise, sink-inputs with the
-        role of filter will be ommitted. If the props keyword is True, then
+        role of filter will be omitted. If the props keyword is True, then
         the property lists will be outputted.
         '''
         for sinput in self.sink_inputs:
@@ -526,7 +526,7 @@ class SinkInputController(BaseController):
         matches the query. If the pid keyword is set to True, then the
         property `application.process.id` is checked instead. If the query
         does not match _exactly_ one sink-input, then None is returned. For
-        convience, if a PulseSinkInputInfo is given as the query, it will be
+        convenience, if a PulseSinkInputInfo is given as the query, it will be
         returned.
 
         :param query: The query of the sink-input to search for
@@ -811,7 +811,7 @@ class SourceController(BaseController):
         searching is to see if the query is an exact match to the source name,
         description, or index. A hyphen (-) can be given as the query to
         return the default source. If the query does not match _exactly_ one
-        source, then None is returned. For convience, if a PulseSourceInfo
+        source, then None is returned. For convenience, if a PulseSourceInfo
         object is given, it will be returned.
 
         :param query: The query of the source to search for
@@ -980,7 +980,7 @@ class SourceOutputController(BaseController):
             raise RuntimeError(f"source-output {soutput} is using unknown "
                                "source")
 
-        # Indicitors
+        # Indicators
         muteind = soobj.mute and 'M' or ' '
 
         # Print basic information
@@ -1014,7 +1014,7 @@ class SourceOutputController(BaseController):
         source-output matches the query. If the pid keyword is set to True,
         then the property `application.process.id` is checked instead. If the
         query does not match _exactly_ one source-output, then None is
-        returned. For convience, if a PulseSourceOutputInfo is given as the
+        returned. For convenience, if a PulseSourceOutputInfo is given as the
         query, it will be returned.
 
         :param query: The query of the source-output to search for
@@ -1221,7 +1221,7 @@ class RSFPACParser(object):
         '''
         An argument parser for rsfpac commands.
 
-        :param bool interactive: Whether or not to supress usage + description
+        :param bool interactive: Whether or not to suppress usage + description
         '''
         # Determine the keywords to use for the parser
         keywords = {}
