@@ -50,9 +50,8 @@ font-1 = HeavyData Nerd Font:size=8
 font-2 = HeavyData Nerd Font:size=20;2
 line-size = 0
 
-modules-left = weather cornerbl
-; Commented since both mlb and nfl are in the off-season
-; modules-center = sports
+modules-left = weather brightness cornerbl
+modules-center = sports
 modules-right = capslock numlock cornerbr pkg
 
 tray-position = right
@@ -110,15 +109,25 @@ label = "%output:0:30%  "
 
 [module/weather]
 type = custom/script
-exec = WEATHER=$(inxi -xxxW 03060 -c 0 | tee /home/brian/.weather) && echo $(echo $WEATHER | grep -E -o "[-]?[1]?[0-9]?[0-9] F" | sed 's/ /°/' | tr '\n' ' ' | sed -r 's/^(.+)\1$/\1/')"("$(echo $WEATHER | grep -E -o "Conditions: [-]?[0-9]+ F \([-]?[0-9]+ C\) - [A-Za-z0-9 ]+\:" | grep -E -o "\- [A-Za-z0-9 ]+ [A-Za-z]+\:" | cut -d" " -f2- | rev | cut -d" " -f2- | rev)")" | sed -r "s/^\s*\(\)$//"
+exec = WEATHER=$(inxi -xxxW 03060 -c 0 | tee /home/brian/.weather) && echo $(echo $WEATHER | grep -E -o "\S+ [-]?[0-9]+ F" | grep -v Point | cut -d' ' -f2- | sed 's/ /°/' | tr '\n' ' ' | sed -r 's/^(.+)\1$/\1/')"("$(echo $WEATHER | grep -E -o "Conditions: [-]?[0-9]+ F \([-]?[0-9]+ C\) - [A-Za-z0-9 ]+\:" | grep -E -o "\- [A-Za-z0-9 ]+ [A-Za-z]+\:" | cut -d" " -f2- | rev | cut -d" " -f2- | rev)")" | sed -r "s/^\s*\(\)$//"
 interval = 1800
 
-format =  <label>
+format =  <label>
 format-foreground = ${colors.white}
 format-background = ${colors.dark}
 format-padding = 1
 
 click-left = notify-send "$(cat .weather)"
+
+
+[module/brightness]
+type = custom/script
+exec = echo `light`% | grep -v 100.00%
+
+format =  <label>
+format-foreground = ${colors.white}
+format-background = ${colors.dark}
+format-padding = 1
 
 
 [module/sports]
@@ -188,7 +197,7 @@ content-background = ${colors.darkest}
 
 [module/audio]
 type = custom/script
-exec = ~/.local/share/bin/rsfpac sd --status --description
+exec = ~/.local/share/bin/rsfpac sd --status --description | sed -r "s/^(.) Laptop ([0-9]+%)$/\\1 \\2/"
 interval = 2.0
 
 click-left = ~/.local/share/bin/rsfpac sm - t
