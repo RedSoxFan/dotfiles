@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+
+import mlbgame
+import datetime
+
+
+def get_standings(date=datetime.datetime.now()):
+    '''
+    Retrieve the standings as of a certain date. This is a convience function
+    to make sure that AL before NL in the standings.
+    :param datetime date: The datetime to get standings for (default: now)
+    :return dict: The retrieved standings
+    '''
+    return sorted(mlbgame.standings(date=date).divisions,
+                  key=lambda div: div.name[0])
+
+
+def get_columns(standings={}):
+    '''
+    Retrive the columns to display and the appropriate formatting. The format
+    is as follows {'<Header>': [<Field>, <FillAndAlign>, <Width>]}. There is a
+    placeholder <Header> of '_' for where the division should be inserted. If
+    the standings are given, then the <Width> values will be set to the
+    maximum width of the values. Otherwise, they will be zeroes (no padding).
+    :param standings: The standings to use for calculating the <Width>.
+    :return dict: The resulting columns dictionary
+    '''
+    # Columns to display
+    columns = {'_': ['team_short', '', 0],
+               'W': ['w', '>', 0],
+               'L': ['l', '>', 0],
+               'PCT': ['pct', '0<', 0],
+               'GB': ['gb', '>', 0],
+               'E': ['elim', '>', 0],
+               'WGB': ['gb_wildcard', '>', 0],
+               'WE': ['elim_wildcard', '>', 0],
+               'L10': ['last_ten', '<', 0],
+               'STK': ['streak', '<', 0]}
+
+    # If standings are given, calculate the appropriate widths for the columns
+    for div in standings:
+        for team in div.teams:
+            for header, (field, _, __) in columns.items():
+                width = len(str(getattr(team, field, 0)))
+                if field == 'gb_wildcard' and team.elim_wildcard == '-':
+                    width += 2 if team.gb_wildcard == '-' else 1
+                columns[header][2] = max(columns[header][2], width)
+
+    # Return resulting columns dictionary
+    return columns
+
+
+def print_standings(standings, columns):
+    '''
+    Print the standings with the given columns.
+    :param dict standings: The standings to display
+    :param dict columns: The columns dictionary to display
+    '''
+    for division in standings:
+        # Print headings
+        for header, (_, __, width) in columns.items():
+            header = header.replace('_', division.name)
+            print(f"\033[1m{header:{width}}\033[0m", end='  ')
+        print()
+
+        # Print team standings
+        for team in division.teams:
+            for field, align, width in columns.values():
+                value = getattr(team, field)
+                if field == 'gb_wildcard' and team.elim_wildcard == '-':
+                    value=f"+{value}".replace('+-', '0.0')
+                elif field == 'pct' and team.pct == '-':
+                    align = '>'
+                print(f"{value:{align}{width}}", end='  ')
+            print()
+        print()
+
+
+if __name__ == "__main__":
+    standings = get_standings()
+    columns = get_columns(standings=standings)
+    print_standings(standings, columns)

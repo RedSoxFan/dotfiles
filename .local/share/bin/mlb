@@ -55,7 +55,7 @@ def get_game_state(game):
         return f"{game['away_name_abbrev']} {game['away_team_runs']}, "\
                f"{game['home_name_abbrev']} {game['home_team_runs']}, "\
                f"{game['inning_state']} {number_with_suffix(game['inning'])}"
-    elif game['status'] in ['Preview', 'Pre-Game']:
+    elif game['status'] in ['Preview', 'Pre-Game', 'Scheduled']:
         return f"{game['away_name_abbrev']} @ {game['home_name_abbrev']} "\
                f"{time_24hour(game['time'], game['ampm'])}"
     elif game['status'] in ['Game Over', 'Final']:
@@ -69,19 +69,23 @@ def get_game_state(game):
 
 def print_game_plays(game_id):
     '''
-    Print out the plays that have occured during a game
+    Print out the plays that have occurred during a game
     :param str game_id: The id of the game to get plays for
     '''
-    events = mlbgame.game_events(game_id)
-    for inning in events:
-        for side in events[inning]:
-            if len(events[inning][side]) == 0:
-                continue
+    try:
+        events = mlbgame.game_events(game_id)
+        for inobj in events:
+            inning = inobj.num
+            for title, side in (('Top', inobj.top), ('Bottom', inobj.bottom)):
+                if len(side) == 0:
+                    continue
 
-            print(f"\t{side.title()} of the {number_with_suffix(inning)}")
-            for play in events[inning][side]:
-                fixed = re.sub('\s+', ' ', str(play))
-                print(f"\t\t{fixed}")
+                print(f"{title} of the {number_with_suffix(inning)}")
+                for play in side:
+                    fixed = re.sub('\s+', ' ', str(play))
+                    print(f"\t{fixed}")
+    except ValueError:
+        print("There is currently no play-by-play information for the game")
 
 
 def number_with_suffix(num):
@@ -152,7 +156,7 @@ if __name__ == "__main__":
             print(game)
             print_game_plays(game_id)
             print()
-    elif args.list:
+    elif args.list or not args.team:
         print("\n".join(info))
     else:
         print(' / '.join(info))
