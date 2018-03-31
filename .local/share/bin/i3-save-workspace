@@ -1,0 +1,19 @@
+#!/bin/sh
+SAVEDIR=~/.config/i3/workspaces
+WORKSPACE=$(~/.local/share/bin/i3-get-workspace)
+WORKFILE=$(echo $WORKSPACE | sed "s/:/_/" | sed -r "s/^([0-9]_)/0\\1/")
+
+i3-msg "move container to workspace SAVE; workspace SAVE; fullscreen"
+sleep 1
+
+JSON=$SAVEDIR"/"$WORKFILE".json"
+i3-save-tree --workspace $WORKSPACE | vim -c ":f $JSON" -
+
+if [ -e $JSON ]; then
+	RESTORE=$SAVEDIR"/"$WORKFILE"_restore"
+	TEMPLATE=$SAVEDIR"/00_restore"
+	cat $TEMPLATE | sed "s/0:WORKSPACE/$WORKSPACE/g" | vim -c ":f $RESTORE | normal 19G" -
+	chmod +x $RESTORE
+fi
+
+i3-msg "move container to workspace $WORKSPACE; workspace SAVE; fullscreen"
