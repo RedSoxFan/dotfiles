@@ -16,23 +16,38 @@ import re
 import sys
 
 
+TEAMS = {}
+
+
 def get_games(team, day):
     '''
-    Get the information for games a team plays on the specified day
+    Get the information for games a team plays on the specified day. If the
+    game overview is available, that is returned, otherwise the scoreboard is
+    returned.
     :param str team: The MLB team to get games for (empty string for all)
     :param datetime.datetime day: The day to get games for
-    :return tuple: A tuple of dicts representing game overviews
+    :return tuple: A tuple of dicts representing game overviews or scoreboards
     '''
     if not team:
         team = None
 
-    games = mlbgame.day(day.year, day.month, day.day, home=team, away=team)
+    games = []
+    for name in set((team, str(team).title(), *get_team_name(str(team)))):
+        games = mlbgame.day(day.year, day.month, day.day, home=name, away=name)
+        if games:
+            break
 
     # This shouldn't be needed, but mlbgame is occasionally returning games
     # for an adjacent day
     games = tuple(game for game in games if validate_date(game, day))
 
-    return tuple(mlbgame.game.overview(game.game_id) for game in games)
+    result = []
+    for game in games:
+        try:
+            result.append(mlbgame.game.overview(game.game_id))
+        except ValueError:
+            result.append(game)
+    return result
 
 
 def validate_date(game, day):
@@ -51,7 +66,11 @@ def get_game_state(game):
     :param dict game: The game information
     :return str: The game status
     '''
-    if game['status'] in ['In Progress', 'Manager Challenge']:
+    if isinstance(game, mlbgame.game.GameScoreboard):
+        return f"{get_team_abbrev(game.away_team)} @ "\
+               f"{get_team_abbrev(game.home_team)} "\
+               f"{time_24hour(*game.game_start_time.split(' '))}"
+    elif game['status'] in ['In Progress', 'Manager Challenge']:
         return f"{game['away_name_abbrev']} {game['away_team_runs']}, "\
                f"{game['home_name_abbrev']} {game['home_team_runs']}, "\
                f"{game['inning_state']} {number_with_suffix(game['inning'])}"
@@ -107,6 +126,8 @@ def time_24hour(time, ampm):
     :return str: The 24 hour time
     '''
     try:
+        time = time.lstrip('0')
+        ampm = ampm.upper()
         hour, minute = map(int, time.split(':'))
         if hour < 12:
             if ampm == 'AM':
@@ -120,6 +141,47 @@ def time_24hour(time, ampm):
     except ValueError:
         # Not a numerical time. Most likely TBD. Just return it raw
         return time
+
+
+def get_team_abbrev(name):
+    '''
+    Returns the abbreviation for the team name. If no abbreviation is found,
+    then the team name is returned.
+    :param str name: The team name to retrieve the abbreviation for
+    :return str: The team abbreviation, if found, otherwise the team name
+    '''
+    if not TEAMS:
+        populate_teams()
+    return name.title() in TEAMS and TEAMS[name.title()] or name
+
+
+def get_team_name(abbrev):
+    '''
+    Returns the name for the team abbreviation. If no name is found, then the
+    team name is returned. If multiple versions of the team name are found,
+    they will all be returned.
+    :param str abbrev: The team abbreviation to retrieve the name for
+    :return tuple: The team name(s), if found, otherwise the team abbreviation
+    '''
+    if not TEAMS:
+        populate_teams()
+    abbrev = abbrev.upper()
+    return tuple(k for k,v in TEAMS.items() if v == abbrev) or (abbrev, )
+
+
+def populate_teams():
+    '''
+    Populates the dictionary of team name and abbreviation mappings. There may
+    be two different versions of the team names mapping to the same
+    abbreviation. For example, both "Athletics" and "A's" map to the
+    abbreviation "OAK".
+    '''
+    for team in mlbgame.teams():
+        # For some reason, there is no field that matches the away_team
+        # and home_team fields of mlbgame.game.GameScorebaord. Checking
+        # against both club_common_name and aws_club_slug seems to work.
+        TEAMS[team.club_common_name.title()] = team.display_code.upper()
+        TEAMS[team.aws_club_slug.title()] = team.display_code.upper()
 
 
 if __name__ == "__main__":
@@ -148,7 +210,10 @@ if __name__ == "__main__":
     gids = []
     for game in get_games(team=args.team, day=day):
         info.append(get_game_state(game))
-        gids.append(game['gameday_link'])
+        if isinstance(game, mlbgame.game.GameScoreboard):
+            gids.append(game.game_id)
+        else:
+            gids.append(game['gameday_link'])
 
     # Print results
     if args.plays:
