@@ -8,8 +8,10 @@ set nofoldenable
 set nowrap
 set nrformats+=alpha
 set number
+set relativenumber
 set shell=bash
 set sidescroll=1
+set spell spelllang=en_us
 
 "" Load vim-plug
 if empty(glob("~/.vim/autoload/plug.vim"))
@@ -41,6 +43,16 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
 let g:tagbar_autofocus = 1
 nmap <F9> :TagbarToggle<Enter>
+Plug 'ludovicchabant/vim-gutentags'
+let g:gutentags_project_root = ['tags']
+let g:gutentags_add_default_project_roots = 0
+Plug 'airblade/vim-rooter'
+let g:rooter_silent_chdir = 1
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install -bin' }
+Plug 'junegunn/fzf.vim'
+let g:fzf_layout = { 'down': '~20%' }
+nmap ; :GitFiles<Enter>
+Plug 'editorconfig/editorconfig-vim'
 
 " Git
 Plug 'tpope/vim-fugitive'
@@ -97,15 +109,17 @@ let g:netrw_altv = 1
 let g:netrw_winsize = 20
 
 "" FileType defaults
-set tabstop=8 softtabstop=8 shiftwidth=8 noexpandtab
+set tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab
+autocmd FileType cfg setlocal nospell
+autocmd FileType c setlocal tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab list
+autocmd FileType cpp setlocal tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab list
 autocmd FileType css setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
-autocmd FileType groovy setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
 autocmd FileType html setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab wrap linebreak nolist
 autocmd FileType java setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
 autocmd FileType javascript setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
-autocmd FileType kconfig setlocal list
 autocmd FileType php setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
 autocmd FileType python setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
+autocmd FileType scss setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
 autocmd FileType help wincmd L
 
 "" Define commands for common typos
