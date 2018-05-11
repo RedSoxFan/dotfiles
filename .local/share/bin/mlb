@@ -67,20 +67,27 @@ def get_game_state(game):
     :return str: The game status
     '''
     if isinstance(game, mlbgame.game.GameScoreboard):
+        status = time_24hour(*game.game_start_time.split(' '))
+        if game.game_status == 'FINAL':
+            status = "Postponed"
         return f"{get_team_abbrev(game.away_team)} @ "\
-               f"{get_team_abbrev(game.home_team)} "\
-               f"{time_24hour(*game.game_start_time.split(' '))}"
+               f"{get_team_abbrev(game.home_team)} {status}"
     elif game['status'] in ['In Progress', 'Manager Challenge']:
         return f"{game['away_name_abbrev']} {game['away_team_runs']}, "\
                f"{game['home_name_abbrev']} {game['home_team_runs']}, "\
                f"{game['inning_state']} {number_with_suffix(game['inning'])}"
-    elif game['status'] in ['Preview', 'Pre-Game', 'Scheduled']:
+    elif game['status'] in ['Preview', 'Pre-Game', 'Scheduled', 'Warmup']:
         return f"{game['away_name_abbrev']} @ {game['home_name_abbrev']} "\
                f"{time_24hour(game['time'], game['ampm'])}"
     elif game['status'] in ['Game Over', 'Final']:
         return f"{game['away_name_abbrev']} {game['away_team_runs']}, "\
                f"{game['home_name_abbrev']} {game['home_team_runs']}, "\
                f"Final{game['inning'] != '9' and '/%s' % game['inning'] or ''}"
+    elif game['status'] in ['Delayed']:
+        return f"{game['away_name_abbrev']} {game['away_team_runs']}, "\
+               f"{game['home_name_abbrev']} {game['home_team_runs']}, "\
+               f"{game['inning_state']} {number_with_suffix(game['inning'])} "\
+               f"({game['status']})"
     else:
         return f"{game['away_name_abbrev']} @ {game['home_name_abbrev']} "\
                f"{game['status']}"
