@@ -97,7 +97,7 @@ label-mode-padding = 2
 [module/pkg]
 type = custom/script
 interval = 1200
-exec = ~/.config/polybar/pkg.sh
+exec = ~/.config/polybar/pkg.sh 2>/dev/null
 exec-if = "ping -q -w 2 -c 1 8.8.8.8 > /dev/null"
 
 format = <label>
@@ -109,7 +109,7 @@ label = "%output:0:30%  "
 
 [module/weather]
 type = custom/script
-exec = WEATHER=$(inxi -xxxW 03060 -c 0 | tee /home/brian/.weather) && echo $(echo $WEATHER | grep -E -o "\S+ [-]?[0-9]+ F" | grep -v Point | cut -d' ' -f2- | sed 's/ /°/' | tr '\n' ' ' | sed -r 's/^(.+)\1$/\1/')"("$(echo $WEATHER | grep -E -o "Conditions: [-]?[0-9]+ F \([-]?[0-9]+ C\) - [A-Za-z0-9 ]+\:" | grep -E -o "\- [A-Za-z0-9 ]+ [A-Za-z]+\:" | cut -d" " -f2- | rev | cut -d" " -f2- | rev)")" | sed -r "s/^\s*\(\)$//"
+exec = WEATHER=$(inxi -xxxw -c 0 | tee /home/brian/.weather) && echo $(echo $WEATHER | grep -E -o "\S+ [-]?[0-9]+ C \([-]?[0-9]+ F\)" | grep -v Point | cut -d' ' -f4- | sed -r 's/\(|\)//g' | sed 's/ /°/' | tr '\n' ' ' | sed -r 's/^(.+)\1$/\1/')"("$(echo -e $WEATHER | grep -E -o "Conditions: [A-Za-z0-9 ]+" | cut -d" " -f2- | rev | cut -d" " -f2- | rev | sed -r 's/\s+$//')")" | sed -r "s/^\s*\(\)$//"
 interval = 1800
 
 format =  <label>

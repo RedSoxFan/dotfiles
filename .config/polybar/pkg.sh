@@ -1,6 +1,12 @@
 #!/bin/bash
-pac=$(checkupdates | wc -l)
-aur=$(auracle sync | wc -l)
+pac=$(set -o pipefail; checkupdates | wc -l);
+if [ $? -ne 0 ]; then
+	pac="E"
+fi
 
-check=$((pac + aur))
+aur=$(set -o pipefail; auracle sync | wc -l);
+if [ $? -ne 0 ]; then
+	pac="E"
+fi
+
 echo "$pac %{F#5b5b5b}%{F-} $aur"
