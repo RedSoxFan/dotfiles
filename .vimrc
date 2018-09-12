@@ -33,7 +33,6 @@ set laststatus=2
 set ttimeoutlen=50
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts=1
-let g:airline_theme='powerlineish'
 let g:airline_exclude_preview=1
 
 " Navigation and Editing
@@ -79,7 +78,16 @@ set t_ut=
 "" Colorscheme
 let g:molokai_original=1
 let g:rehash256=1
-colorscheme molokai
+if empty($DISPLAY)
+    " TTY
+    let g:airline_theme='cobalt2'
+    colorscheme elflord
+    set term=xterm
+else
+    " Terminal Emulator
+    let g:airline_theme='powerlineish'
+    colorscheme molokai
+endif
 
 "" Search customizations
 set magic
