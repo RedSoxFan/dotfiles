@@ -219,7 +219,8 @@ bindsym XF86AudioPrev exec playerctl previous
 bindsym XF86AudioNext exec playerctl next
 
 # Border settings
-new_window pixel 1
+default_border pixel 1
+default_floating_border pixel 1
 bindsym $mod+F12 border toggle
 
 # Reload the configuration file for both i3 and polybar
@@ -286,6 +287,7 @@ mode "launcher" {
 
         # Gaming
         bindsym e exec ~/opt/steam-wine64; mode "default"
+        bindsym Shift+e exec ~/opt/steam-wine32; mode "default"
         bindsym w exec steam-native; mode "default"
 
         # Placeholder
@@ -397,12 +399,16 @@ for_window [class="Termite" instance="rsfpac"] resize set 840 px 950 px
 # Spotify
 assign [class="Spotify"] $WSL2
 
-# Slack
-assign [class="Slack"] $WSL8
-for_window [class="Slack"] mark "sl"
-
 # Opera (Twitch)
 assign [class="Opera"] $WSL2
+
+# Games
+for_window [class="falloutnv.exe" window_type="normal"] floating disable, fullscreen
+assign [class="falloutnv.exe"] $WSL4
+
+# wlroots - X11-#
+#assign [title="^wlroots - X11-\d+$"] $WSH1
+#for_window [title="^wlroots - X11-\d+$"] fullscreen
 
 ## End App Settings##
 
