@@ -1,7 +1,5 @@
 # Environment Variables
 export PATH=/usr/lib/ccache/bin:$PATH:~/.local/share/bin
-export TERM=xterm-256color
-export TERMINAL=/usr/bin/urxvt
 export EDITOR=/usr/bin/vim
 export VISUAL=/usr/bin/vim
 export BROWSER=/usr/bin/vivaldi-stable

@@ -4,7 +4,7 @@
 # Preferences
 set $mod Mod4
 set $sec Mod1
-set $term urxvt -e zsh
+set $term termite -e zsh
 set $menu "rofi -show run -modi window,run"
 
 # Devices
@@ -65,7 +65,7 @@ font pango:monospace 8
 floating_modifier $mod
 
 # Launch a terminal
-bindsym $mod+Return exec urxvt -e zsh
+bindsym $mod+Return exec termite -e zsh
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -270,12 +270,12 @@ mode "launcher" {
         bindsym h exec chromium --app=http://www.accuweather.com/en/us/nashua-nh/03064/hourly-weather-forecast/329509; mode "default"
         bindsym n exec thunar; mode "default"
         bindsym o exec opera; mode "default"
-        bindsym r exec urxvt -name ranger -e ranger; mode "default"
+        bindsym r exec termite --name ranger -e ranger; mode "default"
 
         # Shell + Editors
-        bindsym a exec urxvt -name agenda -e ~/.local/share/bin/agenda; mode "default"
-        bindsym p exec urxvt -name rsfpac -e ~/.local/share/bin/rsfpac; mode "default"
-        bindsym v exec urxvt -name vim -e vim; mode "default"
+        bindsym a exec termite --name agenda -e ~/.local/share/bin/agenda; mode "default"
+        bindsym p exec termite --name rsfpac -e ~/.local/share/bin/rsfpac; mode "default"
+        bindsym v exec termite --name vim -e vim; mode "default"
 
         # Documents
         bindsym l exec libreoffice -writer; mode "default"
@@ -352,7 +352,7 @@ mode "restore" {
         bindsym $sec+0 exec ~/.local/share/bin/i3-restore-workspace "$WSH0"; mode "default"
         bindsym $sec+v exec ~/.local/share/bin/i3-restore-workspace "$WSVG"; mode "default"
 
-        bindsym s exec urxvt -e ~/.local/share/bin/i3-save-workspace; mode "default"
+        bindsym s exec termite -e ~/.local/share/bin/i3-save-workspace; mode "default"
 
         # Return to default mode
         bindsym Return mode "default"
@@ -375,24 +375,24 @@ client.background		#111111
 ## App Settings ##
 
 # Agenda
-for_window [class="URxvt" instance="agenda"] floating enable
-for_window [class="URxvt" instance="agenda"] sticky enable
-for_window [class="URxvt" instance="agenda"] move scratchpad
-for_window [class="URxvt" instance="agenda"] scratchpad show
-for_window [class="URxvt" instance="agenda"] mark "a"
-for_window [class="URxvt" instance="agenda"] move absolute position 180 px 180 px
-for_window [class="URxvt" instance="agenda"] resize set 600 px 720 px
+for_window [class="Termite" instance="agenda"] floating enable
+for_window [class="Termite" instance="agenda"] sticky enable
+for_window [class="Termite" instance="agenda"] move scratchpad
+for_window [class="Termite" instance="agenda"] scratchpad show
+for_window [class="Termite" instance="agenda"] mark "a"
+for_window [class="Termite" instance="agenda"] move absolute position 180 px 180 px
+for_window [class="Termite" instance="agenda"] resize set 650 px 720 px
 
 # Corebird
 for_window [class="Corebird" window_type="dialog"] fullscreen
 
 # rsfpac
-for_window [class="URxvt" instance="rsfpac"] floating enable
-for_window [class="URxvt" instance="rsfpac"] sticky enable
-for_window [class="URxvt" instance="rsfpac"] move scratchpad
-for_window [class="URxvt" instance="rsfpac"] mark "r"
-for_window [class="URxvt" instance="rsfpac"] move absolute position 1020 px 65 px
-for_window [class="URxvt" instance="rsfpac"] resize set 820 px 950 px
+for_window [class="Termite" instance="rsfpac"] floating enable
+for_window [class="Termite" instance="rsfpac"] sticky enable
+for_window [class="Termite" instance="rsfpac"] move scratchpad
+for_window [class="Termite" instance="rsfpac"] mark "r"
+for_window [class="Termite" instance="rsfpac"] move absolute position 1000 px 65 px
+for_window [class="Termite" instance="rsfpac"] resize set 840 px 950 px
 
 # Spotify
 assign [class="Spotify"] $WSL2

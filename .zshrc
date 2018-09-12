@@ -64,8 +64,6 @@ export EDITOR='vim'
 export VISUAL='vim'
 
 # Other Environment Variables
-export TERM=rxvt-unicode-256color
-export TERMINAL=rxvt-unicode-256color
 export BROWSER=/usr/bin/vivaldi-stable
 
 # Fix fonts not showing up in java applications
@@ -123,6 +121,8 @@ bindkey "\033[7~" beginning-of-line
 bindkey "\033[4~" end-of-line
 bindkey "\033[8~" end-of-line
 bindkey "\033[3~" delete-char
+bindkey "${terminfo[khome]}" beginning-of-line
+bindkey "${terminfo[kend]}" end-of-line
 
 # Show abbreviated path
 prompt_dir () {

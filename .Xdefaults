@@ -53,4 +53,5 @@ rofi*color-window: #111111, #222222, #111111
 rofi*color-normal: #111111, #cccccc, #111111, #333333, #cccccc
 rofi*color-active: #666666, #ffffff, #666666, #444444, #fdf6e3
 rofi*color-urgent: #111111, #d10400, #111111, #8d100d, #fdf6e3
-
+rofi*terminal: termite
+rofi*run-shell-command: {terminal} -e "{cmd}"
