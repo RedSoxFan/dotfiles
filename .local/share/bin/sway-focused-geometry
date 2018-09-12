@@ -1,0 +1,2 @@
+#!/usr/bin/sh
+swaymsg -t get_tree | jq -r '.. | objects | select(.focused==true) | "\(.rect.x),\(.rect.y) \(.rect.width)x\(.rect.height)"'
