@@ -8,7 +8,6 @@ set nofoldenable
 set nowrap
 set nrformats+=alpha
 set number
-set relativenumber
 set shell=bash
 set sidescroll=1
 set spell spelllang=en_us
@@ -111,14 +110,14 @@ let g:netrw_winsize = 20
 "" FileType defaults
 set tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab
 autocmd FileType cfg setlocal nospell
-autocmd FileType c setlocal tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab list
-autocmd FileType cpp setlocal tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab list
+autocmd FileType c setlocal tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab list colorcolumn=80
+autocmd FileType cpp setlocal tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab list colorcolumn=80
 autocmd FileType css setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
 autocmd FileType html setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab wrap linebreak nolist
 autocmd FileType java setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
 autocmd FileType javascript setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
 autocmd FileType php setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
-autocmd FileType python setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
+autocmd FileType python setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab colorcolumn=80
 autocmd FileType scss setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
 autocmd FileType help wincmd L
 
