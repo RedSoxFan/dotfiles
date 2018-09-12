@@ -36,15 +36,15 @@
 !URxvt*inheritPixmap: true
 !URxvt*transparent: true
 !URxvg*shading: 190
+Xft.antialias: 1
 URxvt*geometry:         112x22
-URxvt*font:            xft:DejaVu Sans Mono for Powerline:style=Book:size=12,xft:FontAwesome:size=12
+URxvt*font:            xft:Noto Mono for Powerline:size=12
 URxvt*urlLauncher:         firefox
 URxvt*scrollBar:        false
 URxvt*scrollBar_right:        true
 URxvt*scrollColor:        #000000
-URxvt*letterSpace: -1
 URxvt*print-pipe: "cat > /dev/null"
-
+URxvt.urgentOnBell: true
 !------------------------------------------------------------------------------
 ! rofi
 

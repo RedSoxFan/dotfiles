@@ -59,7 +59,7 @@ workspace $WSH0 output $HDMI
 workspace $WSVG output $VGAOUT
 
 # Font for window titles
-font pango:monospace,FontAwesome 8
+font pango:monospace 8
 
 # Allow floating windows to be moved with LMB+$mod
 floating_modifier $mod

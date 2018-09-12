@@ -251,9 +251,9 @@ class SinkController(BaseController):
         '''
         Retrieve information about the default sink. This has been designed
         to be used for status monitors. It has been tested with both i3blocks
-        and polybar with the FontAwesome font, but should work with any status
-        monitor. If you are using a font other than FontAwesome, you may need
-        to set volsym and mutesym.
+        and polybar and with both the HeavyData Nerd and FontAwesome (v4)
+        fonts, but should work with any status monitor. If you are using a
+        different font, you may need to set volsym and mutesym.
 
         :param bool description: Display the description instead of name
         :param str volsym: The symbol to show for volume (def: \uf028)
