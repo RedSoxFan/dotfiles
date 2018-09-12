@@ -83,11 +83,11 @@ def get_game_state(game):
         return f"{game['away_name_abbrev']} {game['away_team_runs']}, "\
                f"{game['home_name_abbrev']} {game['home_team_runs']}, "\
                f"Final{game['inning'] != '9' and '/%s' % game['inning'] or ''}"
-    elif game['status'] in ['Delayed']:
+    elif game['status'] in ['Delayed', 'Delayed Start', 'Suspended']:
         return f"{game['away_name_abbrev']} {game['away_team_runs']}, "\
                f"{game['home_name_abbrev']} {game['home_team_runs']}, "\
                f"{game['inning_state']} {number_with_suffix(game['inning'])} "\
-               f"({game['status']})"
+               f"({game['status']} - {game['reason']})"
     else:
         return f"{game['away_name_abbrev']} @ {game['home_name_abbrev']} "\
                f"{game['status']}"
