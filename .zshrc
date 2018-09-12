@@ -65,10 +65,11 @@ export VISUAL='vim'
 
 # Other Environment Variables
 export BROWSER=/usr/bin/vivaldi-stable
+export GTK_THEME=Vertex-Dark
 
 # Fix fonts not showing up in java applications
 export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true'
-
+export _JAVA_AWT_WM_NONREPARENTING=1
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
@@ -85,16 +86,12 @@ export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true'
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # General Aliases
-alias cdo="cd \"$OLDPWD\" "
-alias cls="echo -ne '\033c'"
-alias cdkern="cd ~/programming/git/kernels/staging"
+alias cu="{ checkupdates && auracle sync } | column"
 alias i3sus="i3lock -c 111111 && systemctl suspend"
 alias java7="/lib/jvm/java-7-openjdk/bin/java "
 alias javac7="/lib/jvm/java-7-openjdk/bin/javac "
 alias java8="/lib/jvm/java-8-openjdk/bin/java "
 alias javac8="/lib/jvm/java-8-openjdk/bin/javac "
-alias topcpu="top -o '%CPU'"
-alias topmem="top -o '%MEM'"
 
 # General Functions
 function mkcd() {
@@ -107,7 +104,7 @@ function mkpcd() {
 
 ZSH_CACHE_DIR=$HOME/.oh-my-zsh-cache
 if [[ ! -d $ZSH_CACHE_DIR ]]; then
-  mkdir $ZSH_CACHE_DIR
+	mkdir $ZSH_CACHE_DIR
 fi
 
 source $ZSH/oh-my-zsh.sh
