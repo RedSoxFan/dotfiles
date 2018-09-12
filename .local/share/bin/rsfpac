@@ -537,15 +537,9 @@ class SinkInputController(BaseController):
         '''
         if isinstance(query, PulseSinkInputInfo):
             return query
-
         query = str(query)
-        if pid:
-            res = tuple(s for s in self.sink_inputs
-                        if str(query) in (s.pid, ))
-        else:
-            res = tuple(s for s in self.sink_inputs
-                        if str(query) in (s.name, str(s.index)))
-
+        attrs = lambda s: (s.pid, ) if pid else (s.name, str(s.index))
+        res = tuple(s for s in self.sink_inputs if str(query) in attrs(s))
         return len(res) == 1 and res[0] or None
 
     def get_sink_input_pid(self, sinput):
