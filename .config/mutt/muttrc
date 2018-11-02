@@ -1,0 +1,103 @@
+source ~/.config/mutt/secret
+
+# Environment
+set editor = vim
+
+# IMAP
+set imap_user = 'bosrsf04@gmail.com'
+set imap_pass = $my_pass
+set folder = 'imaps://imap.gmail.com'
+set spoolfile = +Sway
+set postponed = "+[Gmail]/Drafts"
+set mbox = 'imaps://imap.gmail.com/[Gmail]/All Mail'
+mailboxes =INBOX =Sway
+set header_cache = ~/.cache/mutt
+set message_cachedir = ~/.cache/mutt
+unset imap_passive
+set imap_idle = yes
+set imap_keepalive = 300
+set mail_check = 90
+set mark_old = no
+set timeout = 15
+set imap_poll_timeout = 0
+
+# SMTP and Composing
+set realname = 'Brian Ashworth'
+set from = $imap_user
+set use_from = yes
+set smtp_url = smtps://$imap_user@smtp.gmail.com:465
+set smtp_pass = $my_pass
+set ssl_starttls = yes
+set edit_headers = yes
+unset record
+
+# Navigation and Management
+macro index,pager d "<save-message>=[Gmail]/Trash<enter><enter>" "Trash"
+macro index gi "<change-folder>=INBOX<enter>" "Go to inbox"
+macro index ga "<change-folder>=[Gmail]/All Mail<enter>" "Go to all mail"
+macro index gd "<change-folder>=[Gmail]/Drafts<enter>" "Go to drafts"
+macro index sw "<change-folder>=Sway<enter>" "Go to sway"
+
+# External Processing
+set wait_key = no
+macro index,pager A "<pipe-message> less -\n<Enter>" "View raw"
+macro index,pager B "<pipe-message> env urlscan -c -d<Enter>" "urlscan"
+macro attach,compose B "<pipe-entry> env urlscan -c -d<Enter>" "urlscan"
+macro index,pager H "<pipe-message> grep -A1 'Reply to this email directly or view it on GitHub' | tail -n1 | rev | cut -d= -f2- | rev | xargs firefox -P git <Enter>" "View on GitHub"
+macro index,pager G "<pipe-message> grep -A1 'Reply to this email directly or view it on GitHub' | tail -n1 | $HOME/.local/share/bin/mutt-github <Enter>" "Checkout PR"
+
+# Threading
+set sort = reverse-threads
+set sort_browser = reverse-date
+set sort_aux = last-date-received
+set collapse_unread = no
+folder-hook . "push <collapse-all>"
+
+# Pager
+set pager_stop = yes
+set tilde = yes
+unset markers
+
+# Formats
+set index_format = "%4C %S %D %-15.15n %s%*   (%e/%E)"
+set pager_format = "%S [%C/%m] [%e/%E] %n: %s%*  -%P-"
+set date_format = "%Y-%m-%d %H:%M"
+
+# Colors
+color index blue          default ~P
+color index color16       default ~R
+color index magenta       default "~R ~i /pull/"
+color index brightmagenta default "~U ~i /pull/"
+color index yellow        default "~R ~i /issues?/"
+color index brightyellow  default "~U ~i /issues?/"
+
+set header_color_partial = yes
+color hdrdefault brightcolor17 default
+color header     brightcolor16 default "^[^:]+:"
+
+color normal color18       default
+color body   brightwhite   default "(^| )@[^ ]+(|$)"
+color body   brightwhite   default "^[[:space:]].*"
+color body   brightwhite   default "\`[^\`]+\`"
+color body   brightwhite   default "\`{3}"
+color body   brightwhite   default "\`{3}[^\`]*\`{3}"
+color body   brightwhite   default "#[0-9]+"
+color body   brightblue    default "^(> |)@@ .*"
+color body   red           default "^\-([^\-]+.*|$)"
+color body   green         default "^[\+]([^\+]+.*|$)"
+color body   blue          default "^Reopened #.*"
+color body   brightblue    default "^Fixes #.*"
+color body   brightblue    default "^Closes #.*"
+color body   brightblue    default "^Supersedes #.*"
+color body   green         default "^.* approved this pull request."
+color body   green         default "^Merged #.*"
+color body   red           default "^.* requested changes on this pull request."
+color body   red           default "^Closed #.*"
+color body   yellow        default "^@.* requested your review on: .*"
+
+# Folder Hooks
+folder-hook . "push <sync-mailbox>"
+folder-hook INBOX "auto_view text/html"
+folder-hook INBOX "setenv BROWSER $HOME/opt/scripts/firefox-default"
+folder-hook Sway "unauto_view *"
+folder-hook Sway "setenv BROWSER $HOME/opt/scripts/firefox-git"

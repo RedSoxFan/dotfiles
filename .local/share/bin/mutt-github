@@ -1,0 +1,41 @@
+#!/bin/bash
+
+read URL
+if [[ ! "$URL" =~ /pull/ ]]; then
+	echo "$URL is not a GitHub PR"
+	exit 1
+fi
+
+DIR=""
+if [[ "$URL" =~ /swaywm/ ]]; then
+	SWAY_ROOT=~/programming/forks/sway
+	if [[ "$URL" =~ /sway/ ]]; then
+		DIR=$SWAY_ROOT
+	elif [[ "$URL" =~ /wlroots/ ]]; then
+		DIR=$SWAY_ROOT/subprojects/wlroots
+	fi
+fi
+
+if [ -z "$DIR" ]; then
+	echo "$URL points to an unknown repository location"
+	exit 2
+elif [ ! -d "$DIR" ]; then
+	echo "$DIR does not exist"
+	exit 3
+fi
+
+ID=`echo $URL | grep -Po "(?!pull/)\d+"`
+
+if [ -z "$ID" ]; then
+	echo "$URL does not contain an ID"
+	exit 4
+fi
+
+echo $DIR" -> "$ID
+
+cd $DIR
+git stash
+git checkout master
+git pull
+git fetch origin pull/$ID/head:pr-$ID
+git checkout pr-$ID

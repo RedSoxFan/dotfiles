@@ -1,2 +1,0 @@
-set sendmail="/usr/bin/msmtp -a pitt"
-set from=bma37@pitt.edu
