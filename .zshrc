@@ -1,97 +1,14 @@
-# Path to your oh-my-zsh installation.
-ZSH=/usr/share/oh-my-zsh/
-
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
-ZSH_THEME="agnoster"
-
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
-
-# Uncomment the following line to use hyphen-insensitive completion. Case
-# sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
-
-# Uncomment the following line to disable bi-weekly auto-update checks.
-DISABLE_AUTO_UPDATE="true"
-
-# Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
-
-# Uncomment the following line to disable colors in ls.
-DISABLE_LS_COLORS="true"
-
-# Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
-
-# Uncomment the following line to display red dots whilst waiting for completion.
-# COMPLETION_WAITING_DOTS="true"
-
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# HIST_STAMPS="mm/dd/yyyy"
-
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(git vi-mode)
-
-# User configuration
-# export PATH="/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
-# export MANPATH="/usr/local/man:$MANPATH"
-export PATH=/usr/lib/ccache/bin:$PATH:~/.local/share/bin
-
-# You may need to manually set your language environment
+# Environment variables
 export LANG=en_US.UTF-8
-
-# Preferred editor
+export PATH=/usr/lib/ccache/bin:$PATH:~/.local/share/bin
 export EDITOR='vim'
 export VISUAL='vim'
-
-# Other Environment Variables
 export BROWSER=/usr/bin/vivaldi-stable
 export GTK_THEME=Vertex-Dark
 
 # Fix fonts not showing up in java applications
 export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true'
 export _JAVA_AWT_WM_NONREPARENTING=1
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-# ssh
-# export SSH_KEY_PATH="~/.ssh/dsa_id"
-
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-
-# General Aliases
-alias cu="{ checkupdates && auracle sync } | column"
-alias i3sus="i3lock -c 111111 && systemctl suspend"
-alias java7="/lib/jvm/java-7-openjdk/bin/java "
-alias javac7="/lib/jvm/java-7-openjdk/bin/javac "
-alias java8="/lib/jvm/java-8-openjdk/bin/java "
-alias javac8="/lib/jvm/java-8-openjdk/bin/javac "
 
 # General Functions
 function mkcd() {
@@ -102,29 +19,25 @@ function mkpcd() {
 	mkdir -p "$1" && cd "$1"
 }
 
-ZSH_CACHE_DIR=$HOME/.oh-my-zsh-cache
-if [[ ! -d $ZSH_CACHE_DIR ]]; then
-	mkdir $ZSH_CACHE_DIR
-fi
-
-source $ZSH/oh-my-zsh.sh
-
-# Reverts oh-my-zsh's change in behavior to allow for dot/hyphen/underscore tab completion again
+# Old oh-my-zsh style path completion
+autoload -Uz compinit
+compinit
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
-# Fix home, end, and delete keys
-bindkey "\033[1~" beginning-of-line
-bindkey "\033[7~" beginning-of-line
-bindkey "\033[4~" end-of-line
-bindkey "\033[8~" end-of-line
-bindkey "\033[3~" delete-char
-bindkey "${terminfo[khome]}" beginning-of-line
-bindkey "${terminfo[kend]}" end-of-line
+# History
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
 
-# Show abbreviated path
-prompt_dir () {
-	prompt_segment blue black "%1~"
-}
+# Fix keys
+bindkey "^[[H" beginning-of-line  # Termite
+bindkey "^[[F" end-of-line  # Termite
+bindkey "\033[7~" beginning-of-line  # URxvt
+bindkey "\033[8~" end-of-line  # URxvt
+bindkey "\033[1~" beginning-of-line  # TTY
+bindkey "\033[4~" end-of-line  # TTY
+bindkey "\033[2~" insert-char
+bindkey "\033[3~" delete-char
+bindkey -v '^?' backward-delete-char  # Allow BS over inserts
 
 # TTY specifics
 if [ "$TERM" = "linux" ]; then
@@ -146,4 +59,83 @@ if [ "$TERM" = "linux" ]; then
 	echo -en "\e]P7777777" #lightgrey
 	echo -en "\e]PFffffff" #white
 	clear #for background artifacting
+fi
+
+# Prompt
+function +vi-git-process() {
+	if [[ -n "${hook_com[staged]}" ]] && [[ -n "${hook_com[unstaged]}" ]]; then
+		hook_com[unstaged]="${hook_com[unstaged][2]}"
+	fi
+}
+
+prompt_git() {
+	if ! $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
+		return;
+	fi
+
+	autoload -Uz vcs_info
+
+	zstyle ':vcs_info:*' enable git
+	zstyle ':vcs_info:*' get-revision true
+	zstyle ':vcs_info:*' check-for-changes true
+	zstyle ':vcs_info:*' formats "%b/%7>>%i%<<%c%u"
+	zstyle ':vcs_info:*' actionformats '%b/%7>>%i%<<%a%c%u'
+	zstyle ':vcs_info:*' stagedstr '/s'
+	zstyle ':vcs_info:*' unstagedstr '/u'
+	zstyle ':vcs_info:git*+set-message:*' hooks git-process
+
+	vcs_info
+	echo -n " "
+	if [[ -n $(git status --porcelain 2>/dev/null | tail -n1) ]]; then
+		echo -n "%F{yellow}"
+	else
+		echo -n "%F{green}"
+	fi
+	echo -n "${vcs_info_msg_0_%% }%f"
+}
+
+prompt_build() {
+	echo -n '%B'
+	echo -n '%(?..%F{red}%?%f )'
+	echo -n '%F{cyan}%1~%f'
+	prompt_git
+	echo -n '%(!.#.>)'
+	echo -n ' %b'
+}
+
+setopt PROMPT_SUBST
+PROMPT='$(prompt_build)'
+
+# Display vi mode
+KEYTIMEOUT=5
+if [ "$TERM" = "linux" ]; then
+	# Display '<<<' on the right for normal and nothing for insert
+	function zle-keymap-select {
+		if [[ ${KEYMAP} == vicmd ]] || [[ $1 = 'block' ]]; then
+			RPROMPT="%B%F{red}<<<%f%b"
+		else
+			RPROMPT=""
+		fi
+		zle reset-prompt
+	}
+	zle -N zle-keymap-select
+	RPROMPT=""
+else
+	# Display block cursor for normal and I-beam cursor for insert
+	function zle-line-init {
+		zle -K viins
+	}
+	zle -N zle-line-init
+	function zle-keymap-select {
+		if [[ ${KEYMAP} == vicmd ]] || [[ $1 = 'block' ]]; then
+			echo -ne '\e[1 q'
+		else
+			echo -ne '\e[5 q'
+		fi
+	}
+	zle -N zle-keymap-select
+	echo -ne '\e[5 q'
+	preexec() {
+		echo -ne '\e[1 q'
+	}
 fi
