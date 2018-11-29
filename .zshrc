@@ -98,8 +98,17 @@ prompt_git() {
 	echo -n "${vcs_info_msg_0_%% }%f"
 }
 
+prompt_tmux() {
+	if [ -z "$TMUX" ]; then
+		return;
+	fi
+
+	echo -n "["$(tmux display-message -p '#S')"] "
+}
+
 prompt_build() {
 	echo -n '%B'
+	prompt_tmux
 	echo -n '%(?..%F{red}%?%f )'
 	echo -n '%F{cyan}%1~%f'
 	prompt_git

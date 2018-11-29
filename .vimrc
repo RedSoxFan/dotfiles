@@ -143,3 +143,13 @@ nmap <Leader>b :<C-U>exec (v:count ? "b" . v:count : "ls")<Enter>
 nmap <Leader>; :bp<Enter>
 nmap <Leader>' :bn<Enter>
 nmap <Leader>m :marks<Enter>
+
+"" Fix Home and End
+imap <ESC>[1~ <Home>
+imap <ESC>[4~ <End>
+imap <ESC>[7~ <Home>
+imap <ESC>[8~ <End>
+imap <ESC>OH <Home>
+imap <ESC>OF <End>
+imap <ESC>[H <Home>
+imap <ESC>[F <End>
