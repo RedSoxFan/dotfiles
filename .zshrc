@@ -3,12 +3,16 @@ export LANG=en_US.UTF-8
 export PATH=/usr/lib/ccache/bin:$PATH:~/.local/share/bin
 export EDITOR='vim'
 export VISUAL='vim'
-export BROWSER=/usr/bin/vivaldi-stable
+export BROWSER=/usr/bin/firefox-nightly
+export GDK_BACKEND=wayland
 export GTK_THEME=Vertex-Dark
 
 # Fix fonts not showing up in java applications
 export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true'
 export _JAVA_AWT_WM_NONREPARENTING=1
+
+# Aliases
+alias lsa="ls -lah"
 
 # General Functions
 function mkcd() {
@@ -79,7 +83,7 @@ prompt_git() {
 	zstyle ':vcs_info:*' get-revision true
 	zstyle ':vcs_info:*' check-for-changes true
 	zstyle ':vcs_info:*' formats "%b/%7>>%i%<<%c%u"
-	zstyle ':vcs_info:*' actionformats '%b/%7>>%i%<<%a%c%u'
+	zstyle ':vcs_info:*' actionformats '%b/%7>>%i%<</%a%c%u'
 	zstyle ':vcs_info:*' stagedstr '/s'
 	zstyle ':vcs_info:*' unstagedstr '/u'
 	zstyle ':vcs_info:git*+set-message:*' hooks git-process
