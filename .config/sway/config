@@ -12,6 +12,7 @@ set $LAPTOP eDP-1
 set $HDMI HDMI-A-2
 set $VGA DP-1
 set $X11 X11-1
+set $WL1 WL-1
 set $KEYBOARD 1:1:AT_Translated_Set_2_keyboard
 set $TOUCHPAD 1267:5:Elan_Touchpad
 
@@ -86,7 +87,7 @@ workspace $WSH8 output $HDMI
 workspace $WSH9 output $HDMI
 workspace $WSH0 output $HDMI
 workspace $WSVG output $VGA
-workspace $WSX1 output $X11
+workspace $WSX1 output $X11 $WL1
 
 # Font for window titles and swaybar
 font pango:Noto Mono for Powerline 10
@@ -203,7 +204,7 @@ bindsym $mod+Shift+equal exec $$prompt "Name (retain number)" | xargs -I {} bash
 bindsym $mod+Control+equal exec $$prompt Name | xargs -I {} swaymsg 'rename workspace to "{}"'
 
 # Marks
-bindsym $mod+Shift+m exec $$prompt Mark | xargs swaymsg mark
+bindsym $mod+Shift+m exec $$prompt Mark | xargs swaymsg -- mark --add
 bindsym $mod+m exec $$prompt 'Go To' | xargs -I {} swaymsg '[con_mark="^{}$"] focus'
 bindsym $mod+Control+m exec $$prompt Unmark | xargs swaymsg unmark
 
@@ -267,9 +268,9 @@ bindsym $mod+r mode "resize"
 
 mode "launcher" {
     # Web + Files
-    bindsym b exec vivaldi-stable; mode "default"
     bindsym c exec chromium --incognito; mode "default"
-    bindsym f exec firefox; mode "default"
+    bindsym f exec GDK_BACKEND=wayland firefox-nightly -P default --private-window; mode "default"
+    bindsym Shift+f exec $$prompt Profile | xargs swaymsg -- exec GDK_BACKEND=wayland firefox-nightly -P; mode "default"
     bindsym g exec google-chrome-stable --incognito; mode "default"
     bindsym n exec pcmanfm; mode "default"
     bindsym o exec opera; mode "default"
@@ -290,7 +291,7 @@ mode "launcher" {
     bindsym Return mode "default"
     bindsym Escape mode "default"
 
-    # Available Letters: a--de--hij--m---q--tu-wxyz
+    # Available Letters: ab-de--hij--m---q--tu-wxyz
     # Available Numbers: 1234567890
 }
 bindsym $mod+o mode "launcher"
@@ -339,6 +340,8 @@ client.urgent               #881000FF   #881000FF   #FFFFFFFF   #881000FF   #881
 
 # Status
 bar {
+    bindsym button4 nop
+    bindsym button5 nop
     colors {
         background  #212121A0
         statusline  #DDDDDDFF
