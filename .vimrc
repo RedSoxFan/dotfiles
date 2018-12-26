@@ -2,7 +2,7 @@
 filetype off
 syntax on
 set backspace=indent,eol,start
-set listchars=tab:>-
+set listchars=tab:>-,trail:.
 set nocompatible
 set nofoldenable
 set nowrap
