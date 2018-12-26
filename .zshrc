@@ -82,8 +82,8 @@ prompt_git() {
 	zstyle ':vcs_info:*' enable git
 	zstyle ':vcs_info:*' get-revision true
 	zstyle ':vcs_info:*' check-for-changes true
-	zstyle ':vcs_info:*' formats "%b/%7>>%i%<<%c%u"
-	zstyle ':vcs_info:*' actionformats '%b/%7>>%i%<</%a%c%u'
+	zstyle ':vcs_info:*' formats "%b/%8>>%i%<<%c%u"
+	zstyle ':vcs_info:*' actionformats '%b/%8>>%i%<</%a%c%u'
 	zstyle ':vcs_info:*' stagedstr '/s'
 	zstyle ':vcs_info:*' unstagedstr '/u'
 	zstyle ':vcs_info:git*+set-message:*' hooks git-process
