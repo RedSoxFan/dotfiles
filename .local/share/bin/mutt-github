@@ -13,6 +13,8 @@ if [[ "$URL" =~ /swaywm/ ]]; then
 		DIR=$SWAY_ROOT
 	elif [[ "$URL" =~ /wlroots/ ]]; then
 		DIR=$SWAY_ROOT/subprojects/wlroots
+	elif [[ "$URL" =~ /swaylock/ ]]; then
+		DIR=$SWAY_ROOT/../swaylock
 	fi
 fi
 

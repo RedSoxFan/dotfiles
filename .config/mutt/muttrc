@@ -43,7 +43,7 @@ set wait_key = no
 macro index,pager A "<pipe-message> less -\n<Enter>" "View raw"
 macro index,pager B "<pipe-message> env urlscan -c -d<Enter>" "urlscan"
 macro attach,compose B "<pipe-entry> env urlscan -c -d<Enter>" "urlscan"
-macro index,pager H "<pipe-message> grep -A1 'Reply to this email directly or view it on GitHub' | tail -n1 | rev | cut -d= -f2- | rev | xargs firefox -P git <Enter>" "View on GitHub"
+macro index,pager H "<pipe-message> grep -A1 'Reply to this email directly or view it on GitHub' | tail -n1 | rev | cut -d= -f2- | rev | xargs env GDK_BACKEND=wayland firefox-nightly -P git <Enter>" "View on GitHub"
 macro index,pager G "<pipe-message> grep -A1 'Reply to this email directly or view it on GitHub' | tail -n1 | $HOME/.local/share/bin/mutt-github <Enter>" "Checkout PR"
 
 # Threading
