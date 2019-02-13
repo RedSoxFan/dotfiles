@@ -4,7 +4,7 @@
 # Preferences
 set $mod Mod4
 set $sec Mod1
-set $term termite -e zsh
+set $term urxvt -e zsh
 set $menu "rofi -show run -modi window,run"
 
 # Devices
@@ -65,7 +65,7 @@ font pango:monospace 8
 floating_modifier $mod
 
 # Launch a terminal
-bindsym $mod+Return exec termite -e zsh
+bindsym $mod+Return exec $term
 
 # kill focused window
 bindsym $mod+Shift+q kill
