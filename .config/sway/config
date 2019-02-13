@@ -4,17 +4,20 @@
 set $mod Mod4
 set $sec Mod1
 set $term termite -e zsh
-set $menu dmenu_path | dmenu | xargs -I{} swaymsg "exec {}"
+set $menu dmenu_path | dmenu | xargs -rI{} swaymsg "exec {}"
 set $prompt echo | dmenu -p
 
 # Device names
 set $LAPTOP eDP-1
+set $LAPTOP_ID Unknown 0x38ED 0x00000000
 set $HDMI HDMI-A-2
+set $HDMI_ID Unknown NS-19E310A13 0x00000001
 set $VGA DP-1
-set $X11 X11-1
-set $WL1 WL-1
+set $X11_1 X11-1
+set $WL_1 WL-1
 set $KEYBOARD 1:1:AT_Translated_Set_2_keyboard
 set $TOUCHPAD 1267:5:Elan_Touchpad
+set $MOUSE 1118:1970:Microsoft_Microsoft®_Nano_Transceiver_v1.0_Mouse
 
 # Workspace names
 set $WSL1 1:MAIN
@@ -38,7 +41,9 @@ set $WSH8 18:HDMI8
 set $WSH9 19:HDMI9
 set $WSH0 20:HDMI0
 set $WSVG 21:VGAOUT
-set $WSX1 99:TEST
+
+# Seat configuration
+seat * hide_cursor 3000
 
 # Input configuration
 input $KEYBOARD {
@@ -66,7 +71,7 @@ output $HDMI {
 }
 
 # Set Workspace Outputs
-workspace $WSL1 output $LAPTOP
+workspace $WSL1 output $LAPTOP $WL_1 $X11_1
 workspace $WSL2 output $LAPTOP
 workspace $WSL3 output $LAPTOP
 workspace $WSL4 output $LAPTOP
@@ -87,7 +92,6 @@ workspace $WSH8 output $HDMI
 workspace $WSH9 output $HDMI
 workspace $WSH0 output $HDMI
 workspace $WSVG output $VGA
-workspace $WSX1 output $X11 $WL1
 
 # Font for window titles and swaybar
 font pango:Noto Mono for Powerline 10
@@ -128,8 +132,9 @@ bindsym $mod+e layout toggle split
 bindsym $mod+h splith
 bindsym $mod+v splitv
 
-# Focus the parent
+# Focus the parent or child
 bindsym $mod+a focus parent
+bindsym $mod+Shift+a focus child
 
 # Focus settings
 focus_follows_mouse no
@@ -161,7 +166,6 @@ bindsym $mod+$sec+8 workspace number $$WSH8
 bindsym $mod+$sec+9 workspace number $$WSH9
 bindsym $mod+$sec+0 workspace number $$WSH0
 bindsym $mod+$sec+v workspace number $$WSVG
-bindsym $mod+$sec+t workspace number $$WSX1
 
 # Move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace number $$WSL1; workspace number $$WSL1
@@ -185,7 +189,6 @@ bindsym $mod+$sec+Shift+8 move container to workspace number $$WSH8; workspace n
 bindsym $mod+$sec+Shift+9 move container to workspace number $$WSH9; workspace number $$WSH9
 bindsym $mod+$sec+Shift+0 move container to workspace number $$WSH0; workspace number $$WSH0
 bindsym $mod+$sec+Shift+v move container to workspace number $$WSVG; workspace number $$WSVG
-bindsym $mod+$sec+Shift+t move container to workspace number $$WSX1; workspace number $$WSX1
 
 # Floating
 floating_modifier $mod
@@ -243,9 +246,6 @@ bindsym $mod+y exec $$GRIM $$SCREENSHOT
 bindsym $mod+Shift+y exec $$SLURP -d | $$GRIM -g - $$SCREENSHOT
 bindsym $mod+Control+y exec $$SWAY_FOCUSED_GEOM | $$GRIM -g - $$SCREENSHOT
 
-
-bindsym $mod+c seat default cursor set 0 1080
-
 ## Modes ##
 
 mode "resize" {
@@ -270,7 +270,7 @@ mode "launcher" {
     # Web + Files
     bindsym c exec chromium --incognito; mode "default"
     bindsym f exec GDK_BACKEND=wayland firefox-nightly -P default --private-window; mode "default"
-    bindsym Shift+f exec $$prompt Profile | xargs swaymsg -- exec GDK_BACKEND=wayland firefox-nightly -P; mode "default"
+    bindsym Shift+f exec $$prompt Profile | xargs -r swaymsg -- exec GDK_BACKEND=wayland firefox-nightly -P; mode "default"
     bindsym g exec google-chrome-stable --incognito; mode "default"
     bindsym n exec pcmanfm; mode "default"
     bindsym o exec opera; mode "default"
@@ -330,7 +330,7 @@ mode "mako" {
 bindsym $mod+Grave mode "mako"
 
 for_window [app_id="^termite$"] opacity 0.8
-assign [title="^wlroots - "] output $HDMI
+for_window [title="^wlroots - "] fullscreen
 
 # Colors                    border      back        text        ind         child
 client.focused              #666666FF   #22222280   #FFFFFFFF   #444444FF   #666666FF
