@@ -97,12 +97,6 @@ set ignorecase
 set smartcase
 nnoremap <silent> <Esc><Esc> :let @/=""<CR>
 
-"" Enable very-magic mode so regex works normally
-nnoremap / /\v
-vnoremap / /\v
-cnoremap s/ s/\v
-cnoremap %s/ %s/\v
-
 "" Backup locations
 set backup
 set backupdir=~/.vim/backup
@@ -143,6 +137,10 @@ nmap <Leader>b :<C-U>exec (v:count ? "b" . v:count : "ls")<Enter>
 nmap <Leader>; :bp<Enter>
 nmap <Leader>' :bn<Enter>
 nmap <Leader>m :marks<Enter>
+
+nmap <Leader>1 :cd ~/programming/forks/sway<Enter>
+nmap <Leader>2 :cd ~/programming/forks/sway/subprojects/wlroots<Enter>
+nmap <Leader>3 :cd ~/programming/forks/swaylock<Enter>
 
 "" Fix Home and End
 imap <ESC>[1~ <Home>
