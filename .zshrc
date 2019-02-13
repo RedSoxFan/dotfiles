@@ -4,7 +4,6 @@ export PATH=/usr/lib/ccache/bin:$PATH:~/.local/share/bin
 export EDITOR='vim'
 export VISUAL='vim'
 export BROWSER=/usr/bin/firefox-nightly
-export GDK_BACKEND=wayland
 export GTK_THEME=Vertex-Dark
 
 # Fix fonts not showing up in java applications
