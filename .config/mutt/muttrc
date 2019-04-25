@@ -13,12 +13,10 @@ set mbox = 'imaps://imap.gmail.com/[Gmail]/All Mail'
 mailboxes =INBOX =Sway
 set header_cache = ~/.cache/mutt
 set message_cachedir = ~/.cache/mutt
-unset imap_passive
-set imap_idle = yes
-set imap_keepalive = 300
+set imap_keepalive = 120
 set mail_check = 90
 set mark_old = no
-set timeout = 15
+set timeout = 5
 set imap_poll_timeout = 0
 
 # SMTP and Composing
