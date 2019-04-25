@@ -36,11 +36,6 @@ let g:airline_powerline_fonts=1
 let g:airline_exclude_preview=1
 
 " Navigation and Editing
-Plug 'kshenoy/vim-signature'
-Plug 'terryma/vim-multiple-cursors'
-Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
-let g:tagbar_autofocus = 1
-nmap <F9> :TagbarToggle<Enter>
 Plug 'ludovicchabant/vim-gutentags'
 let g:gutentags_project_root = ['tags']
 let g:gutentags_add_default_project_roots = 0
@@ -55,10 +50,6 @@ Plug 'editorconfig/editorconfig-vim'
 " Git
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
-
-" Syntax Files
-Plug 'PotatoesMaster/i3-vim-syntax', { 'for': 'i3' }
-Plug 'aouelete/sway-vim-syntax', { 'for': 'sway' }
 
 " Python Development
 Plug 'nvie/vim-flake8', { 'for': 'python' }
@@ -102,13 +93,6 @@ set backup
 set backupdir=~/.vim/backup
 set directory=/tmp
 
-"" netrw settings
-let g:netrw_banner = 0
-let g:netrw_liststyle = 3
-let g:netrw_browse_split = 4
-let g:netrw_altv = 1
-let g:netrw_winsize = 20
-
 "" FileType defaults
 set tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab
 autocmd FileType cfg setlocal nospell
@@ -122,6 +106,7 @@ autocmd FileType php setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
 autocmd FileType python setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab colorcolumn=80
 autocmd FileType scss setlocal tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
 autocmd FileType help wincmd L
+autocmd FileType gitcommit setlocal colorcolumn=72
 
 "" Define commands for common typos
 command WQ wq
@@ -138,9 +123,11 @@ nmap <Leader>; :bp<Enter>
 nmap <Leader>' :bn<Enter>
 nmap <Leader>m :marks<Enter>
 
-nmap <Leader>1 :cd ~/programming/forks/sway<Enter>
-nmap <Leader>2 :cd ~/programming/forks/sway/subprojects/wlroots<Enter>
-nmap <Leader>3 :cd ~/programming/forks/swaylock<Enter>
+nmap <Leader>ss :cd ~/programming/forks/sway<Enter>
+nmap <Leader>sw :cd ~/programming/forks/sway/subprojects/wlroots<Enter>
+nmap <Leader>sb :cd ~/programming/forks/swaybg<Enter>
+nmap <Leader>si :cd ~/programming/forks/swayidle<Enter>
+nmap <Leader>sl :cd ~/programming/forks/swaylock<Enter>
 
 "" Fix Home and End
 imap <ESC>[1~ <Home>
