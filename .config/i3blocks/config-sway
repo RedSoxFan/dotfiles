@@ -7,7 +7,7 @@ color=#FFFFFF
 #separator_block_width=3
 
 [music]
-command=/home/brian/.config/polybar/music.sh | sed "s/ //" | sed -r "s;^ (.+)$;<span foreground='#aaaaaa'>\\1</span>;"
+command=/home/brian/.config/polybar/music.sh | sed "s/ //" | sed "s/&/&amp;/" | sed -r "s;^ (.+)$;<span foreground='#aaaaaa'>\\1</span>;"
 markup=pango
 separator_block_width=3
 
