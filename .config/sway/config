@@ -271,10 +271,6 @@ mode "launcher" {
     bindsym c exec chromium --incognito; mode "default"
     bindsym f exec GDK_BACKEND=wayland firefox-nightly -P default --private-window; mode "default"
     bindsym Shift+f exec $$prompt Profile | xargs -r swaymsg -- exec GDK_BACKEND=wayland firefox-nightly -P; mode "default"
-    bindsym g exec google-chrome-stable --incognito; mode "default"
-    bindsym n exec pcmanfm; mode "default"
-    bindsym o exec opera; mode "default"
-    bindsym r exec termite -e ranger; mode "default"
 
     # Shell + Editors
     bindsym p exec termite -e $$RSFPAC; mode "default"
@@ -291,7 +287,7 @@ mode "launcher" {
     bindsym Return mode "default"
     bindsym Escape mode "default"
 
-    # Available Letters: ab-de--hij--m---q--tu-wxyz
+    # Available Letters: ab-de-ghij--mno-qr-tu-wxyz
     # Available Numbers: 1234567890
 }
 bindsym $mod+o mode "launcher"
@@ -330,7 +326,7 @@ mode "mako" {
 bindsym $mod+Grave mode "mako"
 
 for_window [app_id="^termite$"] opacity 0.8
-for_window [title="^wlroots - "] fullscreen
+for_window [title="^wlroots - (WL|X11)"] fullscreen
 
 # Colors                    border      back        text        ind         child
 client.focused              #666666FF   #22222280   #FFFFFFFF   #444444FF   #666666FF
