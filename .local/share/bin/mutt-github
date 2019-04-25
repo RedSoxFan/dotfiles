@@ -1,9 +1,15 @@
 #!/bin/bash
 
+printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+
 read URL
+COMMIT=0
 if [[ ! "$URL" =~ /pull/ ]]; then
-	echo "$URL is not a GitHub PR"
-	exit 1
+	if [[ ! "$URL" =~ /commit/ ]]; then
+		echo "$URL is not a GitHub PR or commit"
+		exit 1
+	fi
+	COMMIT=1
 fi
 
 DIR=""
@@ -13,6 +19,10 @@ if [[ "$URL" =~ /swaywm/ ]]; then
 		DIR=$SWAY_ROOT
 	elif [[ "$URL" =~ /wlroots/ ]]; then
 		DIR=$SWAY_ROOT/subprojects/wlroots
+	elif [[ "$URL" =~ /swaybg/ ]]; then
+		DIR=$SWAY_ROOT/../swaybg
+	elif [[ "$URL" =~ /swayidle/ ]]; then
+		DIR=$SWAY_ROOT/../swayidle
 	elif [[ "$URL" =~ /swaylock/ ]]; then
 		DIR=$SWAY_ROOT/../swaylock
 	fi
@@ -26,7 +36,7 @@ elif [ ! -d "$DIR" ]; then
 	exit 3
 fi
 
-ID=`echo $URL | grep -Po "(?!pull/)\d+"`
+ID=`echo $URL | grep -Po "[A-Za-z0-9]+$"`
 
 if [ -z "$ID" ]; then
 	echo "$URL does not contain an ID"
@@ -39,5 +49,14 @@ cd $DIR
 git stash
 git checkout master
 git pull
-git fetch origin pull/$ID/head:pr-$ID
-git checkout pr-$ID
+if [ $COMMIT -eq 0 ]; then
+	git fetch origin pull/$ID/head:pr-$ID
+	git rev-parse --verify --quiet
+	if [ $? -eq 0 ]; then
+		git branch -fD pr-$ID
+	fi
+	git checkout pr-$ID
+else
+	git checkout $ID
+fi
+read -n 1 -s -r -p "Press any key to continue"
