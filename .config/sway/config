@@ -4,8 +4,9 @@
 set $mod Mod4
 set $sec Mod1
 set $term termite -e zsh
-set $menu dmenu_path | dmenu | xargs -rI{} swaymsg "exec {}"
-set $prompt echo | dmenu -p
+set $_menu bemenu --fn "Monospace 12" --hf "#2B83A6" --tf "#2B83A6" -p
+set $menu dmenu_path | $_menu "" | xargs -rI{} swaymsg "exec {}"
+set $prompt echo | $_menu
 
 # Device names
 set $LAPTOP eDP-1
