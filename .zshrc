@@ -3,6 +3,7 @@ export LANG=en_US.UTF-8
 export PATH=/usr/lib/ccache/bin:$PATH:~/.local/share/bin
 export EDITOR='vim'
 export VISUAL='vim'
+export MOZ_ENABLE_WAYLAND=1
 export BROWSER=/usr/bin/firefox-nightly
 export GTK_THEME=Vertex-Dark
 

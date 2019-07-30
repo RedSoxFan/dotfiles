@@ -270,8 +270,8 @@ bindsym $mod+r mode "resize"
 mode "launcher" {
     # Web + Files
     bindsym c exec chromium --incognito; mode "default"
-    bindsym f exec GDK_BACKEND=wayland firefox-nightly -P default --private-window; mode "default"
-    bindsym Shift+f exec $$prompt Profile | xargs -r swaymsg -- exec GDK_BACKEND=wayland firefox-nightly -P; mode "default"
+    bindsym f exec firefox-nightly -P default --private-window; mode "default"
+    bindsym Shift+f exec $$prompt Profile | xargs -r swaymsg -- exec firefox-nightly -P; mode "default
 
     # Shell + Editors
     bindsym p exec termite -e $$RSFPAC; mode "default"
@@ -281,14 +281,15 @@ mode "launcher" {
     bindsym k exec localc; mode "default"
     bindsym l exec lowriter; mode "default"
 
-    # Misc
+    # Media
     bindsym s exec spotify; mode "default"
+    bindsym y exec firefox-nightly -P default --new-window https://tv.youtube.com; mode "default"
 
     # Return to default mode
     bindsym Return mode "default"
     bindsym Escape mode "default"
 
-    # Available Letters: ab-de-ghij--mno-qr-tu-wxyz
+    # Available Letters: ab-de-ghij--mno-qr-tu-wx-z
     # Available Numbers: 1234567890
 }
 bindsym $mod+o mode "launcher"
