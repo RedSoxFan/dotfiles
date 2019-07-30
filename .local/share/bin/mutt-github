@@ -50,11 +50,11 @@ git stash
 git checkout master
 git pull
 if [ $COMMIT -eq 0 ]; then
-	git fetch origin pull/$ID/head:pr-$ID
-	git rev-parse --verify --quiet
+	git rev-parse --verify --quiet pr-$ID
 	if [ $? -eq 0 ]; then
-		git branch -fD pr-$ID
+		git branch -D pr-$ID
 	fi
+	git fetch origin pull/$ID/head:pr-$ID
 	git checkout pr-$ID
 else
 	git checkout $ID
