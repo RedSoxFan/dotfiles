@@ -2,7 +2,7 @@
 filetype off
 syntax on
 set backspace=indent,eol,start
-set listchars=tab:>-,trail:.
+set listchars=tab:>-,eol:¬,space:.
 set nocompatible
 set nofoldenable
 set nowrap
@@ -136,5 +136,3 @@ imap <ESC>[7~ <Home>
 imap <ESC>[8~ <End>
 imap <ESC>OH <Home>
 imap <ESC>OF <End>
-imap <ESC>[H <Home>
-imap <ESC>[F <End>
