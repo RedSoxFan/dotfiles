@@ -9,5 +9,5 @@ ad=$(playerctl metadata 'mpris:trackid' 2> /dev/null | grep -E '^spotify:ad:')
 if [ -z $ad ]; then
 	echo $state" "$artist" - "$title | sed -r 's/^  - $//'
 else
-	echo $state" Advertisement ("$title")"
+	echo $state" Advertisement"
 fi
