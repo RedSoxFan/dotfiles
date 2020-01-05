@@ -151,4 +151,8 @@ else
 	preexec() {
 		echo -ne '\e[1 q'
 	}
+	echo -ne "\e]0;${PWD/$HOME/~}\a"
+	chpwd() {
+		echo -ne "\e]0;${PWD/$HOME/~}\a"
+	}
 fi
