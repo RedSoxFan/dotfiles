@@ -209,8 +209,12 @@ bindsym $mod+Control+equal exec $$prompt Name | xargs -I {} swaymsg 'rename work
 
 # Marks
 bindsym $mod+Shift+m exec $$prompt Mark | xargs swaymsg -- mark --add
-bindsym $mod+m exec $$prompt 'Go To' | xargs -I {} swaymsg '[con_mark="^{}$"] focus'
+bindsym $mod+$sec+m exec $$prompt 'Go To' | xargs -I {} swaymsg '[con_mark="^{}$"] focus'
 bindsym $mod+Control+m exec $$prompt Unmark | xargs swaymsg unmark
+
+# Quick Marks
+bindsym $mod+m exec i3-input -F '[con_id=__focused__] mark --add _last; [con_mark=%s] focus' -l1
+bindsym $mod+n [con_mark=_last] focus
 
 # Audio
 set $RSFPAC ~/.local/share/bin/rsfpac
@@ -224,10 +228,14 @@ bindsym --locked XF86AudioStop exec playerctl stop
 bindsym --locked XF86AudioPrev exec playerctl previous
 bindsym --locked XF86AudioNext exec playerctl next
 
+# Brightness
+bindsym --locked XF86MonBrightnessDown exec light -U 10
+bindsym --locked XF86MonBrightnessUp exec light -A 10
+
 # Border settings
 default_border pixel 1
 default_floating_border normal
-hide_edge_borders smart
+hide_edge_borders --i3 smart
 bindsym $mod+F12 border toggle
 for_window [shell=".*"] title_format "%title :: %shell"
 
@@ -236,7 +244,7 @@ bindsym $mod+Shift+c reload
 # Logout
 bindsym $mod+Shift+e exit
 # Lock
-bindsym Control+$sec+l exec swaylock
+bindsym Control+$sec+l exec "light -O; light -S 10; swaylock; light -I"
 
 # Screenshot
 set $GRIM ~/opt/grim/build/grim
@@ -274,8 +282,8 @@ mode "launcher" {
     bindsym Shift+f exec $$prompt Profile | xargs -r swaymsg -- exec firefox-nightly -P; mode "default
 
     # Shell + Editors
-    bindsym p exec termite -e $$RSFPAC; mode "default"
-    bindsym v exec termite -e vim; mode "default"
+    bindsym p exec $$term -e $$RSFPAC; mode "default"
+    bindsym v exec $$term -e vim; mode "default"
 
     # Documents
     bindsym k exec localc; mode "default"
