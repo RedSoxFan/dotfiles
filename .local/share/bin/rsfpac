@@ -90,15 +90,18 @@ class BaseController(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def find_sink_input(self, query, pid=False):
         '''
-        Find a sink-input based on a query. If the pid keyword is set, then
+        Find sink-input(s) based on a query. If the pid keyword is set, then
         the query string will search the application.process.id in the
-        proplist instead of the name or id of the sink-input.
+        proplist instead of the name or id of the sink-input. Additionally, if
+        the pid keyboard is set, the tuple returned will include all results.
+        Otherwise, it will either be of length one, for an exact match, or of
+        length zero.
 
         :param query: The query string
         :type query: PulseSinkInputInfo or str or int
         :param pid: Whether to check the pid
-        :return: The sink-input that was found
-        :rtype: PulseSinkInputInfo or None
+        :return: A tuple of PulseSinkInputInfo objects that were found
+        :rtype: tuple
         '''
         pass
 
@@ -480,33 +483,35 @@ class SinkInputController(BaseController):
         :raises RuntimeError: If input is associated with an unknown sink
         '''
         # Find the sink-input
-        siobj = self.find_sink_input(sinput, pid=pid)
-        if not siobj:
+        siobjs = self.find_sink_input(sinput, pid=pid)
+        if len(siobjs) == 0:
             raise ValueError(f"Sink-input {sinput} not found")
 
-        # Find the sink that it is being outputted to
-        sobj = self.find_sink(siobj.sink)
-        if not siobj:
-            raise RuntimeError(f"Sink-input {sinput} is using unknown sink")
+        for siobj in siobjs:
+            # Find the sink that it is being outputted to
+            sobj = self.find_sink(siobj.sink)
+            if not siobj:
+                raise RuntimeError(f"Sink-input {siobj.index} has an unknown "
+                        f"sink {siobj.sink}")
 
-        # Indicators
-        muteind = siobj.mute and 'M' or ' '
+            # Indicators
+            muteind = siobj.mute and 'M' or ' '
 
-        # Print basic information
-        width = max(30, self.max_sink_input_width)
-        sinkwidth = max(30, self.max_sink_width)
-        print(f"{siobj.index:6} {siobj.name:{width}} {siobj.sink:2} ",
-              f"{sobj.name:{sinkwidth}} {muteind}", end='')
-        for value in siobj.volume.values:
-            print(f" {trueround(value * 100):3}", end='')
-        print()
-
-        # If desired, print proplist
-        if props:
-            size = len(max(siobj.proplist.keys(), key=len))
-            for key, value in sorted(siobj.proplist.items()):
-                print(f"\t{key:{size}}\t{value}")
+            # Print basic information
+            width = max(30, self.max_sink_input_width)
+            sinkwidth = max(30, self.max_sink_width)
+            print(f"{siobj.index:6} {siobj.name:{width}} {siobj.sink:2} ",
+                  f"{sobj.name:{sinkwidth}} {muteind}", end='')
+            for value in siobj.volume.values:
+                print(f" {trueround(value * 100):3}", end='')
             print()
+
+            # If desired, print proplist
+            if props:
+                size = len(max(siobj.proplist.keys(), key=len))
+                for key, value in sorted(siobj.proplist.items()):
+                    print(f"\t{key:{size}}\t{value}")
+                print()
 
     def display_sink_inputs(self, shall=False, props=False):
         '''
@@ -521,26 +526,29 @@ class SinkInputController(BaseController):
 
     def find_sink_input(self, query, pid=False):
         '''
-        Try to find a sink-input that matches a given input query. By default,
+        Try to find sink-input(s) that matches a given input query. By default,
         the search checks to see if the name or index of any sink-input
         matches the query. If the pid keyword is set to True, then the
         property `application.process.id` is checked instead. If the query
-        does not match _exactly_ one sink-input, then None is returned. For
-        convenience, if a PulseSinkInputInfo is given as the query, it will be
-        returned.
+        does not match _exactly_ one sink-input _and_ pid is not set, then an
+        empty tuple will be returned. All results are returned when pid is set.
+        For convenience, if a PulseSinkInputInfo is given as the query, it will
+        be returned.
 
         :param query: The query of the sink-input to search for
         :type query: str or int or PulseSinkInputInfo
         :param bool pid: Check the associated pid instead (default is False)
-        :return: The sink-input found
-        :rtype: PulseSinkInputInfo or None
+        :return: A tuple of PulseSinkInputInfo objects that were found
+        :rtype: tuple
         '''
         if isinstance(query, PulseSinkInputInfo):
-            return query
+            return (query, )
         query = str(query)
         attrs = lambda s: (s.pid, ) if pid else (s.name, str(s.index))
         res = tuple(s for s in self.sink_inputs if str(query) in attrs(s))
-        return len(res) == 1 and res[0] or None
+        if pid:
+            return res
+        return len(res) == 1 and (res[0], ) or tuple()
 
     def get_sink_input_pid(self, sinput):
         '''
@@ -551,10 +559,10 @@ class SinkInputController(BaseController):
         :return: The pid of the sink-input, if one is associated
         :rtype: int or None
         '''
-        siobj = self.find_sink_input(sinput, pid=False)
-        if not siobj:
+        siobjs = self.find_sink_input(sinput, pid=False)
+        if len(siobj) != 1:
             raise ValueError(f"Sink-input {sinput} not found")
-        return siobj.pid
+        return siobj[0].pid
 
     def get_sink_input_sink(self, sinput, pid=False):
         '''
@@ -567,10 +575,10 @@ class SinkInputController(BaseController):
         :rtype: PulseSinkInfo
         :raises ValueError: If the sink-input is not found
         '''
-        siobj = self.find_sink_input(sinput, pid=pid)
-        if not siobj:
-            raise ValueError(f"Sink-input {sinput} not found")
-        return self.find_sink(siobj.sink)
+        siobjs = self.find_sink_input(sinput, pid=pid)
+        if len(siobjs) != 1:
+            raise ValueError(f"Sink-input {sinput} has no exact match")
+        return self.find_sink(siobjs[0].sink)
 
     def get_sink_input_volumes(self, sinput, names=False, pid=False):
         '''
@@ -587,9 +595,10 @@ class SinkInputController(BaseController):
         :raises ValueError: If sink-input not found
         '''
         siobj = self.find_sink_input(sinput, pid=pid)
-        if not siobj:
-            raise ValueError(f"Sink-input {sinput} not found")
+        if len(siobj) != 1:
+            raise ValueError(f"Sink-input {sinput} has no exact match")
 
+        siobj = siobjs[0]
         if names:
             return {n: trueround(v * 100)
                     for n, v in zip(siobj.channel_list, siobj.volume.values)}
@@ -608,10 +617,10 @@ class SinkInputController(BaseController):
         :rtype: int
         :raises ValueError: If sink-input not found
         '''
-        siobj = self.find_sink_input(sinput, pid=pid)
-        if not siobj:
-            raise ValueError(f"Sink-input {sinput} not found")
-        return siobj.mute
+        siobjs = self.find_sink_input(sinput, pid=pid)
+        if len(siobjs) != 1:
+            raise ValueError(f"Sink-input {sinput} has no exact match")
+        return siobjs[0].mute
 
     def move_sink_input(self, sinput, sink, pid=False):
         '''
@@ -625,17 +634,18 @@ class SinkInputController(BaseController):
         :raises ValueError: If the sink-input or sink is not found
         '''
         # Find sink-input
-        siobj = self.find_sink_input(sinput, pid=pid)
-        if not siobj:
+        siobjs = self.find_sink_input(sinput, pid=pid)
+        if len(siobjs) == 0:
             raise ValueError(f"Sink-input {sinput} not found")
 
-        # Find sink
-        sobj = self.find_sink(sink)
-        if not sobj:
-            raise ValueError(f"Sink {sink} not found")
+        for siobj in siobjs:
+            # Find sink
+            sobj = self.find_sink(sink)
+            if not sobj:
+                raise ValueError(f"Sink {sink} not found")
 
-        # Move to sink
-        self._client.sink_input_move(siobj.index, sobj.index)
+            # Move to sink
+            self._client.sink_input_move(siobj.index, sobj.index)
 
     def mute_sink_input(self, sinput, mute, pid=False):
         '''
@@ -648,17 +658,18 @@ class SinkInputController(BaseController):
         :param bool pid: Whether or not to treat the query as a pid
         :raises ValueError: If sink-input not found or mute status is invalid
         '''
-        siobj = self.find_sink_input(sinput, pid=pid)
-        if not siobj:
+        siobjs = self.find_sink_input(sinput, pid=pid)
+        if len(siobjs) == 0:
             raise ValueError(f"Sink-input {sinput} not found")
 
-        if mute == 't':
-            mute = 0 if siobj.mute else 1
+        for siobj in siobjs:
+            if mute == 't':
+                mute = 0 if siobj.mute else 1
 
-        if mute is not None:
-            self._client.sink_input_mute(siobj.index, int(mute))
-        else:
-            raise ValueError(f"Mute should be '0', '1', or 't' not {mute}")
+            if mute is not None:
+                self._client.sink_input_mute(siobj.index, int(mute))
+            else:
+                raise ValueError(f"Mute should be '0', '1', or 't' not {mute}")
 
     def set_sink_input_volumes(self, sinput, volumes, pid=False):
         '''
@@ -671,21 +682,22 @@ class SinkInputController(BaseController):
         :param bool pid: Whether or not to interpret the query as a pid
         :raises ValueError: If sink not found or incorrect channel count given
         '''
-        siobj = self.find_sink_input(sinput, pid=pid)
-        if not siobj:
+        siobjs = self.find_sink_input(sinput, pid=pid)
+        if len(siobjs) == 0:
             raise ValueError(f"Sink-input {sinput} not found")
 
-        if len(volumes) == siobj.channel_count:
-            volinfo = PulseVolumeInfo([v / 100 for v in volumes])
-        elif len(volumes) == 1:
-            flatvol = [v / 100 for v in volumes]
-            volinfo = PulseVolumeInfo(flatvol * siobj.channel_count)
-        else:
-            raise ValueError(f"Sink-input {sinput} has {siobj.channel_count} "
-                             "channels. Provide a volume per channel or a "
-                             "single flat volume")
+        for siobj in siobjs:
+            if len(volumes) == siobj.channel_count:
+                volinfo = PulseVolumeInfo([v / 100 for v in volumes])
+            elif len(volumes) == 1:
+                flatvol = [v / 100 for v in volumes]
+                volinfo = PulseVolumeInfo(flatvol * siobj.channel_count)
+            else:
+                raise ValueError(f"Sink-input {sinput} has "
+                                 f"{siobj.channel_count} channels. Provide a "
+                                 "volume per channel or a single flat volume")
 
-        self._client.sink_input_volume_set(siobj.index, volinfo)
+            self._client.sink_input_volume_set(siobj.index, volinfo)
 
     def set_sink_input_volumes_relative(self, sinput, volumes, pid=False):
         '''
@@ -699,22 +711,23 @@ class SinkInputController(BaseController):
         :param bool pid: Whether or not to interpret the query as a pid
         :raises ValueError: If sink not found or incorrect channel count given
         '''
-        siobj = self.find_sink_input(sinput, pid=pid)
-        if not siobj:
+        siobjs = self.find_sink_input(sinput, pid=pid)
+        if len(siobjs) == 0:
             raise ValueError(f"Sink-input {sinput} not found")
 
-        current = siobj.volume.values
-        if len(volumes) == siobj.channel_count:
-            volinfo = PulseVolumeInfo([c + v / 100
-                                       for c, v in zip(current, volumes)])
-        elif len(volumes) == 1:
-            volinfo = PulseVolumeInfo([c + volumes[0] / 100 for c in current])
-        else:
-            raise ValueError(f"Sink-input {sinput} has {siobj.channel_count} "
-                             "channels. Provide a volume per channel or a "
-                             "single flat volume")
+        for siobj in siobjs:
+            curr = siobj.volume.values
+            if len(volumes) == siobj.channel_count:
+                volinfo = PulseVolumeInfo([c + v / 100
+                                           for c, v in zip(curr, volumes)])
+            elif len(volumes) == 1:
+                volinfo = PulseVolumeInfo([c + volumes[0] / 100 for c in curr])
+            else:
+                raise ValueError(f"Sink-input {sinput} has "
+                                 f"{siobj.channel_count} channels. Provide a "
+                                 "volume per channel or a single flat volume")
 
-        self._client.sink_input_volume_set(siobj.index, volinfo)
+            self._client.sink_input_volume_set(siobj.index, volinfo)
 
 
 class SourceController(BaseController):
