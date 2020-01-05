@@ -7,10 +7,10 @@ set editor = vim
 set imap_user = 'bosrsf04@gmail.com'
 set imap_pass = $my_pass
 set folder = 'imaps://imap.gmail.com'
-set spoolfile = +Sway
+set spoolfile = +Wayland
 set postponed = "+[Gmail]/Drafts"
 set mbox = 'imaps://imap.gmail.com/[Gmail]/All Mail'
-mailboxes =INBOX =Sway
+mailboxes =INBOX =Wayland
 set header_cache = ~/.cache/mutt
 set message_cachedir = ~/.cache/mutt
 set imap_keepalive = 120
@@ -34,15 +34,15 @@ macro index,pager d "<save-message>=[Gmail]/Trash<enter><enter>" "Trash"
 macro index gi "<change-folder>=INBOX<enter>" "Go to inbox"
 macro index ga "<change-folder>=[Gmail]/All Mail<enter>" "Go to all mail"
 macro index gd "<change-folder>=[Gmail]/Drafts<enter>" "Go to drafts"
-macro index sw "<change-folder>=Sway<enter>" "Go to sway"
+macro index wa "<change-folder>=Wayland<enter>" "Go to wayland"
 
 # External Processing
 set wait_key = no
 macro index,pager A "<pipe-message> less -\n<Enter>" "View raw"
 macro index,pager B "<pipe-message> env urlscan -c -d<Enter>" "urlscan"
 macro attach,compose B "<pipe-entry> env urlscan -c -d<Enter>" "urlscan"
-macro index,pager H "<pipe-message> grep -A1 'Reply to this email directly or view it on GitHub' | tail -n1 | rev | cut -d= -f2- | rev | xargs env GDK_BACKEND=wayland firefox-nightly -P git <Enter>" "View on GitHub"
-macro index,pager G "<pipe-message> grep -A1 'Reply to this email directly or view it on GitHub' | tail -n1 | cut -d# -f1 | $HOME/.local/share/bin/mutt-github <Enter>" "Checkout PR"
+macro index,pager H "<pipe-message> grep -A1 -P '[Vv]iew it on Git(Hub|Lab):' | grep -Po 'https://[^\s=]+' | sed -r 's/=$//' | xargs firefox-nightly -P git <Enter>" "View online"
+macro index,pager G "<pipe-message> grep -A1 -P 'Reply to this email directly or view it on GitHub' | tail -n1 | cut -d# -f1 | $HOME/.local/share/bin/mutt-github <Enter>" "Checkout PR"
 
 # Threading
 set sort = reverse-threads
@@ -68,6 +68,12 @@ color index magenta       default "~R ~i /pull/"
 color index brightmagenta default "~U ~i /pull/"
 color index yellow        default "~R ~i /issues?/"
 color index brightyellow  default "~U ~i /issues?/"
+color index cyan          default "~R ~i /releases/"
+color index brightcyan    default "~U ~i /releases/"
+color index magenta       default "~R ~x merge_request_"
+color index brightmagenta default "~U ~x merge_request_"
+color index magenta       default "~R ~s PATCH"
+color index brightmagenta default "~U ~s PATCH"
 
 set header_color_partial = yes
 color hdrdefault brightcolor17 default
@@ -97,5 +103,5 @@ color body   yellow        default "^@.* requested your review on: .*"
 folder-hook . "push <sync-mailbox>"
 folder-hook INBOX "auto_view text/html"
 folder-hook INBOX "setenv BROWSER $HOME/opt/scripts/firefox-default"
-folder-hook Sway "unauto_view *"
-folder-hook Sway "setenv BROWSER $HOME/opt/scripts/firefox-git"
+folder-hook Wayland "unauto_view *"
+folder-hook Wayland "setenv BROWSER $HOME/opt/scripts/firefox-git"
