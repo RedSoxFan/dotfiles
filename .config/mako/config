@@ -5,6 +5,7 @@ max-visible=5
 width=1920
 output=eDP-1
 markup=1
+icons=0
 
 default-timeout=0
 ignore-timeout=1
