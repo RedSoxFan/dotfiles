@@ -18,7 +18,7 @@ if empty(glob("~/.vim/autoload/plug.vim"))
 endif
 call plug#begin('~/.vim/plugged')
 
-" Airline
+"" Airline
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
@@ -35,7 +35,7 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts=1
 let g:airline_exclude_preview=1
 
-" Navigation and Editing
+"" Navigation and Editing
 Plug 'ludovicchabant/vim-gutentags'
 let g:gutentags_project_root = ['tags']
 let g:gutentags_add_default_project_roots = 0
@@ -47,16 +47,13 @@ let g:fzf_layout = { 'down': '~20%' }
 nmap ; :GitFiles<Enter>
 Plug 'editorconfig/editorconfig-vim'
 
-" Git
+"" Git
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 
-" Python Development
+"" Python Development
 Plug 'nvie/vim-flake8', { 'for': 'python' }
-Plug 'davidhalter/jedi-vim'  " In order to have the shebang version detection autocmd below, cannot lazy load
-nmap <Leader>2 :call jedi#force_py_version(2)<Enter>
-nmap <Leader>3 :call jedi#force_py_version(3)<Enter>
-autocmd FileType,BufEnter python call jedi#force_py_version(getline(1)=~#"python2" ? 2 : 3)
+Plug 'davidhalter/jedi-vim', { 'for': 'python' }
 
 "" End of vim-plug section
 call plug#end()
